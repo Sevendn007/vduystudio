@@ -153,7 +153,7 @@ export default function OptionC() {
       <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opc-fab">💬 Chat Zalo</a>
 
       <style>{`
-.opc-root{--fg:#0f0f14;--muted:#5b5b66;font-family:var(--font-poppins),var(--font-inter),system-ui,sans-serif;color:var(--fg);background:#fff;overflow-x:hidden;position:relative;min-height:100vh;padding-bottom:90px;}
+.opc-root{--fg:#0f0f14;--muted:#5b5b66;font-family:var(--font-poppins),var(--font-inter),system-ui,sans-serif;color:var(--fg);background:#fff;overflow-x:hidden;position:relative;min-height:100vh;padding-bottom:130px;}
 .opc-root *{box-sizing:border-box;}
 .opc-root [id]{scroll-margin-top:70px;}
 .opc-scard{display:block;color:inherit;}

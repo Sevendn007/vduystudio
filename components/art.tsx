@@ -191,3 +191,158 @@ export function Avatar({ name, size = 40 }: { name: string; size?: number }) {
     </svg>
   );
 }
+
+// Quả cầu HUD 3D: khiên khóa phát sáng + các vòng tròn xoay (hero Option E).
+export function HeroOrb() {
+  return (
+    <div className="art-orb" aria-hidden>
+      <style>{`
+        .art-orb{position:relative;width:min(440px,80vw);aspect-ratio:1;animation:orbFloat 6s ease-in-out infinite;}
+        @keyframes orbFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+        .art-orb svg{position:absolute;inset:0;width:100%;height:100%;}
+        .art-ring-a{transform-origin:center;animation:orbSpin 26s linear infinite;}
+        .art-ring-b{transform-origin:center;animation:orbSpin 18s linear infinite reverse;}
+        @keyframes orbSpin{to{transform:rotate(360deg)}}
+        @media(prefers-reduced-motion:reduce){.art-orb,.art-ring-a,.art-ring-b{animation:none;}}
+      `}</style>
+      <svg viewBox="0 0 400 400">
+        <defs>
+          <radialGradient id="orbGlow" cx="50%" cy="45%" r="55%">
+            <stop offset="0" stopColor="#2dd4bf" stopOpacity="0.5" />
+            <stop offset="0.5" stopColor="#0f766e" stopOpacity="0.15" />
+            <stop offset="1" stopColor="#0a1420" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id="orbShield" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#e7c873" />
+            <stop offset="0.55" stopColor="#c9a227" />
+            <stop offset="1" stopColor="#8a6d14" />
+          </linearGradient>
+          <linearGradient id="orbShieldHi" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#fff8e6" stopOpacity="0.9" />
+            <stop offset="0.4" stopColor="#fff8e6" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <circle cx="200" cy="190" r="180" fill="url(#orbGlow)" />
+        {/* vòng ngoài */}
+        <g className="art-ring-a">
+          <circle cx="200" cy="190" r="150" fill="none" stroke="#2dd4bf" strokeOpacity="0.35" strokeWidth="1" strokeDasharray="3 9" />
+          <circle cx="200" cy="40" r="3" fill="#2dd4bf" />
+          <circle cx="350" cy="190" r="2" fill="#e7c873" />
+        </g>
+        {/* vòng trong */}
+        <g className="art-ring-b">
+          <circle cx="200" cy="190" r="118" fill="none" stroke="#e7c873" strokeOpacity="0.35" strokeWidth="1" strokeDasharray="1 7" />
+          <circle cx="200" cy="308" r="2.5" fill="#e7c873" />
+        </g>
+        <circle cx="200" cy="190" r="92" fill="#0d1b2a" stroke="#1e3a4c" strokeWidth="1" />
+        {/* khiên */}
+        <g transform="translate(200,190)">
+          <path d="M0,-58 L48,-38 V4 C48,38 26,58 0,66 C-26,58 -48,38 -48,4 V-38 Z" fill="url(#orbShield)" stroke="#f3e2a8" strokeWidth="1.5" />
+          <path d="M0,-58 L48,-38 V4 C48,20 40,32 30,42 C20,10 8,-20 0,-58 Z" fill="url(#orbShieldHi)" />
+          {/* ổ khóa */}
+          <rect x="-16" y="-4" width="32" height="26" rx="5" fill="#0d1b2a" />
+          <path d="M-9,-4 V-13 a9,9 0 0 1 18,0 V-4" fill="none" stroke="#0d1b2a" strokeWidth="5" />
+          <circle cx="0" cy="7" r="4" fill="#e7c873" />
+          <rect x="-1.6" y="7" width="3.2" height="9" rx="1.6" fill="#e7c873" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+type CaseKind = "verify" | "shield" | "chart" | "news" | "phone" | "lock";
+
+// Ảnh minh họa case study kiểu 3D (gradient + glow + emblem nổi khối) cho Option E.
+export function CaseArt({
+  kind,
+  accent = "#2dd4bf",
+}: {
+  kind: CaseKind;
+  accent?: string;
+}) {
+  const uid = `ca-${kind}-${accent.replace("#", "")}`;
+  const emblem = () => {
+    switch (kind) {
+      case "verify":
+        return (
+          <g transform="translate(200,150)">
+            <path d="M0-46 12-36 28-38 32-22 46-14 40 0 46 14 32 22 28 38 12 36 0 46-12 36-28 38-32 22-46 14-40 0-46-14-32-22-28-38-12-36Z" fill={`url(#${uid}-g)`} stroke="#fff" strokeOpacity="0.5" />
+            <path d="M-15 2 -4 14 18-12" fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+          </g>
+        );
+      case "shield":
+        return (
+          <g transform="translate(200,148)">
+            <path d="M0,-52 44,-34 V6 C44,38 24,56 0,64 C-24,56 -44,38 -44,6 V-34 Z" fill={`url(#${uid}-g)`} stroke="#fff" strokeOpacity="0.5" />
+            <rect x="-14" y="-2" width="28" height="24" rx="5" fill="#0b1622" />
+            <path d="M-8,-2 V-10 a8,8 0 0 1 16,0 V-2" fill="none" stroke="#0b1622" strokeWidth="4.5" />
+          </g>
+        );
+      case "chart":
+        return (
+          <g transform="translate(150,210)">
+            <rect x="0" y="-40" width="20" height="40" rx="3" fill={`url(#${uid}-g)`} />
+            <rect x="30" y="-70" width="20" height="70" rx="3" fill={`url(#${uid}-g)`} />
+            <rect x="60" y="-104" width="20" height="104" rx="3" fill={`url(#${uid}-g)`} />
+            <path d="M-6 -6 L88 -118" fill="none" stroke="#fff" strokeWidth="5" strokeLinecap="round" />
+            <path d="M70 -118 L88 -118 L88 -100" fill="none" stroke="#fff" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+          </g>
+        );
+      case "news":
+        return (
+          <g transform="translate(158,110)">
+            <rect x="0" y="0" width="84" height="80" rx="8" fill={`url(#${uid}-g)`} stroke="#fff" strokeOpacity="0.4" />
+            <rect x="12" y="14" width="34" height="26" rx="3" fill="#0b1622" opacity="0.6" />
+            <rect x="52" y="14" width="20" height="5" rx="2.5" fill="#0b1622" opacity="0.6" />
+            <rect x="52" y="24" width="20" height="5" rx="2.5" fill="#0b1622" opacity="0.6" />
+            <rect x="52" y="34" width="20" height="5" rx="2.5" fill="#0b1622" opacity="0.6" />
+            <rect x="12" y="50" width="60" height="5" rx="2.5" fill="#0b1622" opacity="0.6" />
+            <rect x="12" y="62" width="60" height="5" rx="2.5" fill="#0b1622" opacity="0.6" />
+          </g>
+        );
+      case "phone":
+        return (
+          <g transform="translate(172,92)">
+            <rect x="0" y="0" width="56" height="116" rx="12" fill={`url(#${uid}-g)`} stroke="#fff" strokeOpacity="0.4" />
+            <circle cx="28" cy="40" r="14" fill="#0b1622" opacity="0.5" />
+            <rect x="14" y="66" width="28" height="5" rx="2.5" fill="#0b1622" opacity="0.5" />
+            <rect x="18" y="78" width="20" height="5" rx="2.5" fill="#0b1622" opacity="0.5" />
+          </g>
+        );
+      default:
+        return (
+          <g transform="translate(200,150)">
+            <rect x="-30" y="-8" width="60" height="48" rx="10" fill={`url(#${uid}-g)`} />
+            <path d="M-18,-8 V-22 a18,18 0 0 1 36,0 V-8" fill="none" stroke={`url(#${uid}-g)`} strokeWidth="9" />
+          </g>
+        );
+    }
+  };
+  return (
+    <svg viewBox="0 0 400 300" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden>
+      <defs>
+        <linearGradient id={`${uid}-bg`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#0f2233" />
+          <stop offset="1" stopColor="#0a1420" />
+        </linearGradient>
+        <radialGradient id={`${uid}-glow`} cx="50%" cy="45%" r="55%">
+          <stop offset="0" stopColor={accent} stopOpacity="0.45" />
+          <stop offset="1" stopColor={accent} stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id={`${uid}-g`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#f3e2a8" />
+          <stop offset="0.5" stopColor="#c9a227" />
+          <stop offset="1" stopColor="#8a6d14" />
+        </linearGradient>
+      </defs>
+      <rect width="400" height="300" fill={`url(#${uid}-bg)`} />
+      <ellipse cx="200" cy="150" rx="150" ry="120" fill={`url(#${uid}-glow)`} />
+      {/* lưới HUD */}
+      <g stroke={accent} strokeOpacity="0.12">
+        <line x1="0" y1="230" x2="400" y2="230" />
+        <line x1="0" y1="70" x2="400" y2="70" />
+      </g>
+      {emblem()}
+    </svg>
+  );
+}

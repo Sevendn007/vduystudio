@@ -1,12 +1,14 @@
 "use client";
 
-export type Variant = "A" | "B" | "C" | "D";
+export type Variant = "A" | "B" | "C" | "D" | "E" | "F";
 
 const OPTIONS: { key: Variant; label: string; hint: string }[] = [
   { key: "A", label: "Editorial", hint: "Dark / cinematic" },
   { key: "B", label: "Bento", hint: "Sạch / chuyên nghiệp" },
   { key: "C", label: "Gradient", hint: "Trẻ trung / mobile" },
   { key: "D", label: "Paper", hint: "thiswasmajor style" },
+  { key: "E", label: "Cinematic", hint: "3D vàng gold / futuristic" },
+  { key: "F", label: "Glass", hint: "Glassmorphism / sáng-tối" },
 ];
 
 export default function VariantSwitcher({
@@ -47,7 +49,9 @@ export default function VariantSwitcher({
           max-width:calc(100vw - 24px);
         }
         .vsw-title{color:#9aa0aa;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
-        .vsw-track{display:flex;gap:4px;background:rgba(255,255,255,.06);border-radius:100px;padding:4px;}
+        .vsw-track{display:flex;gap:4px;background:rgba(255,255,255,.06);border-radius:100px;padding:4px;overflow-x:auto;scrollbar-width:none;max-width:100%;}
+        .vsw-track::-webkit-scrollbar{display:none;}
+        .vsw-btn{flex:0 0 auto;white-space:nowrap;}
         .vsw-btn{
           display:flex;align-items:center;gap:8px;border:none;cursor:pointer;
           background:transparent;color:#cfd2d8;padding:8px 14px;border-radius:100px;

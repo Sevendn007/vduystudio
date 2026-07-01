@@ -202,7 +202,7 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 .opa-cta{text-align:center;padding:150px 40px;border-top:1px solid #1a1a1a;}
 .opa-cta h2{font-family:var(--font-grotesk),sans-serif;font-size:clamp(44px,9vw,120px);font-weight:700;letter-spacing:-3px;margin:0 0 34px;}
 .opa-cta .opa-btn{padding:20px 46px;font-size:14px;}
-.opa-footer{display:flex;justify-content:space-between;padding:30px 40px 90px;color:var(--muted);font-size:12px;letter-spacing:1px;}
+.opa-footer{display:flex;justify-content:space-between;padding:30px 40px 120px;color:var(--muted);font-size:12px;letter-spacing:1px;}
 @media(max-width:820px){
  .opa-nav{padding:16px 20px;}.opa-menu{display:none;}
  .opa-hero{padding:60px 20px;min-height:auto;}
@@ -212,7 +212,7 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
  .opa-work-grid{grid-template-columns:1fr;}
  .opa-work-card.tall{grid-row:auto;aspect-ratio:4/5;}
  .opa-cta{padding:100px 20px;}
- .opa-footer{padding:30px 20px 90px;}
+ .opa-footer{padding:30px 20px 120px;}
 }
       `}</style>
     </div>

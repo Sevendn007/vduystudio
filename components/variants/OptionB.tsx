@@ -212,7 +212,7 @@ export default function OptionB() {
       </div>
 
       <style>{`
-.opb-root{--bg:#fafafa;--card:#fff;--fg:#0f1115;--muted:#6b7280;--accent:#1d9bf0;--accent2:#7c3aed;--border:#e7e8ec;font-family:var(--font-inter),system-ui,sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;padding-bottom:80px;}
+.opb-root{--bg:#fafafa;--card:#fff;--fg:#0f1115;--muted:#6b7280;--accent:#1d9bf0;--accent2:#7c3aed;--border:#e7e8ec;font-family:var(--font-inter),system-ui,sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;padding-bottom:120px;}
 .opb-root *{box-sizing:border-box;}
 .opb-root [id]{scroll-margin-top:80px;}
 .opb-menu a{cursor:pointer;}

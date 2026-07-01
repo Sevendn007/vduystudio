@@ -206,7 +206,7 @@ export default function OptionD() {
 .opd-qcard p{font-size:18px;line-height:1.5;margin:0 0 16px;font-weight:500;}
 .opd-qcard span{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
 
-.opd-footer{background:var(--ink);color:var(--paper);padding:90px 40px 40px;margin-top:40px;}
+.opd-footer{background:var(--ink);color:var(--paper);padding:90px 40px 120px;margin-top:40px;}
 .opd-footer h2{font-family:var(--font-grotesk),sans-serif;font-size:clamp(34px,6vw,80px);font-weight:500;letter-spacing:-2px;margin:0 0 40px;}
 .opd-contactrow{display:flex;gap:32px;flex-wrap:wrap;font-size:clamp(16px,2vw,22px);border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:50px;margin-bottom:20px;}
 .opd-contactrow a{border-bottom:1px solid transparent;transition:.2s;}
