@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ProjectCover, Avatar } from "@/components/art";
+import { site } from "@/lib/site";
 
 export default function OptionB() {
   return (
@@ -11,12 +12,14 @@ export default function OptionB() {
           <span className="opb-badge-check">✓</span>vduystudio
         </div>
         <div className="opb-menu">
-          <div>Dịch vụ</div>
-          <div>Dự án</div>
-          <div>Feedback</div>
-          <div>Bảng giá</div>
+          <a href="#opb-services">Dịch vụ</a>
+          <a href="#opb-work">Dự án</a>
+          <a href="#opb-testi">Feedback</a>
+          <a href="#opb-services">Bảng giá</a>
         </div>
-        <div className="opb-nav-cta">Liên hệ ngay</div>
+        <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opb-nav-cta">
+          Liên hệ ngay
+        </a>
       </nav>
 
       <section className="opb-hero">
@@ -32,8 +35,8 @@ export default function OptionB() {
           hành.
         </p>
         <div className="opb-hero-ctas">
-          <div className="opb-btn-primary">Xem bảng giá dịch vụ</div>
-          <div className="opb-btn-secondary">Xem dự án đã làm</div>
+          <a href="#opb-services" className="opb-btn-primary">Xem bảng giá dịch vụ</a>
+          <a href="#opb-work" className="opb-btn-secondary">Xem dự án đã làm</a>
         </div>
         <div className="opb-stats">
           <div className="opb-stat">
@@ -55,7 +58,7 @@ export default function OptionB() {
         </div>
       </section>
 
-      <section className="opb-section">
+      <section className="opb-section" id="opb-services">
         <div className="opb-section-tag">Hạng mục dịch vụ</div>
         <h2>Chọn nền tảng bạn cần hỗ trợ</h2>
         <div className="opb-bento">
@@ -99,7 +102,7 @@ export default function OptionB() {
         </div>
       </section>
 
-      <section className="opb-section">
+      <section className="opb-section" id="opb-work">
         <div className="opb-section-tag">Featured Work</div>
         <h2>Dự án tiêu biểu đã triển khai</h2>
         <div className="opb-work">
@@ -154,7 +157,7 @@ export default function OptionB() {
         </div>
       </section>
 
-      <section className="opb-section">
+      <section className="opb-section" id="opb-testi">
         <div className="opb-section-tag">Feedback</div>
         <h2>Khách hàng nói gì</h2>
         <div className="opb-testi">
@@ -203,12 +206,16 @@ export default function OptionB() {
       <div className="opb-cta-final">
         <h2>Sẵn sàng để được xác minh?</h2>
         <p>Nhắn tin để nhận tư vấn và báo giá miễn phí ngay hôm nay.</p>
-        <div className="opb-btn-primary">Liên hệ tư vấn</div>
+        <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opb-btn-primary">
+          Liên hệ tư vấn
+        </a>
       </div>
 
       <style>{`
 .opb-root{--bg:#fafafa;--card:#fff;--fg:#0f1115;--muted:#6b7280;--accent:#1d9bf0;--accent2:#7c3aed;--border:#e7e8ec;font-family:var(--font-inter),system-ui,sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;padding-bottom:80px;}
 .opb-root *{box-sizing:border-box;}
+.opb-root [id]{scroll-margin-top:80px;}
+.opb-menu a{cursor:pointer;}
 .opb-nav{display:flex;justify-content:space-between;align-items:center;padding:20px 48px;position:sticky;top:0;background:rgba(250,250,250,.85);backdrop-filter:blur(10px);z-index:20;border-bottom:1px solid var(--border);}
 .opb-logo{font-weight:800;font-size:16px;display:flex;align-items:center;gap:6px;}
 .opb-badge-check{width:18px;height:18px;background:var(--accent);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:11px;}

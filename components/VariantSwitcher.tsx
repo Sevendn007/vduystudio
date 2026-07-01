@@ -1,11 +1,12 @@
 "use client";
 
-export type Variant = "A" | "B" | "C";
+export type Variant = "A" | "B" | "C" | "D";
 
 const OPTIONS: { key: Variant; label: string; hint: string }[] = [
-  { key: "A", label: "Editorial", hint: "Cinematic / cao cấp" },
-  { key: "B", label: "Bento SaaS", hint: "Sạch / chuyên nghiệp" },
+  { key: "A", label: "Editorial", hint: "Dark / cinematic" },
+  { key: "B", label: "Bento", hint: "Sạch / chuyên nghiệp" },
   { key: "C", label: "Gradient", hint: "Trẻ trung / mobile" },
+  { key: "D", label: "Paper", hint: "thiswasmajor style" },
 ];
 
 export default function VariantSwitcher({

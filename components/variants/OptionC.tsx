@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { PhoneMock, ProjectCover } from "@/components/art";
+import { site } from "@/lib/site";
 
 export default function OptionC() {
   return (
@@ -11,11 +12,11 @@ export default function OptionC() {
       <div className="opc-bgblob opc-blob3" />
 
       <nav className="opc-nav">
-        <div className="opc-logo">vduystudio ✓</div>
-        <div className="opc-nav-cta">Chat ngay</div>
+        <a href="#opc-top" className="opc-logo">vduystudio ✓</a>
+        <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opc-nav-cta">Chat ngay</a>
       </nav>
 
-      <section className="opc-hero">
+      <section className="opc-hero" id="opc-top">
         <div className="opc-pill">🔥 1.200+ tài khoản đã lên tích xanh</div>
         <h1>
           Biến kênh của bạn
@@ -26,7 +27,7 @@ export default function OptionC() {
           Tích xanh · Mở khóa tài khoản · Booking báo chí cho TikTok, Facebook,
           Instagram &amp; Threads.
         </p>
-        <div className="opc-hero-cta">Nhận tư vấn miễn phí 🚀</div>
+        <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opc-hero-cta">Nhận tư vấn miễn phí 🚀</a>
 
         <div className="opc-phones">
           <div className="opc-phone-wrap">
@@ -70,26 +71,26 @@ export default function OptionC() {
           <Link href="/dich-vu/bao-chi" className="opc-tab">📰 Báo chí</Link>
         </div>
         <div className="opc-cardrow">
-          <div className="opc-scard">
+          <Link href="/dich-vu/tiktok" className="opc-scard">
             <div className="ic">✅</div>
             <h4>Tích xanh chính thống</h4>
             <p>Xác minh danh tính thật, đúng chính sách nền tảng.</p>
-          </div>
-          <div className="opc-scard">
+          </Link>
+          <Link href="/dich-vu/tiktok" className="opc-scard">
             <div className="ic">🔓</div>
             <h4>Mở khóa tài khoản</h4>
             <p>Khôi phục tài khoản bị khóa/hạn chế nhanh chóng.</p>
-          </div>
-          <div className="opc-scard">
+          </Link>
+          <Link href="/dich-vu/tiktok" className="opc-scard">
             <div className="ic">🛒</div>
             <h4>Mở khóa giỏ hàng</h4>
             <p>Kích hoạt tính năng bán hàng trên TikTok Shop.</p>
-          </div>
-          <div className="opc-scard">
+          </Link>
+          <Link href="/dich-vu/tiktok" className="opc-scard">
             <div className="ic">🎥</div>
             <h4>Mở khóa Livestream</h4>
             <p>Kích hoạt quyền livestream cho kênh của bạn.</p>
-          </div>
+          </Link>
         </div>
       </section>
 
@@ -146,14 +147,16 @@ export default function OptionC() {
       <section className="opc-cta-final">
         <h2>Sẵn sàng lên tích xanh chưa?</h2>
         <p>Nhắn ngay để được tư vấn gói phù hợp nhất với bạn</p>
-        <div className="opc-hero-cta">Chat Zalo ngay</div>
+        <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opc-hero-cta">Chat Zalo ngay</a>
       </section>
 
-      <div className="opc-fab">💬 Chat Zalo</div>
+      <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opc-fab">💬 Chat Zalo</a>
 
       <style>{`
 .opc-root{--fg:#0f0f14;--muted:#5b5b66;font-family:var(--font-poppins),var(--font-inter),system-ui,sans-serif;color:var(--fg);background:#fff;overflow-x:hidden;position:relative;min-height:100vh;padding-bottom:90px;}
 .opc-root *{box-sizing:border-box;}
+.opc-root [id]{scroll-margin-top:70px;}
+.opc-scard{display:block;color:inherit;}
 .opc-bgblob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;z-index:0;}
 .opc-blob1{width:420px;height:420px;top:-140px;left:-100px;background:radial-gradient(circle,#7c3aed,transparent 70%);}
 .opc-blob2{width:460px;height:460px;top:60px;right:-140px;background:radial-gradient(circle,#ec4899,transparent 70%);}

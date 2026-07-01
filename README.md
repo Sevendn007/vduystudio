@@ -6,9 +6,13 @@ Bản này gồm **3 phong cách giao diện** dựng sẵn, chuyển đổi tr�
 
 | Option | Phong cách | Ghi chú |
 |--------|-----------|---------|
-| **A — Editorial** | Cinematic / cao cấp, dark theme, grain, typography khổ lớn | Cảm hứng từ thiswasmajor.com |
+| **A — Editorial** | Dark cinematic, grain, grotesk khổ lớn, accent xanh | Editorial tối |
 | **B — Bento SaaS** | Sạch, chuyên nghiệp, trust-first, light theme | Dễ maintain, an toàn để launch |
 | **C — Gradient** | Trẻ trung, gradient, glassmorphism, mobile-first | Sticky CTA Chat Zalo |
+| **D — Paper** | Editorial nền giấy kem, serif italic, danh sách work | Clone phong cách thiswasmajor.com |
+
+Toàn bộ nút bấm (nav, CTA, service card, tab) đều hoạt động: điều hướng sang trang
+chi tiết, cuộn mượt tới section, hoặc mở Zalo/Messenger.
 
 ## Tech stack
 

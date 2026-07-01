@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import OptionA from "@/components/variants/OptionA";
 import OptionB from "@/components/variants/OptionB";
 import OptionC from "@/components/variants/OptionC";
+import OptionD from "@/components/variants/OptionD";
 import VariantSwitcher, { Variant } from "@/components/VariantSwitcher";
 
 const STORAGE_KEY = "vduy-variant";
@@ -14,7 +15,7 @@ export default function Home() {
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY) as Variant | null;
-    if (saved === "A" || saved === "B" || saved === "C") {
+    if (saved === "A" || saved === "B" || saved === "C" || saved === "D") {
       setVariant(saved);
     }
     setMounted(true);
@@ -37,6 +38,7 @@ export default function Home() {
       {variant === "A" && <OptionA />}
       {variant === "B" && <OptionB />}
       {variant === "C" && <OptionC />}
+      {variant === "D" && <OptionD />}
     </>
   );
 }

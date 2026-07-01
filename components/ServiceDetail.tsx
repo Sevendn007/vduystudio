@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import type { Platform } from "@/lib/services";
 import { platforms } from "@/lib/services";
@@ -8,7 +7,6 @@ import { site } from "@/lib/site";
 import { BrandMark, ProjectCover } from "@/components/art";
 
 export default function ServiceDetail({ platform }: { platform: Platform }) {
-  const [open, setOpen] = useState<number>(0);
   const others = platforms.filter((p) => p.slug !== platform.slug);
 
   return (
@@ -134,12 +132,9 @@ export default function ServiceDetail({ platform }: { platform: Platform }) {
         <h2>Câu hỏi thường gặp</h2>
         <div className="sd-faq">
           {platform.faq.map((f, i) => (
-            <div className={`sd-faq-item${open === i ? " open" : ""}`} key={i}>
-              <button className="sd-faq-q" onClick={() => setOpen(open === i ? -1 : i)}>
-                <span>{f.q}</span>
-                <span className="sd-faq-icon">{open === i ? "–" : "+"}</span>
-              </button>
-              {open === i && <div className="sd-faq-a">{f.a}</div>}
+            <div className="sd-faq-item" key={i}>
+              <div className="sd-faq-q">{f.q}</div>
+              <div className="sd-faq-a">{f.a}</div>
             </div>
           ))}
         </div>
@@ -230,12 +225,11 @@ export default function ServiceDetail({ platform }: { platform: Platform }) {
 .sd-project-body h4{margin:0 0 6px;font-size:16px;font-weight:700;}
 .sd-project-body p{margin:0;color:var(--muted);font-size:13.5px;}
 
-.sd-faq{display:flex;flex-direction:column;gap:10px;}
-.sd-faq-item{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
-.sd-faq-item.open{border-color:var(--accent);}
-.sd-faq-q{width:100%;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 22px;background:none;border:none;cursor:pointer;font-size:16px;font-weight:600;text-align:left;color:var(--fg);font-family:inherit;}
-.sd-faq-icon{font-size:22px;color:var(--muted);flex-shrink:0;}
-.sd-faq-a{padding:0 22px 20px;color:var(--muted);font-size:14.5px;line-height:1.65;}
+.sd-faq{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.sd-faq-item{background:#fff;border:1px solid var(--border);border-radius:12px;padding:22px 24px;}
+.sd-faq-q{font-size:16px;font-weight:700;color:var(--fg);margin-bottom:10px;}
+.sd-faq-a{color:var(--muted);font-size:14.5px;line-height:1.65;}
+@media(max-width:820px){.sd-faq{grid-template-columns:1fr;}}
 
 .sd-others{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
 .sd-other{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;transition:.2s;}
