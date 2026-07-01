@@ -29,25 +29,71 @@ npm run build    # build production
 
 ```
 app/
-  layout.tsx              # metadata, fonts
-  page.tsx                # state switcher + render variant đang chọn
+  layout.tsx                 # metadata, fonts
+  page.tsx                   # state switcher + render variant đang chọn
+  icon.svg                   # favicon (huy hiệu tích xanh)
   globals.css
+  dich-vu/[slug]/page.tsx    # trang chi tiết dịch vụ (SSG cho 4 nền tảng)
 components/
-  VariantSwitcher.tsx     # thanh chuyển A/B/C
+  VariantSwitcher.tsx        # thanh chuyển A/B/C
+  ServiceDetail.tsx          # UI trang chi tiết (hero, giá, quy trình, FAQ...)
+  art.tsx                    # ảnh SVG vector: logo, badge, phone, cover, avatar
   variants/
-    OptionA.tsx           # Editorial
-    OptionB.tsx           # Bento SaaS
-    OptionC.tsx           # Gradient
+    OptionA.tsx              # Editorial
+    OptionB.tsx              # Bento SaaS
+    OptionC.tsx              # Gradient
+lib/
+  services.ts                # dữ liệu dịch vụ tập trung (giá, quy trình, FAQ, dự án)
+  site.ts                    # thông tin liên hệ & thương hiệu dùng chung
 ```
 
-## Deploy Vercel
+## Trang chi tiết dịch vụ
 
-1. Push repo lên GitHub.
-2. Import vào Vercel → framework tự nhận Next.js → Deploy (không cần config).
-3. Gắn domain `vduystudio.com` trong phần Domains.
+Mỗi nền tảng có 1 trang riêng, prerender static:
+
+- `/dich-vu/tiktok`
+- `/dich-vu/facebook`
+- `/dich-vu/instagram-threads`
+- `/dich-vu/bao-chi`
+
+Gồm: chi tiết dịch vụ · bảng giá + thời gian + bảo hành · quy trình 4 bước · dự án
+liên quan · FAQ (accordion) · link nền tảng khác · CTA. Toàn bộ nội dung nằm trong
+[`lib/services.ts`](lib/services.ts) để dễ sửa (và sau này nối trang admin).
+
+## Ảnh thương hiệu
+
+Không dùng ảnh ngoài — tất cả là SVG vector trong [`components/art.tsx`](components/art.tsx):
+`VerifiedBadge`, `BrandMark`, `PhoneMock` (hồ sơ đã xác minh), `ProjectCover`
+(ảnh bìa case study), `Avatar`. Sắc nét ở mọi kích thước, nhẹ, đúng branding.
+
+## Cần chỉnh trước khi chạy thật
+
+- **Liên hệ**: sửa Zalo / Messenger / phone / email trong [`lib/site.ts`](lib/site.ts).
+- **Giá**: hiện để "Liên hệ báo giá" trong [`lib/services.ts`](lib/services.ts) — thay số thật nếu muốn.
+- **Feedback / ảnh thật**: có thể thay `ProjectCover`/`Avatar` bằng ảnh chụp thật khi có.
+
+## Deploy Vercel (free)
+
+**Cách 1 — qua GitHub (khuyến nghị, không cần CLI):**
+
+1. Tạo repo trên GitHub rồi push (repo đã `git init` + commit sẵn):
+   ```bash
+   git remote add origin https://github.com/<user>/vduystudio.git
+   git branch -M main
+   git push -u origin main
+   ```
+2. Vào [vercel.com/new](https://vercel.com/new) → Import repo → Vercel tự nhận Next.js → **Deploy** (không cần config).
+3. Vào **Settings → Domains**, thêm `vduystudio.com` và trỏ DNS theo hướng dẫn.
+
+**Cách 2 — qua Vercel CLI:**
+
+```bash
+npm i -g vercel
+vercel        # đăng nhập & deploy preview
+vercel --prod # deploy production
+```
 
 ## Bước tiếp theo (chưa làm)
 
-- Trang chi tiết từng dịch vụ (`/dich-vu/[platform]`) với quy trình + bảng giá + FAQ + dự án liên quan.
-- Trang admin để sửa giá / upload feedback / cập nhật chính sách (đề xuất: Supabase hoặc Sanity).
-- Nội dung + hình ảnh thật (hiện đang dùng placeholder).
+- Trang **admin** để sửa giá / upload feedback / cập nhật chính sách (đề xuất: Supabase hoặc Sanity).
+- Form liên hệ lưu lead + gửi email (Resend).
