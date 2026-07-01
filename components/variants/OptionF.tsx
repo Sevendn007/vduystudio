@@ -64,7 +64,7 @@ export default function OptionF() {
           <span className="opf-spark s3">✧</span>
           <h1>Xây dựng uy tín số cho thương hiệu của bạn.</h1>
           <p>
-            vduystudio giúp cá nhân &amp; thương hiệu đạt tích xanh chính thống,
+            VDuyStudio giúp cá nhân &amp; thương hiệu đạt tích xanh chính thống,
             mở khóa tài khoản và chinh phục báo chí — bằng quy trình minh bạch,
             kết quả thật.
           </p>
@@ -188,7 +188,7 @@ export default function OptionF() {
 
         {/* FOOTER */}
         <footer className="opf-footer">
-          <span>© 2026 vduystudio</span>
+          <span>© 2026 VDuyStudio</span>
           <div className="opf-themetoggle">
             <span>GIAO DIỆN</span>
             <span className="opf-dot">·</span>

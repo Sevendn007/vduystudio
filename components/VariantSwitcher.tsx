@@ -6,7 +6,7 @@ const OPTIONS: { key: Variant; label: string; hint: string }[] = [
   { key: "A", label: "Editorial", hint: "Dark / cinematic" },
   { key: "B", label: "Bento", hint: "Sạch / chuyên nghiệp" },
   { key: "C", label: "Gradient", hint: "Trẻ trung / mobile" },
-  { key: "D", label: "ID Passport", hint: "Độc đáo / thẻ định danh hologram" },
+  { key: "D", label: "Verified Hub", hint: "Độc đáo / trung tâm xác minh đa nền tảng" },
   { key: "E", label: "Cinematic", hint: "3D vàng gold / futuristic" },
   { key: "F", label: "Glass", hint: "Glassmorphism / sáng-tối" },
 ];

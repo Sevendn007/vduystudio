@@ -1,67 +1,17 @@
-// Logo thương hiệu (con dấu tích xanh động) + bộ icon nền tảng chuẩn brand.
-// Logo dựa trên file "VDuyStudio Logo": seal xanh #1877f2 + dấu check trắng.
+// Logo thương hiệu — dùng lại logo NGUYÊN BẢN VDuyStudio ở components/logo.tsx.
+import { VDuyBadge, VDuyMark } from "@/components/logo";
 
-let blSeq = 0;
-
+// Giữ nguyên chữ ký prop để các nơi gọi cũ vẫn chạy; render logo gốc.
 export function BrandLogo({
   size = 34,
-  animated = true,
   showText = false,
-  textColor = "currentColor",
 }: {
   size?: number;
   animated?: boolean;
   showText?: boolean;
   textColor?: string;
 }) {
-  const uid = `bl${blSeq++}`;
-  return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
-      <span style={{ width: size, height: size, display: "inline-block", position: "relative", flexShrink: 0 }}>
-        <style>{`
-          .${uid}-seal{transform-origin:600px 400px;${animated ? `animation:${uid}Pulse 4.5s ease-in-out infinite;` : ""}}
-          @keyframes ${uid}Pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-          .${uid}-glow{transform-origin:600px 400px;${animated ? `animation:${uid}Spin 9s linear infinite;` : ""}}
-          @keyframes ${uid}Spin{to{transform:rotate(360deg)}}
-          .${uid}-check{stroke-dasharray:230;${animated ? `animation:${uid}Draw 4.5s ease-in-out infinite;` : ""}}
-          @keyframes ${uid}Draw{0%{stroke-dashoffset:230}22%,78%{stroke-dashoffset:0}100%{stroke-dashoffset:0}}
-          @media(prefers-reduced-motion:reduce){.${uid}-seal,.${uid}-glow,.${uid}-check{animation:none;stroke-dashoffset:0;}}
-        `}</style>
-        <svg viewBox="420 240 360 320" width="100%" height="100%" style={{ overflow: "visible", display: "block" }}>
-          <defs>
-            <radialGradient id={`${uid}g`} cx="50%" cy="50%" r="50%">
-              <stop offset="0" stopColor="#3b9bff" stopOpacity="0.55" />
-              <stop offset="1" stopColor="#1877f2" stopOpacity="0" />
-            </radialGradient>
-            <linearGradient id={`${uid}s`} x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor="#3b9bff" />
-              <stop offset="1" stopColor="#1160d4" />
-            </linearGradient>
-          </defs>
-          {animated && <circle className={`${uid}-glow`} cx="600" cy="400" r="165" fill={`url(#${uid}g)`} />}
-          <path
-            className={`${uid}-seal`}
-            fill={`url(#${uid}s)`}
-            d="M600 250 636 279 683 272 701 317 748 335 741 382 776 400 741 418 748 465 701 483 683 528 636 521 600 550 564 521 517 528 499 483 452 465 459 418 424 400 459 382 452 335 499 317 517 272 564 279Z"
-          />
-          <path
-            className={`${uid}-check`}
-            fill="none"
-            stroke="#fff"
-            strokeWidth="34"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M534 402 L580 448 L668 356"
-          />
-        </svg>
-      </span>
-      {showText && (
-        <b style={{ fontSize: size * 0.5, fontWeight: 800, letterSpacing: "-0.5px", color: textColor }}>
-          vduystudio
-        </b>
-      )}
-    </span>
-  );
+  return showText ? <VDuyMark size={size} intro={false} /> : <VDuyBadge size={size} intro={false} />;
 }
 
 export type Platform = "tiktok" | "facebook" | "instagram" | "threads" | "press";

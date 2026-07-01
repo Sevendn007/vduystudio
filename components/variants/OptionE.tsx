@@ -45,7 +45,7 @@ export default function OptionE() {
           <HeroOrb />
         </div>
         <div className="ope-hero-text">
-          <h1>vduystudio</h1>
+          <h1>VDuyStudio</h1>
           <p>
             Elevating Your Digital Presence.
             <br />
@@ -109,7 +109,7 @@ export default function OptionE() {
           </a>
         </div>
         <div className="ope-footbar">
-          <span>© 2026 vduystudio</span>
+          <span>© 2026 VDuyStudio</span>
           <div className="ope-social">
             <a href={site.contact.messenger} target="_blank" rel="noreferrer" aria-label="Messenger">
               f

@@ -2,13 +2,14 @@
 // Thay các giá trị placeholder bên dưới bằng thông tin thật của bạn.
 
 export const site = {
-  name: "vduystudio",
+  name: "VDuyStudio",
   domain: "vduystudio.com",
   tagline: "Verified Identity Studio",
   description:
     "Tích xanh chính thống, mở khóa tài khoản & booking báo chí cho TikTok, Facebook, Instagram/Threads. Minh bạch quy trình, kết quả thật.",
   contact: {
     zalo: "https://zalo.me/0000000000",
+    telegram: "https://t.me/vduystudio",
     messenger: "https://m.me/vduystudio",
     phone: "0000 000 000",
     email: "hello@vduystudio.com",

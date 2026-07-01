@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Tilt from "@/components/tilt";
 import { BrandLogo, PlatformIcon, PersonAvatar, Platform } from "@/components/brand";
+import { VDuyLockup } from "@/components/logo";
 import { site } from "@/lib/site";
 
 const STAMPS: { slug: string; icon: Platform; name: string; sub: string }[] = [
@@ -39,24 +40,29 @@ export default function OptionG() {
         </a>
       </nav>
 
-      {/* HERO — thẻ định danh 3D */}
+      {/* LOGO NGUYÊN BẢN — nổi bật ở đầu trang */}
+      <div className="opg-lockup">
+        <VDuyLockup />
+      </div>
+
+      {/* HERO — trung tâm xác minh đa nền tảng */}
       <header className="opg-hero">
         <div className="opg-hero-left">
           <div className="opg-eyebrow">
-            <span className="opg-livedot" /> Đang cấp danh tính xác minh · từ 2021
+            <span className="opg-livedot" /> Trung tâm xác minh đa nền tảng · từ 2021
           </div>
           <h1>
-            Nhận tấm thẻ <span className="opg-holo">đã xác minh</span> của riêng
-            thương hiệu bạn.
+            Xác minh mọi nền tảng của bạn —{" "}
+            <span className="opg-holo">tích xanh, mở khóa &amp; báo chí.</span>
           </h1>
           <p>
-            vduystudio biến tài khoản của bạn thành một danh tính được xác minh
-            chính thống — tích xanh, mở khóa &amp; báo chí, cấp như một tấm thẻ
-            định danh số.
+            VDuyStudio giúp thương hiệu của bạn được xác minh chính thống và gỡ
+            mọi rào cản tài khoản trên TikTok, Facebook, Instagram/Threads —
+            minh bạch quy trình, có bảo hành.
           </p>
           <div className="opg-hero-cta">
             <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opg-btn">
-              Cấp thẻ cho tôi
+              Bắt đầu xác minh
             </a>
             <a href="#opg-stamps" className="opg-btn ghost">
               Xem dịch vụ
@@ -67,7 +73,7 @@ export default function OptionG() {
             <PersonAvatar name="B" hue={320} size={30} verified={false} />
             <PersonAvatar name="C" hue={150} size={30} verified={false} />
             <span>
-              <b>1.200+</b> danh tính đã được cấp · 98% thành công
+              <b>1.200+</b> tài khoản đã được xác minh · 98% thành công
             </span>
           </div>
         </div>
@@ -76,7 +82,7 @@ export default function OptionG() {
           <div className="opg-card-sheen" />
           <div className="opg-card-top">
             <span className="opg-card-issuer">
-              VERIFIED IDENTITY · vduystudio<sup>®</sup>
+              VERIFIED STATUS · VDuyStudio<sup>®</sup>
             </span>
             <span className="opg-chip" />
           </div>
@@ -89,22 +95,22 @@ export default function OptionG() {
             </div>
             <div className="opg-card-fields">
               <div>
-                <label>Holder</label>
+                <label>Thương hiệu</label>
                 <b>Thương hiệu của bạn</b>
               </div>
               <div>
-                <label>Nền tảng</label>
-                <b>TikTok · FB · IG · Threads</b>
+                <label>Dịch vụ</label>
+                <b>Tích xanh · Mở khóa · Báo chí</b>
               </div>
               <div className="opg-card-status">
                 <label>Trạng thái</label>
-                <b>✓ VERIFIED</b>
+                <b>✓ ĐÃ XÁC MINH</b>
               </div>
             </div>
           </div>
           <div className="opg-card-bottom">
-            <span className="opg-card-id">ID · VDUY-2026-★★★★</span>
-            <span className="opg-card-valid">VALID ∞</span>
+            <span className="opg-card-id">HỒ SƠ · VDUY-2026</span>
+            <span className="opg-card-valid">BẢO HÀNH ∞</span>
           </div>
           <div className="opg-card-strip" />
         </Tilt>
@@ -192,8 +198,8 @@ export default function OptionG() {
       {/* TESTIMONIALS */}
       <section className="opg-section-block" id="opg-voices">
         <div className="opg-block-head">
-          <h2>Những danh tính đã được cấp</h2>
-          <p>Feedback thật từ khách hàng đã nhận “thẻ xác minh”.</p>
+          <h2>Khách hàng đã được xác minh</h2>
+          <p>Feedback thật từ khách hàng đã được xác minh thành công.</p>
         </div>
         <div className="opg-voices">
           {site.testimonials.map((t) => (
@@ -217,7 +223,7 @@ export default function OptionG() {
         <div className="opg-cta">
           <div className="opg-livedot" />
           <h2>
-            Danh tính xác minh của bạn <span className="opg-holo">đang chờ được cấp.</span>
+            Hồ sơ xác minh của bạn <span className="opg-holo">đang chờ hoàn tất.</span>
           </h2>
           <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opg-btn big">
             Bắt đầu xác minh
@@ -246,7 +252,8 @@ export default function OptionG() {
 .opg-navcta{border:1px solid var(--line);background:rgba(255,255,255,.04);padding:10px 20px;border-radius:100px;font-size:13px;font-weight:700;transition:.2s;}
 .opg-navcta:hover{background:var(--fg);color:#060814;}
 
-.opg-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center;padding:50px 44px 80px;max-width:1240px;margin:0 auto;}
+.opg-lockup{max-width:1240px;margin:0 auto;padding:26px 44px 6px;display:flex;justify-content:center;}
+.opg-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center;padding:36px 44px 80px;max-width:1240px;margin:0 auto;}
 .opg-eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:22px;font-weight:600;}
 .opg-livedot{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 0 rgba(34,211,238,.6);animation:opgPulse 1.8s infinite;}
 @keyframes opgPulse{0%{box-shadow:0 0 0 0 rgba(34,211,238,.55)}70%{box-shadow:0 0 0 10px rgba(34,211,238,0)}100%{box-shadow:0 0 0 0 rgba(34,211,238,0)}}

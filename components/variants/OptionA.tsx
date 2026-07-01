@@ -43,7 +43,7 @@ export default function OptionA() {
           Xây dựng <span className="accent">uy tín số</span> cho thương hiệu của bạn.
         </h1>
         <p className="opa-hero-sub">
-          vduystudio giúp cá nhân &amp; thương hiệu đạt tích xanh chính thống, mở
+          VDuyStudio giúp cá nhân &amp; thương hiệu đạt tích xanh chính thống, mở
           khóa tài khoản và chinh phục báo chí — bằng quy trình minh bạch, kết
           quả thật.
         </p>
@@ -128,7 +128,7 @@ export default function OptionA() {
         </a>
       </section>
       <div className="opa-footer">
-        <div>© 2026 vduystudio</div>
+        <div>© 2026 VDuyStudio</div>
         <div>{site.domain}</div>
       </div>
 

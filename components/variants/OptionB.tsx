@@ -39,7 +39,7 @@ export default function OptionB() {
           <span className="grad">Uy tín thật, kết quả thật.</span>
         </h1>
         <p>
-          vduystudio hỗ trợ tích xanh, mở khóa tài khoản &amp; booking báo chí
+          VDuyStudio hỗ trợ tích xanh, mở khóa tài khoản &amp; booking báo chí
           cho TikTok, Facebook, Instagram/Threads — minh bạch quy trình, có bảo
           hành.
         </p>
@@ -112,7 +112,7 @@ export default function OptionB() {
 
       <section className="opb-section">
         <div className="opb-section-tag">Capabilities</div>
-        <h2>Vì sao chọn vduystudio</h2>
+        <h2>Vì sao chọn VDuyStudio</h2>
         <div className="opb-caps">
           <div className="opb-cap">
             <div className="em">⚡</div>

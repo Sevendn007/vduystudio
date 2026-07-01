@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, Poppins, Space_Grotesk, Instrument_Serif } from "next/font/google";
+import { Inter, Poppins, Space_Grotesk, Instrument_Serif, Comfortaa } from "next/font/google";
 import "./globals.css";
+import ChatFab from "@/components/ChatFab";
 
 const inter = Inter({
   subsets: ["latin", "vietnamese"],
@@ -30,17 +31,24 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
+const comfortaa = Comfortaa({
+  subsets: ["latin", "vietnamese"],
+  weight: ["500", "700"],
+  variable: "--font-comfortaa",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "vduystudio — Tích xanh chính thống & mở khóa tài khoản",
+  title: "VDuyStudio — Tích xanh chính thống & mở khóa tài khoản",
   description:
-    "vduystudio hỗ trợ tích xanh, mở khóa tài khoản & booking báo chí cho TikTok, Facebook, Instagram/Threads. Minh bạch quy trình, kết quả thật.",
+    "VDuyStudio hỗ trợ tích xanh, mở khóa tài khoản & booking báo chí cho TikTok, Facebook, Instagram/Threads. Minh bạch quy trình, kết quả thật.",
   metadataBase: new URL("https://vduystudio.com"),
   openGraph: {
-    title: "vduystudio — Verified Identity Studio",
+    title: "VDuyStudio — Verified Identity Studio",
     description:
       "Tích xanh chính thống, mở khóa tài khoản & booking báo chí cho các nền tảng mạng xã hội.",
     url: "https://vduystudio.com",
-    siteName: "vduystudio",
+    siteName: "VDuyStudio",
     locale: "vi_VN",
     type: "website",
   },
@@ -54,9 +62,12 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${inter.variable} ${poppins.variable} ${spaceGrotesk.variable} ${instrumentSerif.variable}`}
+      className={`${inter.variable} ${poppins.variable} ${spaceGrotesk.variable} ${instrumentSerif.variable} ${comfortaa.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        <ChatFab />
+      </body>
     </html>
   );
 }

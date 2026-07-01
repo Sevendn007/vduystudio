@@ -15,10 +15,10 @@ export function generateMetadata({
   const platform = getPlatform(params.slug);
   if (!platform) return {};
   return {
-    title: `Dịch vụ ${platform.name} — vduystudio`,
+    title: `Dịch vụ ${platform.name} — VDuyStudio`,
     description: platform.tagline,
     openGraph: {
-      title: `Dịch vụ ${platform.name} — vduystudio`,
+      title: `Dịch vụ ${platform.name} — VDuyStudio`,
       description: platform.tagline,
     },
   };

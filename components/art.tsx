@@ -40,7 +40,7 @@ export function BrandMark({
       }}
     >
       <VerifiedBadge size={height} />
-      vduystudio
+      VDuyStudio
     </span>
   );
 }
