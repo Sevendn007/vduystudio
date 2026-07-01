@@ -3,13 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import Tilt from "@/components/tilt";
+import { BrandLogo, PlatformIcon, PersonAvatar, Platform } from "@/components/brand";
 import { site } from "@/lib/site";
 
-const SERVICES = [
-  { slug: "tiktok", n: "01", name: "TikTok", tags: "Tích xanh · Mở khóa · Livestream", icon: "♪", ic: "#000", pct: 92 },
-  { slug: "facebook", n: "02", name: "Facebook", tags: "Tích xanh · Cá nhân · Fanpage", icon: "f", ic: "#1877f2", pct: 88 },
-  { slug: "instagram-threads", n: "03", name: "Instagram / Threads", tags: "Tích xanh · Mở khóa tài khoản", icon: "◎", ic: "linear-gradient(45deg,#f58529,#dd2a7b,#8134af)", pct: 84 },
-  { slug: "bao-chi", n: "04", name: "Báo chí", tags: "Booking · Viết bài PR", icon: "▤", ic: "#0f766e", pct: 80 },
+const SERVICES: { slug: string; n: string; name: string; tags: string; icon: Platform; pct: number }[] = [
+  { slug: "tiktok", n: "01", name: "TikTok", tags: "Tích xanh · Mở khóa · Livestream", icon: "tiktok", pct: 92 },
+  { slug: "facebook", n: "02", name: "Facebook", tags: "Tích xanh · Cá nhân · Fanpage", icon: "facebook", pct: 88 },
+  { slug: "instagram-threads", n: "03", name: "Instagram / Threads", tags: "Tích xanh · Mở khóa tài khoản", icon: "instagram", pct: 84 },
+  { slug: "bao-chi", n: "04", name: "Báo chí", tags: "Booking · Viết bài PR", icon: "press", pct: 80 },
 ];
 
 function Ring({ pct, color }: { pct: number; color: string }) {
@@ -43,7 +44,7 @@ export default function OptionF() {
       <div className="opf-shell">
         <nav className="opf-nav">
           <a href="#opf-top" className="opf-logo">
-            VDUY STUDIO
+            <BrandLogo size={30} showText />
           </a>
           <div className="opf-menu">
             <a href="#opf-services">Dịch vụ</a>
@@ -87,8 +88,8 @@ export default function OptionF() {
                 <Link href={`/dich-vu/${s.slug}`} className="opf-listrow" key={s.slug}>
                   <div className="opf-ringwrap">
                     <Ring pct={s.pct} color="#2dd4bf" />
-                    <span className="opf-ico" style={{ background: s.ic }}>
-                      {s.icon}
+                    <span className="opf-ico">
+                      <PlatformIcon kind={s.icon} size={30} />
                     </span>
                   </div>
                   <span className="opf-n">{s.n}</span>
@@ -158,20 +159,21 @@ export default function OptionF() {
 
           {/* Testimonials */}
           <Tilt className="opf-card opf-testi" max={5} id="opf-testi">
-            <h2>Testimonials</h2>
+            <h2>Khách hàng nói gì</h2>
             <div className="opf-quotes">
-              <div className="opf-q">
-                <p>“Tích xanh thật, không rủi ro”</p>
-                <span className="opf-stars">★★★★★</span>
-              </div>
-              <div className="opf-q">
-                <p>“Đội ngũ chuyên nghiệp”</p>
-                <span className="opf-stars">★★★★★</span>
-              </div>
-              <div className="opf-q">
-                <p>“Nhanh, minh bạch, được việc”</p>
-                <span className="opf-stars">★★★★★</span>
-              </div>
+              {site.testimonials.map((t) => (
+                <div className="opf-q" key={t.name}>
+                  <span className="opf-stars">★★★★★</span>
+                  <p>“{t.quote}”</p>
+                  <div className="opf-qperson">
+                    <PersonAvatar name={t.name} hue={t.hue} size={40} />
+                    <div>
+                      <b>{t.name}</b>
+                      <span>{t.company}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </Tilt>
         </div>
@@ -252,7 +254,7 @@ export default function OptionF() {
 .opf-listrow:hover{transform:translateX(4px);border-color:var(--fg);}
 .opf-ringwrap{position:relative;width:52px;height:52px;flex-shrink:0;color:var(--fg);}
 .opf-ring{position:absolute;inset:0;}
-.opf-ico{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;}
+.opf-ico{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;line-height:0;}
 .opf-n{font-size:13px;color:var(--muted);font-weight:700;width:20px;}
 .opf-listinfo{flex:1;min-width:0;}
 .opf-listinfo b{display:block;font-size:15px;}
@@ -278,9 +280,14 @@ export default function OptionF() {
 .opf-statrow b{display:block;font-size:20px;}
 .opf-statrow span{font-size:11.5px;color:var(--muted);}
 
-.opf-quotes{display:flex;flex-direction:column;gap:14px;}
-.opf-q p{margin:0 0 4px;font-size:16px;font-weight:600;}
+.opf-quotes{display:flex;flex-direction:column;gap:16px;}
+.opf-q{padding-bottom:16px;border-bottom:1px solid var(--stroke);}
+.opf-q:last-child{border-bottom:none;padding-bottom:0;}
+.opf-q p{margin:6px 0 12px;font-size:15px;font-weight:500;line-height:1.5;}
 .opf-stars{color:var(--gold);font-size:13px;letter-spacing:2px;}
+.opf-qperson{display:flex;align-items:center;gap:10px;}
+.opf-qperson b{display:block;font-size:13.5px;}
+.opf-qperson span{font-size:12px;color:var(--muted);}
 
 .opf-ctacard{text-align:center;margin-top:24px;padding:56px 24px;}
 .opf-ctacard h2{font-size:clamp(30px,5vw,44px);margin:0 0 22px;}

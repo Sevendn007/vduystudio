@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ProjectCover } from "@/components/art";
+import { VerifiedBadge } from "@/components/art";
+import { BrandLogo, PlatformIcon, Platform } from "@/components/brand";
 import { site } from "@/lib/site";
 
 const SERVICES = [
@@ -11,13 +12,19 @@ const SERVICES = [
   { slug: "bao-chi", n: "04", name: "Báo chí", tags: "Booking · Viết bài PR" },
 ];
 
+const WORK: { slug: string; icon: Platform; tag: string; title: string; desc: string; bg: string }[] = [
+  { slug: "tiktok", icon: "tiktok", tag: "TikTok · Tích xanh", title: "@brand.hub — 2.1M follow", desc: "Đạt tích xanh sau 18 ngày, mở khóa giỏ hàng TikTok Shop.", bg: "linear-gradient(150deg,#111,#25333a)" },
+  { slug: "facebook", icon: "facebook", tag: "Facebook · Fanpage", title: "Fanpage F&B miền Bắc", desc: "Khôi phục fanpage bị khóa trong 48 giờ.", bg: "linear-gradient(150deg,#0e1b33,#1877f2)" },
+  { slug: "bao-chi", icon: "press", tag: "Báo chí · PR", title: "Booking 6 đầu báo lớn", desc: "Chiến dịch PR ra mắt sản phẩm mới.", bg: "linear-gradient(150deg,#1a1206,#7a5a1e)" },
+];
+
 export default function OptionA() {
   return (
     <div className="opa-root">
       <div className="opa-grain" />
       <nav className="opa-nav">
         <a href="#opa-top" className="opa-logo">
-          VDUY<span>.</span>STUDIO
+          <BrandLogo size={30} showText textColor="#f5f4f0" />
         </a>
         <div className="opa-menu">
           <a href="#opa-services">Dịch vụ</a>
@@ -78,36 +85,22 @@ export default function OptionA() {
           <p>Một vài dự án tiêu biểu đã triển khai gần đây.</p>
         </div>
         <div className="opa-work-grid">
-          <div className="opa-work-card tall">
-            <div className="opa-cover">
-              <ProjectCover platform="tiktok" handle="brandhub" tag="TikTok · Tích xanh" />
-            </div>
-            <span className="tag">TikTok · Tích xanh</span>
-            <div className="opa-work-meta">
-              <h4>@brand.hub — 2.1M follow</h4>
-              <p>Đạt tích xanh sau 18 ngày, mở khóa giỏ hàng.</p>
-            </div>
-          </div>
-          <div className="opa-work-card">
-            <div className="opa-cover">
-              <ProjectCover platform="facebook" handle="fnbpage" tag="Facebook · Fanpage" />
-            </div>
-            <span className="tag">Facebook · Fanpage</span>
-            <div className="opa-work-meta">
-              <h4>Fanpage F&amp;B miền Bắc</h4>
-              <p>Khôi phục fanpage bị khóa trong 48h.</p>
-            </div>
-          </div>
-          <div className="opa-work-card">
-            <div className="opa-cover">
-              <ProjectCover platform="bao-chi" handle="prcampaign" tag="Báo chí · PR" />
-            </div>
-            <span className="tag">Báo chí</span>
-            <div className="opa-work-meta">
-              <h4>Booking 6 đầu báo lớn</h4>
-              <p>Chiến dịch PR ra mắt sản phẩm mới.</p>
-            </div>
-          </div>
+          {WORK.map((w) => (
+            <Link href={`/dich-vu/${w.slug}`} className="opa-wcard" key={w.title}>
+              <div className="opa-wimg" style={{ background: w.bg }}>
+                <PlatformIcon kind={w.icon} size={62} />
+                <span className="opa-wcheck">
+                  <VerifiedBadge size={26} />
+                </span>
+                <span className="opa-wtag">{w.tag}</span>
+              </div>
+              <div className="opa-wbody">
+                <h4>{w.title}</h4>
+                <p>{w.desc}</p>
+                <span className="opa-wlink">Xem chi tiết →</span>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -183,15 +176,16 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 .opa-service-arrow{width:44px;height:44px;border-radius:50%;border:1px solid #333;display:flex;align-items:center;justify-content:center;font-size:18px;transition:.3s;flex-shrink:0;}
 .opa-service-row:hover .opa-service-arrow{background:var(--accent);color:#000;border-color:var(--accent);transform:rotate(45deg);}
 
-.opa-work-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:20px;}
-.opa-work-card{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:4/5;background:#111;display:flex;flex-direction:column;justify-content:flex-end;padding:26px;}
-.opa-work-card.tall{grid-row:span 2;aspect-ratio:auto;min-height:100%;}
-.opa-cover{position:absolute;inset:0;z-index:0;line-height:0;}
-.opa-work-card .tag{position:relative;z-index:3;align-self:flex-start;font-size:11px;letter-spacing:1px;color:#fff;text-transform:uppercase;border:1px solid rgba(255,255,255,.4);padding:4px 11px;border-radius:100px;margin-bottom:auto;}
-.opa-work-card::before{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.85),transparent 60%);z-index:1;}
-.opa-work-meta{position:relative;z-index:2;}
-.opa-work-card h4{font-size:22px;margin:0 0 6px;font-weight:700;letter-spacing:-.3px;}
-.opa-work-card p{margin:0;color:#cfcfca;font-size:13px;line-height:1.5;}
+.opa-work-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.opa-wcard{background:#0f1214;border:1px solid #1c1f22;border-radius:16px;overflow:hidden;color:var(--fg);transition:.28s;display:flex;flex-direction:column;}
+.opa-wcard:hover{transform:translateY(-6px);border-color:#2b2f33;box-shadow:0 24px 50px rgba(0,0,0,.5);}
+.opa-wimg{position:relative;aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;}
+.opa-wcheck{position:absolute;top:14px;right:14px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));}
+.opa-wtag{position:absolute;left:14px;bottom:14px;font-size:10.5px;letter-spacing:1px;color:#fff;text-transform:uppercase;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);padding:4px 10px;border-radius:100px;}
+.opa-wbody{padding:22px;}
+.opa-wbody h4{font-size:19px;margin:0 0 8px;font-weight:700;letter-spacing:-.3px;}
+.opa-wbody p{margin:0 0 16px;color:var(--muted);font-size:13.5px;line-height:1.55;}
+.opa-wlink{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--accent);}
 
 .opa-marquee{overflow:hidden;white-space:nowrap;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;padding:28px 0;}
 .opa-marquee-track{display:inline-block;animation:opaScroll 24s linear infinite;font-size:22px;font-weight:600;color:var(--muted);}
@@ -210,7 +204,6 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
  .opa-section-head{align-items:flex-start;}
  .opa-service-tags{display:none;}
  .opa-work-grid{grid-template-columns:1fr;}
- .opa-work-card.tall{grid-row:auto;aspect-ratio:4/5;}
  .opa-cta{padding:100px 20px;}
  .opa-footer{padding:30px 20px 120px;}
 }

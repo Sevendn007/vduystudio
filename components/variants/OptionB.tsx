@@ -1,15 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { ProjectCover, Avatar } from "@/components/art";
+import { ProjectCover } from "@/components/art";
+import { BrandLogo, PlatformIcon, Platform } from "@/components/brand";
+import { PersonAvatar } from "@/components/brand";
 import { site } from "@/lib/site";
+
+const PLATFORMS: { slug: string; icon: Platform; name: string; desc: string }[] = [
+  { slug: "tiktok", icon: "tiktok", name: "TikTok", desc: "Tích xanh, mở khóa tài khoản, livestream & giỏ hàng." },
+  { slug: "facebook", icon: "facebook", name: "Facebook", desc: "Tích xanh, mở khóa cá nhân & Fanpage." },
+  { slug: "instagram-threads", icon: "instagram", name: "Instagram / Threads", desc: "Tích xanh chính thống, mở khóa tài khoản." },
+  { slug: "bao-chi", icon: "press", name: "Báo chí", desc: "Booking báo chí, viết bài PR trên đầu báo lớn." },
+];
 
 export default function OptionB() {
   return (
     <div className="opb-root">
       <nav className="opb-nav">
         <div className="opb-logo">
-          <span className="opb-badge-check">✓</span>vduystudio
+          <BrandLogo size={30} showText textColor="#0f1115" />
         </div>
         <div className="opb-menu">
           <a href="#opb-services">Dịch vụ</a>
@@ -62,43 +71,14 @@ export default function OptionB() {
         <div className="opb-section-tag">Hạng mục dịch vụ</div>
         <h2>Chọn nền tảng bạn cần hỗ trợ</h2>
         <div className="opb-bento">
-          <Link href="/dich-vu/tiktok" className="opb-card wide">
-            <div>
-              <div className="opb-icon ic-tiktok">♪</div>
-              <h3>TikTok</h3>
-              <p>
-                Tích xanh chính thống, mở khóa tài khoản, mở khóa livestream
-                &amp; giỏ hàng.
-              </p>
-            </div>
-            <div className="cta">Xem chi tiết →</div>
-          </Link>
-          <Link href="/dich-vu/facebook" className="opb-card">
-            <div>
-              <div className="opb-icon ic-fb">f</div>
-              <h3>Facebook</h3>
-              <p>Tích xanh, mở khóa cá nhân &amp; Fanpage.</p>
-            </div>
-            <div className="cta">Xem chi tiết →</div>
-          </Link>
-          <Link href="/dich-vu/instagram-threads" className="opb-card">
-            <div>
-              <div className="opb-icon ic-ig">◎</div>
-              <h3>Instagram / Threads</h3>
-              <p>Tích xanh, mở khóa tài khoản.</p>
-            </div>
-            <div className="cta">Xem chi tiết →</div>
-          </Link>
-          <Link href="/dich-vu/bao-chi" className="opb-card tall">
-            <div>
-              <div className="opb-icon ic-press">📰</div>
-              <h3>Báo chí</h3>
-              <p>
-                Booking báo chí, viết bài PR chuyên nghiệp trên các đầu báo lớn.
-              </p>
-            </div>
-            <div className="cta">Xem chi tiết →</div>
-          </Link>
+          {PLATFORMS.map((p) => (
+            <Link href={`/dich-vu/${p.slug}`} className="opb-card" key={p.slug}>
+              <PlatformIcon kind={p.icon} size={48} />
+              <h3>{p.name}</h3>
+              <p>{p.desc}</p>
+              <div className="cta">Xem chi tiết →</div>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -161,45 +141,19 @@ export default function OptionB() {
         <div className="opb-section-tag">Feedback</div>
         <h2>Khách hàng nói gì</h2>
         <div className="opb-testi">
-          <div className="opb-tcard">
-            <div className="stars">★★★★★</div>
-            <p>
-              &quot;Lên tích xanh TikTok đúng như cam kết, hỗ trợ nhiệt
-              tình.&quot;
-            </p>
-            <div className="opb-tperson">
-              <Avatar name="Minh Anh" size={34} />
-              <div>
-                <b>Minh Anh</b>
-                <span>Chủ shop thời trang</span>
+          {site.testimonials.map((t) => (
+            <div className="opb-tcard" key={t.name}>
+              <div className="stars">★★★★★</div>
+              <p>&quot;{t.quote}&quot;</p>
+              <div className="opb-tperson">
+                <PersonAvatar name={t.name} hue={t.hue} size={44} />
+                <div>
+                  <b>{t.name}</b>
+                  <span>{t.company}</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="opb-tcard">
-            <div className="stars">★★★★★</div>
-            <p>&quot;Fanpage bị khóa được xử lý rất nhanh, giá hợp lý.&quot;</p>
-            <div className="opb-tperson">
-              <Avatar name="Quốc Huy" size={34} />
-              <div>
-                <b>Quốc Huy</b>
-                <span>F&amp;B Owner</span>
-              </div>
-            </div>
-          </div>
-          <div className="opb-tcard">
-            <div className="stars">★★★★★</div>
-            <p>
-              &quot;Team booking báo chí chuyên nghiệp, bài viết chất
-              lượng.&quot;
-            </p>
-            <div className="opb-tperson">
-              <Avatar name="Thu Trang" size={34} />
-              <div>
-                <b>Thu Trang</b>
-                <span>Founder mỹ phẩm</span>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
@@ -239,19 +193,12 @@ export default function OptionB() {
 .opb-section-tag{color:var(--accent);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
 .opb-section h2{font-size:clamp(26px,3.5vw,38px);font-weight:800;letter-spacing:-1px;margin:0 0 40px;}
 
-.opb-bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:180px;gap:18px;}
-.opb-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:.25s;position:relative;overflow:hidden;}
-.opb-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.08);border-color:#d9dce3;}
-.opb-card.wide{grid-column:span 2;grid-row:span 2;}
-.opb-card.tall{grid-row:span 2;}
-.opb-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;}
-.opb-card h3{font-size:20px;font-weight:700;margin:14px 0 6px;}
-.opb-card p{color:var(--muted);font-size:13.5px;margin:0;line-height:1.5;}
-.opb-card .cta{margin-top:auto;font-size:13px;font-weight:700;color:var(--fg);display:flex;align-items:center;gap:6px;}
-.ic-tiktok{background:#000;}
-.ic-fb{background:#1877f2;}
-.ic-ig{background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af);}
-.ic-press{background:#111;}
+.opb-bento{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+.opb-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;display:flex;flex-direction:column;cursor:pointer;transition:.25s;min-height:230px;color:var(--fg);}
+.opb-card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(0,0,0,.1);border-color:#d9dce3;}
+.opb-card h3{font-size:19px;font-weight:700;margin:18px 0 8px;}
+.opb-card p{color:var(--muted);font-size:13.5px;margin:0;line-height:1.55;}
+.opb-card .cta{margin-top:auto;padding-top:16px;font-size:13px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:6px;}
 
 .opb-work{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
 .opb-work-card{background:#111;border-radius:16px;overflow:hidden;aspect-ratio:4/3;position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;color:#fff;}

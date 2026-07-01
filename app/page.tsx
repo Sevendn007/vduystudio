@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import OptionA from "@/components/variants/OptionA";
 import OptionB from "@/components/variants/OptionB";
 import OptionC from "@/components/variants/OptionC";
-import OptionD from "@/components/variants/OptionD";
+import OptionG from "@/components/variants/OptionG";
 import OptionE from "@/components/variants/OptionE";
 import OptionF from "@/components/variants/OptionF";
 import VariantSwitcher, { Variant } from "@/components/VariantSwitcher";
@@ -40,7 +40,7 @@ export default function Home() {
       {variant === "A" && <OptionA />}
       {variant === "B" && <OptionB />}
       {variant === "C" && <OptionC />}
-      {variant === "D" && <OptionD />}
+      {variant === "D" && <OptionG />}
       {variant === "E" && <OptionE />}
       {variant === "F" && <OptionF />}
     </>

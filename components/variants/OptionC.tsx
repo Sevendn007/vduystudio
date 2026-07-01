@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { PhoneMock, ProjectCover } from "@/components/art";
+import { BrandLogo, PlatformIcon } from "@/components/brand";
 import { site } from "@/lib/site";
 
 export default function OptionC() {
@@ -12,7 +13,7 @@ export default function OptionC() {
       <div className="opc-bgblob opc-blob3" />
 
       <nav className="opc-nav">
-        <a href="#opc-top" className="opc-logo">vduystudio ✓</a>
+        <a href="#opc-top" className="opc-logo"><BrandLogo size={30} showText textColor="#0f0f14" /></a>
         <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opc-nav-cta">Chat ngay</a>
       </nav>
 
@@ -65,10 +66,10 @@ export default function OptionC() {
         <h2>Chọn nền tảng của bạn</h2>
         <p className="sub">Chạm để xem chi tiết dịch vụ, bảng giá &amp; quy trình</p>
         <div className="opc-tabs">
-          <Link href="/dich-vu/tiktok" className="opc-tab active">🎵 TikTok</Link>
-          <Link href="/dich-vu/facebook" className="opc-tab">📘 Facebook</Link>
-          <Link href="/dich-vu/instagram-threads" className="opc-tab">📸 Instagram/Threads</Link>
-          <Link href="/dich-vu/bao-chi" className="opc-tab">📰 Báo chí</Link>
+          <Link href="/dich-vu/tiktok" className="opc-tab active"><PlatformIcon kind="tiktok" size={22} /> TikTok</Link>
+          <Link href="/dich-vu/facebook" className="opc-tab"><PlatformIcon kind="facebook" size={22} /> Facebook</Link>
+          <Link href="/dich-vu/instagram-threads" className="opc-tab"><PlatformIcon kind="instagram" size={22} /> Instagram/Threads</Link>
+          <Link href="/dich-vu/bao-chi" className="opc-tab"><PlatformIcon kind="press" size={22} /> Báo chí</Link>
         </div>
         <div className="opc-cardrow">
           <Link href="/dich-vu/tiktok" className="opc-scard">
@@ -192,7 +193,7 @@ export default function OptionC() {
 .opc-section .sub{text-align:center;color:var(--muted);font-size:14px;margin:0 0 34px;}
 
 .opc-tabs{display:flex;justify-content:center;gap:10px;margin-bottom:26px;flex-wrap:wrap;}
-.opc-tab{padding:10px 18px;border-radius:100px;font-size:13px;font-weight:700;background:#fff;border:1px solid #eee;cursor:pointer;}
+.opc-tab{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;font-size:13px;font-weight:700;background:#fff;border:1px solid #eee;cursor:pointer;}
 .opc-tab.active{background:linear-gradient(90deg,#7c3aed,#ec4899);color:#fff;border:none;}
 .opc-cardrow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
 .opc-scard{background:rgba(255,255,255,.75);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.9);border-radius:18px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,.05);cursor:pointer;transition:.25s;}

@@ -2,17 +2,16 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { HeroOrb, CaseArt } from "@/components/art";
+import { HeroOrb } from "@/components/art";
+import { BrandLogo, PlatformIcon, Platform } from "@/components/brand";
 import Tilt from "@/components/tilt";
 import { site } from "@/lib/site";
 
-type Kind = "verify" | "shield" | "chart" | "news" | "phone" | "lock";
-const WORK: { slug: string; title: string; desc: string; kind: Kind; accent: string }[] = [
-  { slug: "tiktok", title: "TikTok Verification", desc: "Tích xanh chính thống cho kênh 2.1M follow trong 18 ngày.", kind: "verify", accent: "#2dd4bf" },
-  { slug: "facebook", title: "Facebook Recovery", desc: "Khôi phục Fanpage bị khóa chỉ trong 48 giờ.", kind: "shield", accent: "#3b82f6" },
-  { slug: "instagram-threads", title: "Instagram Verified", desc: "Huy hiệu xác minh cho tài khoản Instagram & Threads.", kind: "phone", accent: "#ec4899" },
-  { slug: "tiktok", title: "Growth & Livestream", desc: "Mở khóa livestream, giỏ hàng và bứt tốc doanh thu.", kind: "chart", accent: "#c9a227" },
-  { slug: "bao-chi", title: "Báo chí PR Booking", desc: "Booking 6 đầu báo lớn cho chiến dịch ra mắt.", kind: "news", accent: "#f59e0b" },
+const WORK: { slug: string; title: string; desc: string; icon: Platform; accent: string; bg: string }[] = [
+  { slug: "tiktok", title: "TikTok Verification", desc: "Tích xanh chính thống cho kênh 2.1M follow trong 18 ngày.", icon: "tiktok", accent: "#2dd4bf", bg: "linear-gradient(150deg,#0f2233,#0a1420)" },
+  { slug: "facebook", title: "Facebook Recovery", desc: "Khôi phục Fanpage bị khóa chỉ trong 48 giờ.", icon: "facebook", accent: "#3b82f6", bg: "linear-gradient(150deg,#0e1b33,#0a1420)" },
+  { slug: "instagram-threads", title: "Instagram Verified", desc: "Huy hiệu xác minh cho tài khoản Instagram & Threads.", icon: "instagram", accent: "#ec4899", bg: "linear-gradient(150deg,#2a1230,#0a1420)" },
+  { slug: "bao-chi", title: "Báo chí PR Booking", desc: "Booking 6 đầu báo lớn cho chiến dịch ra mắt.", icon: "press", accent: "#f59e0b", bg: "linear-gradient(150deg,#2a2010,#0a1420)" },
 ];
 
 export default function OptionE() {
@@ -31,7 +30,7 @@ export default function OptionE() {
       <div className="ope-bg" />
       <nav className="ope-nav">
         <a href="#ope-top" className="ope-logo">
-          vduy<b>studio</b>
+          <BrandLogo size={30} showText textColor="#eef3f6" />
         </a>
         <div className="ope-menu">
           <a href="#ope-work">Services</a>
@@ -75,10 +74,16 @@ export default function OptionE() {
           {WORK.map((w, i) => (
             <Tilt className="ope-card" glare key={i}>
               <Link href={`/dich-vu/${w.slug}`} className="ope-card-inner">
-                <div className="ope-card-art">
-                  <CaseArt kind={w.kind} accent={w.accent} />
-                  <span className="ope-card-badge" style={{ boxShadow: `0 0 24px ${w.accent}66` }}>
-                    ✦
+                <div className="ope-card-art" style={{ background: w.bg }}>
+                  <span className="ope-card-glow" style={{ background: `radial-gradient(circle, ${w.accent}55, transparent 65%)` }} />
+                  <span className="ope-card-plat">
+                    <PlatformIcon kind={w.icon} size={72} />
+                  </span>
+                  <span className="ope-card-verified">
+                    <svg width="26" height="26" viewBox="0 0 24 24">
+                      <path d="M12 1.5l2.4 1.8 3-.2 1.1 2.8 2.6 1.5-.8 2.9.8 2.9-2.6 1.5-1.1 2.8-3-.2L12 22.5l-2.4-1.8-3 .2-1.1-2.8L2.9 16.6l.8-2.9-.8-2.9 2.6-1.5 1.1-2.8 3 .2z" fill="#1877f2" />
+                      <path d="M8.5 12.2l2.3 2.3 4.7-4.9" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                    </svg>
                   </span>
                 </div>
                 <div className="ope-card-body">
@@ -159,8 +164,11 @@ export default function OptionE() {
 .ope-track::-webkit-scrollbar{display:none;}
 .ope-card{flex:0 0 340px;scroll-snap-align:start;border-radius:18px;}
 .ope-card-inner{display:block;border-radius:18px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);box-shadow:0 24px 50px rgba(0,0,0,.45);color:var(--fg);height:100%;}
-.ope-card-art{position:relative;aspect-ratio:16/10;line-height:0;}
-.ope-card-badge{position:absolute;top:16px;left:16px;width:38px;height:38px;border-radius:50%;background:rgba(10,20,32,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;color:var(--gold-l);font-size:16px;border:1px solid rgba(231,200,115,.4);}
+.ope-card-art{position:relative;aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.ope-card-glow{position:absolute;width:180px;height:180px;border-radius:50%;filter:blur(8px);}
+.ope-card-plat{position:relative;z-index:1;line-height:0;filter:drop-shadow(0 10px 24px rgba(0,0,0,.5));transition:transform .3s;}
+.ope-card-inner:hover .ope-card-plat{transform:translateY(-4px) scale(1.05);}
+.ope-card-verified{position:absolute;z-index:2;top:16px;right:16px;line-height:0;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5));}
 .ope-card-body{padding:22px;}
 .ope-card-body h3{font-size:20px;font-weight:700;margin:0 0 8px;letter-spacing:-.3px;}
 .ope-card-body p{font-size:13.5px;color:var(--muted);line-height:1.55;margin:0 0 18px;min-height:42px;}
