@@ -13,7 +13,7 @@ const OPTIONS: { key: Variant; label: string; hintVi: string; hintEn: string }[]
   { key: "D", label: "Verified Hub", hintVi: "Trung tâm xác minh đa nền tảng", hintEn: "Multi-platform verification hub" },
   { key: "E", label: "Cinematic", hintVi: "3D vàng gold / futuristic", hintEn: "3D gold / futuristic" },
   { key: "F", label: "Glass", hintVi: "Glassmorphism / sáng-tối", hintEn: "Glassmorphism / light-dark" },
-  { key: "G", label: "2079", hintVi: "VDuyOS — hệ điều hành uy tín số từ tương lai", hintEn: "VDuyOS — a trust operating system from the future" },
+  { key: "G", label: "Galaxy", hintVi: "Không gian & thời gian — quỹ đạo uy tín", hintEn: "Space & time — the orbit of trust" },
 ];
 
 export default function VariantSwitcher({
