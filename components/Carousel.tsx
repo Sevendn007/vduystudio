@@ -26,7 +26,7 @@ export default function Carousel({
   const measure = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
-    const p = Math.max(1, Math.round(el.scrollWidth / el.clientWidth));
+    const p = Math.max(1, Math.ceil(el.scrollWidth / el.clientWidth - 0.05));
     setPages(p);
     setActive(Math.min(p - 1, Math.round(el.scrollLeft / el.clientWidth)));
   }, []);
@@ -47,7 +47,7 @@ export default function Carousel({
   const goTo = (i: number) => {
     const el = trackRef.current;
     if (!el) return;
-    const p = Math.max(1, Math.round(el.scrollWidth / el.clientWidth));
+    const p = Math.max(1, Math.ceil(el.scrollWidth / el.clientWidth - 0.05));
     const idx = ((i % p) + p) % p;
     el.scrollTo({ left: idx * el.clientWidth, behavior: "smooth" });
   };
@@ -57,7 +57,7 @@ export default function Carousel({
     const id = setInterval(() => {
       const el = trackRef.current;
       if (!el) return;
-      const p = Math.max(1, Math.round(el.scrollWidth / el.clientWidth));
+      const p = Math.max(1, Math.ceil(el.scrollWidth / el.clientWidth - 0.05));
       const cur = Math.round(el.scrollLeft / el.clientWidth);
       el.scrollTo({ left: ((cur + 1) % p) * el.clientWidth, behavior: "smooth" });
     }, interval);

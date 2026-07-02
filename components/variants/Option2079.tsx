@@ -476,7 +476,7 @@ export default function OptionGalaxy() {
 .gx-bcard{background:rgba(139,147,184,.06);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.25s;}
 .gx-bcard:hover{transform:translateY(-4px);border-color:rgba(103,232,249,.5);box-shadow:0 20px 44px rgba(0,0,0,.5);}
 .gx-bcover{position:relative;aspect-ratio:16/10;background:#0a0f1e;line-height:0;}
-.gx-bcover img{width:100%;height:100%;object-fit:cover;display:block;}
+.gx-bcover img{width:100%;height:100%;object-fit:contain;display:block;}
 .gx-btag{position:absolute;left:12px;bottom:12px;font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;background:rgba(3,4,12,.6);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);padding:4px 10px;border-radius:100px;}
 .gx-bbody{padding:18px 20px 20px;}
 .gx-bbody h4{margin:0 0 6px;font-size:16.5px;font-weight:700;}
