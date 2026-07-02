@@ -62,6 +62,27 @@ insert into public.settings (key, value) values
 on conflict (key) do nothing;
 
 -- ============================================================
+-- Dữ liệu mẫu (chỉ chèn khi bảng đang trống) — để admin & landing khớp nhau
+-- ngay từ đầu. Xóa/sửa thoải mái trong trang admin sau khi chạy.
+-- ============================================================
+insert into public.feedbacks (name, company, quote, rating)
+select * from (values
+  ('Minh Anh','CEO — LuxHouse Cosmetics','Lên tích xanh TikTok đúng như cam kết, hỗ trợ nhiệt tình. Doanh thu livestream tăng rõ sau khi có tick.',5),
+  ('Quốc Huy','Founder — Huy''s Kitchen (F&B)','Fanpage bị khóa được xử lý chỉ trong 48 giờ, giá minh bạch. Quá chuyên nghiệp.',5),
+  ('Thu Trang','Giám đốc Marketing — Bloom Beauty','Team booking báo chí rất chuyên nghiệp, bài viết chất lượng, đúng thông điệp thương hiệu.',5)
+) as v(name,company,quote,rating)
+where not exists (select 1 from public.feedbacks);
+
+insert into public.projects (title, tag, result, platform)
+select * from (values
+  ('@brand.hub — 2.1M follow','TikTok · Tích xanh','Tích xanh sau 18 ngày, mở khóa giỏ hàng','tiktok'),
+  ('Fanpage F&B miền Bắc','Facebook · Fanpage','Khôi phục fanpage bị khóa trong 48 giờ','facebook'),
+  ('Chiến dịch ra mắt mỹ phẩm','Báo chí · PR','Booking 6 đầu báo lớn','bao-chi'),
+  ('Studio nhiếp ảnh','Instagram · Tích xanh','Tích xanh Instagram sau 7 ngày','instagram-threads')
+) as v(title,tag,result,platform)
+where not exists (select 1 from public.projects);
+
+-- ============================================================
 -- RLS: ai cũng ĐỌC được (landing page), chỉ user đăng nhập được GHI (admin)
 -- ============================================================
 alter table public.feedbacks enable row level security;

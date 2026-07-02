@@ -8,15 +8,26 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Tilt from "@/components/tilt";
+import Carousel from "@/components/Carousel";
 import { PlatformIcon, PersonAvatar, Platform } from "@/components/brand";
 import { ProjectCover } from "@/components/art";
-import { VDuyBadge, VDuyWordmark, VDuyLockup } from "@/components/logo";
+import { VDuyBadge, VDuyWordmark } from "@/components/logo";
 import { useLang, Lang, LangToggle } from "@/lib/i18n";
 import { siteText } from "@/lib/site";
 import { site } from "@/lib/site";
 import { getProcess } from "@/lib/services";
 import { fetchFeedbacks, fetchProjects, DbFeedback, DbProject } from "@/lib/data";
 import { useContact } from "@/lib/useContact";
+
+// Ảnh dự án: thử tải ảnh thật (image_url), lỗi/không có thì dùng ảnh vẽ (ProjectCover).
+function ProjImage({ url, platform, id, tag }: { url: string | null; platform: string; id: string; tag: string }) {
+  const [failed, setFailed] = useState(false);
+  if (url && !failed) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={url} alt={tag} loading="lazy" onError={() => setFailed(true)} />;
+  }
+  return <ProjectCover platform={platform} handle={id} tag={tag} />;
+}
 
 const SERVICES = (lang: Lang): { slug: string; icon: Platform; name: string; desc: string }[] => [
   { slug: "tiktok", icon: "tiktok", name: "TikTok", desc: lang === "en" ? "Verification badge · account recovery · livestream & shop cart unlocks" : "Tích xanh chính thống · mở khóa tài khoản · livestream & giỏ hàng" },
@@ -25,11 +36,15 @@ const SERVICES = (lang: Lang): { slug: string; icon: Platform; name: string; des
   { slug: "bao-chi", icon: "press", name: lang === "en" ? "Press & PR" : "Báo chí", desc: lang === "en" ? "Press booking · SEO-standard PR writing on major outlets" : "Booking báo chí · viết bài PR chuẩn SEO trên đầu báo lớn" },
 ];
 
-// Dự án mặc định khi DB chưa có dữ liệu.
+// Dự án mẫu khi DB chưa có dữ liệu. Thẻ đầu có ảnh thật để minh họa cách hiển
+// thị khi admin upload ảnh; các thẻ còn lại dùng ảnh vẽ mặc định.
 const DEFAULT_PROJECTS = (lang: Lang): DbProject[] => [
-  { id: "d1", platform: "tiktok", tag: lang === "en" ? "TikTok · Verified" : "TikTok · Tích xanh", title: lang === "en" ? "@brand.hub — 2.1M followers" : "@brand.hub — 2.1M follow", result: lang === "en" ? "Verified in 18 days, shop cart unlocked" : "Tích xanh sau 18 ngày, mở khóa giỏ hàng", image_url: null },
+  { id: "d1", platform: "tiktok", tag: lang === "en" ? "TikTok · Verified" : "TikTok · Tích xanh", title: lang === "en" ? "@brand.hub — 2.1M followers" : "@brand.hub — 2.1M follow", result: lang === "en" ? "Verified in 18 days, shop cart unlocked" : "Tích xanh sau 18 ngày, mở khóa giỏ hàng", image_url: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=900&q=70" },
   { id: "d2", platform: "facebook", tag: "Facebook · Fanpage", title: lang === "en" ? "Northern F&B fanpage" : "Fanpage F&B miền Bắc", result: lang === "en" ? "Locked fanpage recovered within 48 hours" : "Khôi phục fanpage bị khóa trong 48 giờ", image_url: null },
   { id: "d3", platform: "bao-chi", tag: lang === "en" ? "Press · PR" : "Báo chí · PR", title: lang === "en" ? "Cosmetics launch campaign" : "Chiến dịch ra mắt mỹ phẩm", result: lang === "en" ? "6 major press outlets booked" : "Booking 6 đầu báo lớn", image_url: null },
+  { id: "d4", platform: "instagram-threads", tag: lang === "en" ? "Instagram · Verified" : "Instagram · Tích xanh", title: lang === "en" ? "Photography studio" : "Studio nhiếp ảnh", result: lang === "en" ? "IG verified in 7 days" : "Tích xanh Instagram sau 7 ngày", image_url: null },
+  { id: "d5", platform: "tiktok", tag: lang === "en" ? "TikTok · Livestream" : "TikTok · Livestream", title: lang === "en" ? "Women's fashion shop" : "Shop thời trang nữ", result: lang === "en" ? "Livestream unlocked in 24h" : "Mở khóa livestream trong 24h", image_url: null },
+  { id: "d6", platform: "facebook", tag: lang === "en" ? "Facebook · Recovery" : "Facebook · Mở khóa", title: lang === "en" ? "KOL personal profile" : "Trang cá nhân KOL", result: lang === "en" ? "Officially verified in 9 days" : "Tích xanh chính thống sau 9 ngày", image_url: null },
 ];
 
 const TX = {
@@ -159,31 +174,20 @@ export default function OptionGalaxy() {
         </div>
       </nav>
 
-      {/* HERO — trái: logo nguyên bản + hình 3D; phải: chữ */}
+      {/* HERO — trái: hình 3D quỹ đạo + logo (wordmark); phải: chữ */}
       <header className="gx-hero">
         <div className="gx-hero-visual">
-          <div className="gx-hero-lockup">
-            <VDuyLockup
-              center
-              badgeSize={64}
-              wordSize={30}
-              showIcons={false}
-              taglineColor="var(--muted)"
-              barColor="var(--cyan)"
-              tagline={lang === "en" ? "Verification · Account rescue · Press booking" : "Tích xanh · Cứu tài khoản · Booking báo chí"}
-            />
-          </div>
           <div className="gx-system" aria-hidden>
             <div className="gx-orbit o1" />
             <div className="gx-orbit o2" />
             <div className="gx-sun">
-              <VDuyBadge size={80} intro={false} />
+              <VDuyBadge size={88} intro={false} />
             </div>
             <div className="gx-ring r1">
               {(["tiktok", "instagram"] as Platform[]).map((k, i) => (
                 <span className="gx-sat" style={{ ["--a" as string]: `${i * 180}deg` }} key={k}>
                   <span className="gx-sat-inner ri1">
-                    <PlatformIcon kind={k} size={36} />
+                    <PlatformIcon kind={k} size={38} />
                   </span>
                 </span>
               ))}
@@ -192,10 +196,17 @@ export default function OptionGalaxy() {
               {(["facebook", "press"] as Platform[]).map((k, i) => (
                 <span className="gx-sat far" style={{ ["--a" as string]: `${90 + i * 180}deg` }} key={k}>
                   <span className="gx-sat-inner ri2">
-                    <PlatformIcon kind={k} size={32} />
+                    <PlatformIcon kind={k} size={34} />
                   </span>
                 </span>
               ))}
+            </div>
+          </div>
+          <div className="gx-hero-logo">
+            <VDuyWordmark fontSize={38} shine />
+            <div className="gx-hero-tagline">
+              <span className="gx-tag-bar" />
+              <span>{lang === "en" ? "Verification · Account rescue · Press booking" : "Tích xanh · Cứu tài khoản · Booking báo chí"}</span>
             </div>
           </div>
         </div>
@@ -277,16 +288,11 @@ export default function OptionGalaxy() {
       <section className="gx-section" id="gx-projects">
         <div className="gx-sec-tag">{t.prjTag}</div>
         <h2>{t.prjTitle}</h2>
-        <div className="gx-bento">
+        <Carousel per={3} ariaLabel={t.prjTitle}>
           {projects.map((p) => (
             <div className="gx-bcard" key={p.id}>
               <div className="gx-bcover">
-                {p.image_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={p.image_url} alt={p.title} loading="lazy" />
-                ) : (
-                  <ProjectCover platform={p.platform ?? "tiktok"} handle={p.id} tag={p.tag ?? ""} />
-                )}
+                <ProjImage url={p.image_url} platform={p.platform ?? "tiktok"} id={p.id} tag={p.tag ?? ""} />
                 {p.tag && <span className="gx-btag">{p.tag}</span>}
               </div>
               <div className="gx-bbody">
@@ -295,14 +301,14 @@ export default function OptionGalaxy() {
               </div>
             </div>
           ))}
-        </div>
+        </Carousel>
       </section>
 
       {/* FEEDBACK */}
       <section className="gx-section" id="gx-feedback">
         <div className="gx-sec-tag">{t.fbTag}</div>
         <h2>{t.fbTitle}</h2>
-        <div className="gx-signals">
+        <Carousel per={3} ariaLabel={t.fbTitle}>
           {feedbacks.map((c, i) => (
             <div className="gx-signal" key={c.id}>
               {c.image_url && (
@@ -322,7 +328,7 @@ export default function OptionGalaxy() {
               </div>
             </div>
           ))}
-        </div>
+        </Carousel>
       </section>
 
       {/* CTA */}
@@ -385,10 +391,13 @@ export default function OptionGalaxy() {
 .gx-navcta{border:1px solid rgba(103,232,249,.4);color:var(--cyan);background:rgba(103,232,249,.06);padding:10px 18px;border-radius:100px;font-size:13px;font-weight:700;transition:.25s;white-space:nowrap;}
 .gx-navcta:hover{background:var(--cyan);color:#03222a;box-shadow:0 0 26px rgba(103,232,249,.4);}
 
-/* ===== hero: trái = logo + 3D; phải = chữ ===== */
-.gx-hero{max-width:1200px;margin:0 auto;padding:44px clamp(16px,4vw,30px) 60px;display:grid;grid-template-columns:.85fr 1.15fr;gap:40px;align-items:center;}
-.gx-hero-visual{display:flex;flex-direction:column;align-items:center;gap:14px;}
-.gx-hero-lockup{width:100%;display:flex;justify-content:center;}
+/* ===== hero: trái = 3D + logo; phải = chữ ===== */
+.gx-hero{max-width:1200px;margin:0 auto;padding:44px clamp(16px,4vw,30px) 64px;display:grid;grid-template-columns:.92fr 1.08fr;gap:48px;align-items:center;}
+.gx-hero-visual{display:flex;flex-direction:column;align-items:center;gap:22px;}
+.gx-hero-logo{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.gx-hero-tagline{display:flex;align-items:center;gap:10px;white-space:nowrap;}
+.gx-hero-tagline>span:last-child{font-family:var(--font-inter),sans-serif;font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+.gx-tag-bar{width:26px;height:2px;flex-shrink:0;background:linear-gradient(90deg,var(--cyan),transparent);}
 .gx-hero-text{max-width:600px;}
 .gx-hero-tag{display:inline-block;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);border:1px solid rgba(103,232,249,.3);background:rgba(103,232,249,.05);padding:7px 14px;border-radius:100px;margin-bottom:22px;font-weight:600;}
 .gx-hero-text h1{margin:0;font-size:clamp(28px,4.2vw,50px);font-weight:700;letter-spacing:-1.2px;line-height:1.14;}
