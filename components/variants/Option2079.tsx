@@ -10,7 +10,7 @@ import Link from "next/link";
 import Tilt from "@/components/tilt";
 import { PlatformIcon, PersonAvatar, Platform } from "@/components/brand";
 import { ProjectCover } from "@/components/art";
-import { VDuyBadge, VDuyWordmark, VDuyLockup } from "@/components/logo";
+import { VDuyBadge, VDuyWordmark } from "@/components/logo";
 import { useLang, Lang, LangToggle } from "@/lib/i18n";
 import { siteText } from "@/lib/site";
 import { site } from "@/lib/site";
@@ -159,20 +159,40 @@ export default function OptionGalaxy() {
         </div>
       </nav>
 
-      {/* HERO — logo lockup + hệ quỹ đạo */}
+      {/* HERO — hình 3D bên trái (thu nhỏ), chữ + logo bên phải */}
       <header className="gx-hero">
-        <div className="gx-hero-text">
-          <div className="gx-hero-tag">✦ {t.heroTag}</div>
-          <div className="gx-hero-lockup">
-            <VDuyLockup
-              badgeSize={92}
-              wordSize={40}
-              iconSize={46}
-              taglineColor="var(--muted)"
-              barColor="var(--cyan)"
-              tagline={lang === "en" ? "Verification · Account rescue · Press booking" : "Tích xanh · Cứu tài khoản · Booking báo chí"}
-            />
+        <div className="gx-system" aria-hidden>
+          <div className="gx-orbit o1" />
+          <div className="gx-orbit o2" />
+          <div className="gx-sun">
+            <VDuyBadge size={88} intro={false} />
           </div>
+          <div className="gx-ring r1">
+            {(["tiktok", "instagram"] as Platform[]).map((k, i) => (
+              <span className="gx-sat" style={{ ["--a" as string]: `${i * 180}deg` }} key={k}>
+                <span className="gx-sat-inner ri1">
+                  <PlatformIcon kind={k} size={38} />
+                </span>
+              </span>
+            ))}
+          </div>
+          <div className="gx-ring r2">
+            {(["facebook", "press"] as Platform[]).map((k, i) => (
+              <span className="gx-sat far" style={{ ["--a" as string]: `${90 + i * 180}deg` }} key={k}>
+                <span className="gx-sat-inner ri2">
+                  <PlatformIcon kind={k} size={34} />
+                </span>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="gx-hero-text">
+          <div className="gx-hero-brand">
+            <VDuyBadge size={48} intro={false} />
+            <VDuyWordmark fontSize={26} shine />
+          </div>
+          <div className="gx-hero-tag">✦ {t.heroTag}</div>
           <h1>
             {t.heroA} <span className="gx-holo">{t.heroB}</span> {t.heroC}
           </h1>
@@ -189,32 +209,6 @@ export default function OptionGalaxy() {
             {st.stats.map((s, i) => (
               <span key={i}>
                 <b>{s.value}</b> {s.label}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="gx-system" aria-hidden>
-          <div className="gx-orbit o1" />
-          <div className="gx-orbit o2" />
-          <div className="gx-sun">
-            <VDuyBadge size={104} intro={false} />
-          </div>
-          <div className="gx-ring r1">
-            {(["tiktok", "instagram"] as Platform[]).map((k, i) => (
-              <span className="gx-sat" style={{ ["--a" as string]: `${i * 180}deg` }} key={k}>
-                <span className="gx-sat-inner ri1">
-                  <PlatformIcon kind={k} size={42} />
-                </span>
-              </span>
-            ))}
-          </div>
-          <div className="gx-ring r2">
-            {(["facebook", "press"] as Platform[]).map((k, i) => (
-              <span className="gx-sat far" style={{ ["--a" as string]: `${90 + i * 180}deg` }} key={k}>
-                <span className="gx-sat-inner ri2">
-                  <PlatformIcon kind={k} size={38} />
-                </span>
               </span>
             ))}
           </div>
@@ -382,11 +376,11 @@ export default function OptionGalaxy() {
 .gx-navcta{border:1px solid rgba(103,232,249,.4);color:var(--cyan);background:rgba(103,232,249,.06);padding:10px 18px;border-radius:100px;font-size:13px;font-weight:700;transition:.25s;white-space:nowrap;}
 .gx-navcta:hover{background:var(--cyan);color:#03222a;box-shadow:0 0 26px rgba(103,232,249,.4);}
 
-/* ===== hero ===== */
-.gx-hero{max-width:1200px;margin:0 auto;padding:44px clamp(16px,4vw,30px) 60px;display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center;}
-.gx-hero-text{max-width:560px;}
-.gx-hero-tag{display:inline-block;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);border:1px solid rgba(103,232,249,.3);background:rgba(103,232,249,.05);padding:7px 14px;border-radius:100px;margin-bottom:26px;font-weight:600;}
-.gx-hero-lockup{margin-bottom:30px;}
+/* ===== hero: 3D trái (nhỏ) — chữ phải ===== */
+.gx-hero{max-width:1200px;margin:0 auto;padding:44px clamp(16px,4vw,30px) 60px;display:grid;grid-template-columns:.8fr 1.2fr;gap:40px;align-items:center;}
+.gx-hero-text{max-width:600px;}
+.gx-hero-brand{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+.gx-hero-tag{display:inline-block;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);border:1px solid rgba(103,232,249,.3);background:rgba(103,232,249,.05);padding:7px 14px;border-radius:100px;margin-bottom:22px;font-weight:600;}
 .gx-hero-text h1{margin:0;font-size:clamp(28px,4.2vw,50px);font-weight:700;letter-spacing:-1.2px;line-height:1.14;}
 .gx-holo{background:linear-gradient(90deg,var(--cyan),var(--vio),var(--pink),var(--cyan));background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gxHolo 6s linear infinite;}
 @keyframes gxHolo{to{background-position:250% 0}}
@@ -401,7 +395,7 @@ export default function OptionGalaxy() {
 .gx-statline b{color:var(--cyan);font-size:15px;margin-right:4px;}
 
 /* hệ quỹ đạo (trang trí) */
-.gx-system{position:relative;width:min(440px,86vw);aspect-ratio:1;margin:0 auto;--r1:140px;--r2:200px;}
+.gx-system{position:relative;width:min(360px,78vw);aspect-ratio:1;margin:0 auto;--r1:112px;--r2:162px;}
 .gx-orbit{position:absolute;border-radius:50%;border:1px dashed rgba(139,147,184,.3);}
 .gx-orbit.o1{inset:calc(50% - var(--r1));}
 .gx-orbit.o2{inset:calc(50% - var(--r2));}
@@ -481,8 +475,8 @@ export default function OptionGalaxy() {
 /* ===== tablet ===== */
 @media(max-width:980px){
  .gx-hero{grid-template-columns:1fr;padding-top:30px;gap:16px;}
- .gx-hero-text{max-width:none;}
- .gx-system{width:min(340px,80vw);--r1:104px;--r2:150px;}
+ .gx-hero-text{max-width:none;order:1;}
+ .gx-system{order:2;width:min(320px,76vw);--r1:98px;--r2:142px;}
  .gx-stations,.gx-launch{grid-template-columns:1fr 1fr;}
  .gx-values,.gx-bento,.gx-signals{grid-template-columns:1fr 1fr;}
  .gx-menu{display:none;}
