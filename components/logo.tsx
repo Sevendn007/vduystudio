@@ -167,46 +167,75 @@ function TileGlyph({ kind }: { kind: string }) {
 }
 
 // Logo lockup ĐẦY ĐỦ (nguyên bản) — badge + wordmark + tagline + 4 icon nền tảng.
-export function VDuyLockup({ tagline = "Tích xanh · Cứu tài khoản · Booking báo chí" }: { tagline?: string }) {
+// Tùy biến theo style: kích thước, màu tagline/bar, căn giữa, ẩn icon.
+export function VDuyLockup({
+  tagline = "Tích xanh · Cứu tài khoản · Booking báo chí",
+  badgeSize = 128,
+  wordSize = 64,
+  taglineColor = "#a6bada",
+  barColor = "#1877f2",
+  showIcons = true,
+  center = false,
+  iconSize = 58,
+}: {
+  tagline?: string;
+  badgeSize?: number;
+  wordSize?: number;
+  taglineColor?: string;
+  barColor?: string;
+  showIcons?: boolean;
+  center?: boolean;
+  iconSize?: number;
+}) {
   return (
-    <div className="vdsl-lockup">
+    <div className={`vdsl-lockup${center ? " center" : ""}`}>
       <div className="vdsl-row">
-        <VDuyBadge size={128} intro />
+        <VDuyBadge size={badgeSize} intro />
         <div className="vdsl-words">
           <div className="vdsl-wordIn">
-            <VDuyWordmark fontSize={64} shine />
+            <VDuyWordmark fontSize={wordSize} shine />
           </div>
           <div className="vdsl-tag">
-            <span className="vdsl-tagline-bar" />
-            <span className="vdsl-tagline">{tagline}</span>
+            <span className="vdsl-tagline-bar" style={{ background: `linear-gradient(90deg,${barColor},transparent)` }} />
+            <span className="vdsl-tagline" style={{ color: taglineColor }}>{tagline}</span>
           </div>
         </div>
       </div>
-      <div className="vdsl-icons">
-        {ICON_TILES.map((t, i) => (
-          <div key={i} className="vdsl-iconIn" style={{ animationDelay: `${1.35 + i * 0.15}s` }}>
-            <div
-              className="vdsl-iconFloat"
-              style={{ animationDelay: `${i * 0.3}s`, background: t.bg, border: t.border, boxShadow: t.shadow }}
-            >
-              <TileGlyph kind={t.svg} />
+      {showIcons && (
+        <div className="vdsl-icons">
+          {ICON_TILES.map((t, i) => (
+            <div key={i} className="vdsl-iconIn" style={{ animationDelay: `${1.35 + i * 0.15}s` }}>
+              <div
+                className="vdsl-iconFloat"
+                style={{ animationDelay: `${i * 0.3}s`, background: t.bg, border: t.border, boxShadow: t.shadow, width: iconSize, height: iconSize }}
+              >
+                <TileGlyph kind={t.svg} />
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
       <style>{`
 ${keyframes()}
 .vdsl-lockup{display:flex;flex-direction:column;gap:30px;}
+.vdsl-lockup.center{align-items:center;text-align:center;}
+.vdsl-lockup.center .vdsl-row{justify-content:center;}
+.vdsl-lockup.center .vdsl-tag{justify-content:center;}
+.vdsl-lockup.center .vdsl-icons{justify-content:center;}
 .vdsl-row{display:flex;align-items:center;gap:30px;flex-wrap:wrap;}
 .vdsl-words{display:flex;flex-direction:column;gap:12px;}
 .vdsl-wordIn{animation:vds-wordIn .9s cubic-bezier(.2,.8,.25,1) .55s both;}
 .vdsl-tag{display:flex;align-items:center;gap:12px;animation:vds-tagIn 1.4s ease 1.1s both;}
-.vdsl-tagline-bar{width:34px;height:2px;background:linear-gradient(90deg,#1877f2,transparent);}
-.vdsl-tagline{font-family:var(--font-inter),sans-serif;font-weight:600;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:#a6bada;}
+.vdsl-tagline-bar{width:34px;height:2px;flex-shrink:0;}
+.vdsl-tagline{font-family:var(--font-inter),sans-serif;font-weight:600;font-size:13px;letter-spacing:.22em;text-transform:uppercase;}
 .vdsl-icons{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
 .vdsl-iconIn{animation:vds-iconIn .6s cubic-bezier(.2,.8,.3,1.1) both;}
-.vdsl-iconFloat{width:58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;animation:vds-iconFloat 4.4s ease-in-out infinite;}
-@media(max-width:520px){.vdsl-wordIn :is(span){font-size:44px!important;}}
+.vdsl-iconFloat{border-radius:16px;display:flex;align-items:center;justify-content:center;animation:vds-iconFloat 4.4s ease-in-out infinite;}
+@media(max-width:560px){
+ .vdsl-row{gap:18px;}
+ .vdsl-wordIn :is(span){font-size:min(11vw,44px)!important;}
+ .vdsl-tagline{font-size:11px;letter-spacing:.14em;}
+}
       `}</style>
     </div>
   );

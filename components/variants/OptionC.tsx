@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { PhoneMock, ProjectCover } from "@/components/art";
 import { BrandLogo, PlatformIcon } from "@/components/brand";
+import { VDuyLockup } from "@/components/logo";
 import { site } from "@/lib/site";
+import { getProcess } from "@/lib/services";
 import { useLang } from "@/lib/i18n";
 
 const TX = {
@@ -17,6 +19,7 @@ const TX = {
     pickTitle: "Chọn nền tảng của bạn", pickSub: "Chạm để xem chi tiết dịch vụ, bảng giá & quy trình",
     press: "Báo chí",
     cards: [["✅", "Tích xanh chính thống", "Xác minh danh tính thật, đúng chính sách nền tảng."], ["🔓", "Mở khóa tài khoản", "Khôi phục tài khoản bị khóa/hạn chế nhanh chóng."], ["🛒", "Mở khóa giỏ hàng", "Kích hoạt tính năng bán hàng trên TikTok Shop."], ["🎥", "Mở khóa Livestream", "Kích hoạt quyền livestream cho kênh của bạn."]],
+    processTitle: "Quy trình siêu đơn giản", processSub: "4 bước là xong — minh bạch từ đầu tới cuối",
     workTitle: "Dự án tiêu biểu", workSub: "Ảnh chụp thực tế kết quả đã bàn giao",
     tags: ["TikTok · Tích xanh", "Instagram · Mở khóa", "Facebook · Fanpage", "Báo chí · PR", "TikTok · Giỏ hàng", "Threads · Tích xanh"],
     chatTitle: "Khách hàng nói gì", chatSub: "Feedback thật từ tin nhắn Zalo/Messenger",
@@ -38,6 +41,7 @@ const TX = {
     pickTitle: "Pick your platform", pickSub: "Tap to see service details, pricing & process",
     press: "Press & PR",
     cards: [["✅", "Official badge", "Genuine identity verification, per platform policy."], ["🔓", "Account recovery", "Quickly restore locked/restricted accounts."], ["🛒", "Shop cart unlock", "Activate selling features on TikTok Shop."], ["🎥", "Livestream unlock", "Activate livestream permission for your channel."]],
+    processTitle: "Super simple process", processSub: "Done in 4 steps — transparent start to finish",
     workTitle: "Featured projects", workSub: "Real screenshots of delivered results",
     tags: ["TikTok · Verified", "Instagram · Recovery", "Facebook · Fanpage", "Press · PR", "TikTok · Shop cart", "Threads · Verified"],
     chatTitle: "What clients say", chatSub: "Real feedback from Zalo/Messenger chats",
@@ -66,6 +70,17 @@ export default function OptionC() {
       </nav>
 
       <section className="opc-hero" id="opc-top">
+        <div className="opc-lockup">
+          <VDuyLockup
+            center
+            badgeSize={76}
+            wordSize={42}
+            iconSize={42}
+            taglineColor="var(--muted)"
+            barColor="#7c3aed"
+            tagline={lang === "en" ? "Verification · Account rescue · Press booking" : "Tích xanh · Cứu tài khoản · Booking báo chí"}
+          />
+        </div>
         <div className="opc-pill">{t.pill}</div>
         <h1>
           {t.h1a}
@@ -113,6 +128,20 @@ export default function OptionC() {
               <h4>{c[1]}</h4>
               <p>{c[2]}</p>
             </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="opc-section">
+        <h2>{t.processTitle}</h2>
+        <p className="sub">{t.processSub}</p>
+        <div className="opc-process">
+          {getProcess(lang).map((s, i) => (
+            <div className="opc-pstep" key={i}>
+              <span className="opc-pnum">{i + 1}</span>
+              <h4>{s.title}</h4>
+              <p>{s.desc}</p>
+            </div>
           ))}
         </div>
       </section>
@@ -207,6 +236,13 @@ export default function OptionC() {
 .opc-scard h4{font-size:15px;margin:0 0 6px;font-weight:700;}
 .opc-scard p{font-size:12px;color:var(--muted);margin:0;}
 
+.opc-lockup{display:flex;justify-content:center;margin-bottom:30px;}
+.opc-process{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.opc-pstep{background:rgba(255,255,255,.8);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.95);border-radius:18px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,.05);}
+.opc-pnum{width:34px;height:34px;border-radius:50%;background:linear-gradient(90deg,#7c3aed,#ec4899);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;margin-bottom:12px;}
+.opc-pstep h4{font-size:14.5px;margin:0 0 6px;font-weight:700;}
+.opc-pstep p{font-size:12px;color:var(--muted);margin:0;line-height:1.5;}
+
 .opc-masonry{columns:3;column-gap:14px;}
 .opc-mitem{break-inside:avoid;margin-bottom:14px;border-radius:16px;overflow:hidden;background:linear-gradient(160deg,#e9d5ff,#fbcfe8);aspect-ratio:1;position:relative;display:flex;align-items:flex-end;padding:14px;}
 .opc-mitem:nth-child(2){aspect-ratio:1/1.3;background:linear-gradient(160deg,#bae6fd,#e9d5ff);}
@@ -223,7 +259,7 @@ export default function OptionC() {
 .opc-cta-final p{color:var(--muted);margin:0 0 24px;}
 
 .opc-fab{position:fixed;bottom:80px;right:22px;background:linear-gradient(90deg,#2563eb,#22d3ee);color:#fff;padding:14px 22px;border-radius:100px;font-weight:700;font-size:13px;box-shadow:0 10px 30px rgba(37,99,235,.4);z-index:50;display:flex;align-items:center;gap:8px;cursor:pointer;}
-@media(max-width:720px){.opc-cardrow{grid-template-columns:1fr 1fr;}.opc-masonry{columns:2;}.opc-phones{transform:scale(.85);}}
+@media(max-width:720px){.opc-cardrow,.opc-process{grid-template-columns:1fr 1fr;}.opc-masonry{columns:2;}.opc-phones{transform:scale(.85);}}
       `}</style>
     </div>
   );

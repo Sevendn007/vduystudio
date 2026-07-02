@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { VerifiedBadge } from "@/components/art";
 import { BrandLogo, PlatformIcon, Platform } from "@/components/brand";
-import { site } from "@/lib/site";
+import { VDuyLockup } from "@/components/logo";
+import { PersonAvatar } from "@/components/brand";
+import { site, siteText } from "@/lib/site";
+import { getProcess } from "@/lib/services";
 import { useLang, Lang } from "@/lib/i18n";
 
 const SERVICES = (lang: Lang) => [
@@ -30,6 +33,10 @@ const TX = {
     workTitle: "Featured Work",
     workSub: "Một vài dự án tiêu biểu đã triển khai gần đây.",
     workLink: "Xem chi tiết →",
+    processTitle: "Quy trình làm việc",
+    processSub: "Bốn bước minh bạch, có cam kết bằng văn bản.",
+    testiTitle: "Khách hàng nói gì",
+    testiSub: "Feedback thật từ các dự án đã bàn giao.",
     quotes: ["Nhanh, minh bạch, đúng cam kết", "Tích xanh thật, không rủi ro", "Đội ngũ chuyên nghiệp"],
     ctaBtn: "Liên hệ tư vấn",
   },
@@ -43,6 +50,10 @@ const TX = {
     workTitle: "Featured Work",
     workSub: "A few recent, representative projects.",
     workLink: "View details →",
+    processTitle: "How we work",
+    processSub: "Four transparent steps, committed in writing.",
+    testiTitle: "What clients say",
+    testiSub: "Real feedback from delivered projects.",
     quotes: ["Fast, transparent, as promised", "Real badges, zero risk", "A truly professional team"],
     ctaBtn: "Get in touch",
   },
@@ -51,6 +62,7 @@ const TX = {
 export default function OptionA() {
   const { lang } = useLang();
   const t = TX[lang];
+  const st = siteText(lang);
   return (
     <div className="opa-root">
       <div className="opa-grain" />
@@ -70,7 +82,16 @@ export default function OptionA() {
       </nav>
 
       <section className="opa-hero" id="opa-top">
-        <div className="opa-eyebrow">Verified Identity Studio — Est. 2021</div>
+        <div className="opa-lockup">
+          <VDuyLockup
+            badgeSize={84}
+            wordSize={46}
+            iconSize={46}
+            taglineColor="var(--muted)"
+            barColor="var(--accent)"
+            tagline={lang === "en" ? "Verification · Account rescue · Press booking" : "Tích xanh · Cứu tài khoản · Booking báo chí"}
+          />
+        </div>
         <h1>
           {t.heroA}<span className="accent">{t.heroAccent}</span>{t.heroB}
         </h1>
@@ -84,6 +105,15 @@ export default function OptionA() {
           </a>
         </div>
       </section>
+
+      <div className="opa-statbar">
+        {st.stats.map((s, i) => (
+          <div className="opa-statitem" key={i}>
+            <b>{s.value}</b>
+            <span>{s.label}</span>
+          </div>
+        ))}
+      </div>
 
       <section className="opa-section" id="opa-services">
         <div className="opa-section-head">
@@ -129,6 +159,44 @@ export default function OptionA() {
         </div>
       </section>
 
+      <section className="opa-section" id="opa-process">
+        <div className="opa-section-head">
+          <h2>{t.processTitle}</h2>
+          <p>{t.processSub}</p>
+        </div>
+        <div className="opa-steps">
+          {getProcess(lang).map((s, i) => (
+            <div className="opa-step" key={i}>
+              <span className="opa-step-num">{String(i + 1).padStart(2, "0")}</span>
+              <h4>{s.title}</h4>
+              <p>{s.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="opa-section" id="opa-testi">
+        <div className="opa-section-head">
+          <h2>{t.testiTitle}</h2>
+          <p>{t.testiSub}</p>
+        </div>
+        <div className="opa-testi">
+          {st.testimonials.map((c) => (
+            <div className="opa-tcard" key={c.name}>
+              <div className="opa-tstars">★★★★★</div>
+              <p>“{c.quote}”</p>
+              <div className="opa-tperson">
+                <PersonAvatar name={c.name} hue={c.hue} size={42} />
+                <div>
+                  <b>{c.name}</b>
+                  <span>{c.company}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <div className="opa-marquee" id="opa-feedback">
         <div className="opa-marquee-track">
           {[...t.quotes, ...t.quotes].map((q, i) => (
@@ -168,7 +236,7 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 .opa-hero{min-height:86vh;display:flex;flex-direction:column;justify-content:center;padding:80px 40px;position:relative;background:
  radial-gradient(ellipse at 75% 25%, rgba(62,207,142,.14), transparent 55%),
  linear-gradient(180deg,#0a0a0a,#050505);}
-.opa-eyebrow{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:26px;font-weight:600;}
+.opa-lockup{margin-bottom:44px;}
 .opa-hero h1{font-family:var(--font-grotesk),sans-serif;font-size:clamp(40px,7.2vw,104px);line-height:1.04;font-weight:700;letter-spacing:-2px;margin:0;max-width:16ch;}
 .opa-hero h1 .accent{color:var(--accent);}
 .opa-hero-sub{max-width:540px;margin-top:30px;color:var(--muted);font-size:17px;line-height:1.65;}
@@ -206,6 +274,24 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 .opa-wbody p{margin:0 0 16px;color:var(--muted);font-size:13.5px;line-height:1.55;}
 .opa-wlink{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--accent);}
 
+.opa-statbar{display:flex;justify-content:space-between;gap:16px;padding:26px 40px;border-top:1px solid #1a1a1a;flex-wrap:wrap;}
+.opa-statitem b{display:block;font-size:26px;letter-spacing:-1px;color:var(--accent);}
+.opa-statitem span{font-size:12.5px;color:var(--muted);}
+
+.opa-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+.opa-step{border-top:1px solid #2a2a2a;padding-top:20px;}
+.opa-step-num{font-size:13px;font-weight:800;letter-spacing:2px;color:var(--accent);}
+.opa-step h4{margin:12px 0 8px;font-size:17px;font-weight:700;}
+.opa-step p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.6;}
+
+.opa-testi{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.opa-tcard{background:#0f1214;border:1px solid #1c1f22;border-radius:16px;padding:24px;}
+.opa-tstars{color:var(--accent);letter-spacing:2px;font-size:13px;margin-bottom:12px;}
+.opa-tcard p{margin:0 0 18px;font-size:14.5px;line-height:1.65;color:#d6d6d1;}
+.opa-tperson{display:flex;align-items:center;gap:11px;}
+.opa-tperson b{display:block;font-size:14px;}
+.opa-tperson span{font-size:12px;color:var(--muted);}
+
 .opa-marquee{overflow:hidden;white-space:nowrap;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;padding:28px 0;}
 .opa-marquee-track{display:inline-block;animation:opaScroll 24s linear infinite;font-size:22px;font-weight:600;color:var(--muted);}
 .opa-marquee-track span{margin:0 30px;}
@@ -223,6 +309,9 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
  .opa-section-head{align-items:flex-start;}
  .opa-service-tags{display:none;}
  .opa-work-grid{grid-template-columns:1fr;}
+ .opa-statbar{padding:22px 20px;gap:14px 22px;}
+ .opa-steps{grid-template-columns:1fr 1fr;}
+ .opa-testi{grid-template-columns:1fr;}
  .opa-cta{padding:100px 20px;}
  .opa-footer{padding:30px 20px 120px;}
 }

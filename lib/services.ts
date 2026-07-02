@@ -261,6 +261,11 @@ const platformsEn: Platform[] = [
   },
 ];
 
+// Quy trình 4 bước dùng chung cho mọi giao diện.
+export function getProcess(lang: Lang = "vi"): ProcessStep[] {
+  return lang === "en" ? processEn : processVi;
+}
+
 export function getPlatforms(lang: Lang = "vi"): Platform[] {
   return lang === "en" ? platformsEn : platformsVi;
 }

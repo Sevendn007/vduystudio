@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Tilt from "@/components/tilt";
 import { BrandLogo, PlatformIcon, PersonAvatar, Platform } from "@/components/brand";
+import { VDuyLockup } from "@/components/logo";
 import { site, siteText } from "@/lib/site";
 import { useLang, Lang } from "@/lib/i18n";
 
@@ -112,6 +113,17 @@ export default function OptionF() {
           <span className="opf-spark s1">✦</span>
           <span className="opf-spark s2">✦</span>
           <span className="opf-spark s3">✧</span>
+          <div className="opf-lockup">
+            <VDuyLockup
+              center
+              badgeSize={78}
+              wordSize={42}
+              iconSize={42}
+              taglineColor="var(--muted)"
+              barColor="var(--gold)"
+              tagline={lang === "en" ? "Verification · Account rescue · Press booking" : "Tích xanh · Cứu tài khoản · Booking báo chí"}
+            />
+          </div>
           <h1>{t.heroTitle}</h1>
           <p>{t.heroSub}</p>
           <div className="opf-hero-ctas">
@@ -292,7 +304,8 @@ export default function OptionF() {
 .opf-spark.s1{top:26px;left:8%;font-size:22px;}
 .opf-spark.s2{top:40%;right:9%;font-size:26px;}
 .opf-spark.s3{bottom:30px;left:16%;font-size:16px;}
-.opf-hero h1{font-size:clamp(30px,5vw,50px);font-weight:800;letter-spacing:-1.5px;line-height:1.12;margin:0 auto 18px;max-width:16ch;}
+.opf-lockup{display:flex;justify-content:center;margin-bottom:34px;}
+.opf-hero h1{font-size:clamp(28px,4.4vw,44px);font-weight:800;letter-spacing:-1.5px;line-height:1.12;margin:0 auto 18px;max-width:18ch;}
 .opf-hero p{color:var(--muted);font-size:15.5px;line-height:1.65;max-width:600px;margin:0 auto 28px;}
 .opf-hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
 .opf-btn{background:var(--glass2);border:1px solid var(--stroke);color:var(--fg);padding:13px 26px;border-radius:12px;font-weight:600;font-size:14.5px;backdrop-filter:blur(8px);transition:.2s;}

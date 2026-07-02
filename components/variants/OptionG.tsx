@@ -29,6 +29,8 @@ const FEED = (lang: Lang): { handle: string; icon: Platform; label: string; time
 const TX = {
   vi: {
     navFeed: "Live Feed", navServices: "Dịch vụ", navFeedback: "Feedback", navCta: "Get Verified",
+    lockupTag: "Tích xanh · Cứu tài khoản · Booking báo chí",
+    scrollHint: "Kéo xuống để khám phá",
     eyebrow: "Trung tâm xác minh đa nền tảng · từ 2021",
     heroA: "Xác minh mọi nền tảng của bạn — ",
     heroB: "tích xanh, mở khóa & báo chí.",
@@ -53,6 +55,8 @@ const TX = {
   },
   en: {
     navFeed: "Live Feed", navServices: "Services", navFeedback: "Feedback", navCta: "Get Verified",
+    lockupTag: "Verification · Account rescue · Press booking",
+    scrollHint: "Scroll to explore",
     eyebrow: "Multi-platform verification hub · since 2021",
     heroA: "Verify every platform you own — ",
     heroB: "badges, recovery & press.",
@@ -97,17 +101,36 @@ export default function OptionG() {
         </a>
       </nav>
 
-      {/* LOGO NGUYÊN BẢN — nổi bật ở đầu trang */}
-      <div className="opg-lockup">
-        <VDuyLockup />
-      </div>
+      {/* LOGO NGUYÊN BẢN — full màn hình đầu tiên */}
+      <section className="opg-splash">
+        <div className="opg-splash-eyebrow">
+          <span className="opg-livedot" /> {t.eyebrow}
+        </div>
+        <VDuyLockup center badgeSize={150} wordSize={78} iconSize={62} tagline={t.lockupTag} />
+        <div className="opg-splash-stats">
+          {siteText(lang).stats.map((s, i) => (
+            <span key={i}>
+              <b>{s.value}</b> {s.label}
+            </span>
+          ))}
+        </div>
+        <div className="opg-splash-cta">
+          <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opg-btn">
+            {t.heroBtn}
+          </a>
+          <a href="#opg-hero" className="opg-btn ghost">
+            {t.heroBtn2}
+          </a>
+        </div>
+        <a href="#opg-hero" className="opg-scrollhint" aria-label={t.scrollHint}>
+          <span>{t.scrollHint}</span>
+          <i>↓</i>
+        </a>
+      </section>
 
       {/* HERO — trung tâm xác minh đa nền tảng */}
-      <header className="opg-hero">
+      <header className="opg-hero" id="opg-hero">
         <div className="opg-hero-left">
-          <div className="opg-eyebrow">
-            <span className="opg-livedot" /> {t.eyebrow}
-          </div>
           <h1>
             {t.heroA}
             <span className="opg-holo">{t.heroB}</span>
@@ -303,8 +326,16 @@ export default function OptionG() {
 .opg-navcta{border:1px solid var(--line);background:rgba(255,255,255,.04);padding:10px 20px;border-radius:100px;font-size:13px;font-weight:700;transition:.2s;}
 .opg-navcta:hover{background:var(--fg);color:#060814;}
 
-.opg-lockup{max-width:1240px;margin:0 auto;padding:26px 44px 6px;display:flex;justify-content:center;}
-.opg-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center;padding:36px 44px 80px;max-width:1240px;margin:0 auto;}
+.opg-splash{min-height:calc(100svh - 78px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;padding:20px 24px 70px;position:relative;text-align:center;}
+.opg-splash-eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);font-weight:600;}
+.opg-splash-stats{display:flex;justify-content:center;flex-wrap:wrap;gap:8px 28px;color:var(--muted);font-size:13px;}
+.opg-splash-stats b{color:var(--fg);margin-right:5px;}
+.opg-splash-cta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.opg-scrollhint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase;}
+.opg-scrollhint i{font-style:normal;font-size:18px;animation:opgBounce 1.6s infinite;}
+@keyframes opgBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+.opg-scrollhint:hover{color:var(--fg);}
+.opg-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center;padding:70px 44px 80px;max-width:1240px;margin:0 auto;}
 .opg-eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:22px;font-weight:600;}
 .opg-livedot{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 0 rgba(34,211,238,.6);animation:opgPulse 1.8s infinite;}
 @keyframes opgPulse{0%{box-shadow:0 0 0 0 rgba(34,211,238,.55)}70%{box-shadow:0 0 0 10px rgba(34,211,238,0)}100%{box-shadow:0 0 0 0 rgba(34,211,238,0)}}

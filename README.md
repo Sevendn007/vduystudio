@@ -118,3 +118,5 @@ vercel --prod # deploy production
 
 - Trang **admin** để sửa giá / upload feedback / cập nhật chính sách (đề xuất: Supabase hoặc Sanity).
 - Form liên hệ lưu lead + gửi email (Resend).
+
+## Password DB: Db: !7#R,b3T?77b@C7

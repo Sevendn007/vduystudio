@@ -4,7 +4,9 @@ import Link from "next/link";
 import { ProjectCover } from "@/components/art";
 import { BrandLogo, PlatformIcon, Platform } from "@/components/brand";
 import { PersonAvatar } from "@/components/brand";
+import { VDuyLockup } from "@/components/logo";
 import { site, siteText } from "@/lib/site";
+import { getProcess } from "@/lib/services";
 import { useLang, Lang } from "@/lib/i18n";
 
 const PLATFORMS = (lang: Lang): { slug: string; icon: Platform; name: string; desc: string }[] => [
@@ -24,6 +26,7 @@ const TX = {
     svcTag: "Hạng mục dịch vụ", svcTitle: "Chọn nền tảng bạn cần hỗ trợ", detail: "Xem chi tiết →",
     workTag: "Featured Work", workTitle: "Dự án tiêu biểu đã triển khai",
     work: [["TikTok · 18 ngày", "@brand.hub — 2.1M follow"], ["Facebook · 48 giờ", "Khôi phục Fanpage F&B"], ["Báo chí · 6 đầu báo", "PR ra mắt sản phẩm"]],
+    processTag: "Quy trình", processTitle: "4 bước minh bạch",
     capsTag: "Capabilities", capsTitle: "Vì sao chọn VDuyStudio",
     caps: [["⚡", "Nhanh chóng", "Cam kết thời gian rõ ràng theo từng gói."], ["🛡️", "Bảo hành", "Hỗ trợ xử lý nếu phát sinh sự cố."], ["📋", "Quy trình minh bạch", "Báo giá rõ, cập nhật tiến độ từng bước."], ["💬", "Hỗ trợ 24/7", "Tư vấn qua Zalo/Messenger mọi lúc."]],
     testiTag: "Feedback", testiTitle: "Khách hàng nói gì",
@@ -38,6 +41,7 @@ const TX = {
     svcTag: "Our services", svcTitle: "Pick the platform you need", detail: "View details →",
     workTag: "Featured Work", workTitle: "Representative projects delivered",
     work: [["TikTok · 18 days", "@brand.hub — 2.1M followers"], ["Facebook · 48 hours", "F&B fanpage recovered"], ["Press · 6 outlets", "Product-launch PR"]],
+    processTag: "Process", processTitle: "4 transparent steps",
     capsTag: "Capabilities", capsTitle: "Why choose VDuyStudio",
     caps: [["⚡", "Fast", "Clear timeline commitment per package."], ["🛡️", "Warranty", "We handle any post-delivery issues."], ["📋", "Transparent process", "Clear quotes, step-by-step updates."], ["💬", "24/7 support", "Advice via Zalo/Messenger anytime."]],
     testiTag: "Feedback", testiTitle: "What clients say",
@@ -67,6 +71,17 @@ export default function OptionB() {
       </nav>
 
       <section className="opb-hero">
+        <div className="opb-lockup">
+          <VDuyLockup
+            center
+            badgeSize={80}
+            wordSize={44}
+            iconSize={44}
+            taglineColor="var(--muted)"
+            barColor="var(--accent)"
+            tagline={lang === "en" ? "Verification · Account rescue · Press booking" : "Tích xanh · Cứu tài khoản · Booking báo chí"}
+          />
+        </div>
         <div className="opb-pill">{t.pill}</div>
         <h1>
           {t.h1a}
@@ -131,6 +146,20 @@ export default function OptionB() {
         </div>
       </section>
 
+      <section className="opb-section" id="opb-process">
+        <div className="opb-section-tag">{t.processTag}</div>
+        <h2>{t.processTitle}</h2>
+        <div className="opb-process">
+          {getProcess(lang).map((s, i) => (
+            <div className="opb-pstep" key={i}>
+              <span className="opb-pnum">{i + 1}</span>
+              <h4>{s.title}</h4>
+              <p>{s.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="opb-section">
         <div className="opb-section-tag">{t.capsTag}</div>
         <h2>{t.capsTitle}</h2>
@@ -186,6 +215,7 @@ export default function OptionB() {
 .opb-nav-cta{background:var(--fg);color:#fff;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;}
 
 .opb-hero{padding:90px 48px 60px;text-align:center;max-width:900px;margin:0 auto;}
+.opb-lockup{display:flex;justify-content:center;margin-bottom:36px;}
 .opb-pill{display:inline-flex;align-items:center;gap:8px;background:#eef6ff;color:var(--accent);border:1px solid #d7ebff;padding:6px 16px;border-radius:100px;font-size:13px;font-weight:600;margin-bottom:24px;}
 .opb-hero h1{font-size:clamp(34px,5.5vw,60px);font-weight:800;line-height:1.08;letter-spacing:-1.5px;margin:0 0 20px;}
 .opb-hero h1 .grad{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
@@ -216,6 +246,12 @@ export default function OptionB() {
 .opb-work-card .res{font-size:12px;color:#bcdcff;font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
 .opb-work-card h4{margin:0;font-size:17px;font-weight:700;}
 
+.opb-process{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.opb-pstep{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;}
+.opb-pnum{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;margin-bottom:14px;}
+.opb-pstep h4{font-size:15.5px;font-weight:700;margin:0 0 6px;}
+.opb-pstep p{color:var(--muted);font-size:13px;margin:0;line-height:1.55;}
+
 .opb-caps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
 .opb-cap{text-align:center;padding:26px 16px;background:#fff;border:1px solid var(--border);border-radius:14px;}
 .opb-cap .em{font-size:26px;margin-bottom:10px;}
@@ -235,7 +271,7 @@ export default function OptionB() {
 .opb-cta-final h2{font-size:clamp(28px,4vw,42px);font-weight:800;margin:0 0 16px;letter-spacing:-1px;}
 .opb-cta-final p{color:#b8bac2;margin:0 0 30px;}
 .opb-cta-final .opb-btn-primary{background:#fff;color:#000;}
-@media(max-width:860px){.opb-nav{padding:18px 20px;}.opb-menu{display:none;}.opb-hero{padding:70px 20px 40px;}.opb-section{padding:50px 20px;}.opb-bento{grid-template-columns:repeat(2,1fr);}.opb-card.wide{grid-column:span 2;}.opb-work,.opb-caps,.opb-testi{grid-template-columns:1fr 1fr;}.opb-stats{gap:28px;}.opb-cta-final{margin:0 20px 40px;padding:50px 24px;}}
+@media(max-width:860px){.opb-nav{padding:18px 20px;}.opb-menu{display:none;}.opb-hero{padding:70px 20px 40px;}.opb-section{padding:50px 20px;}.opb-bento{grid-template-columns:repeat(2,1fr);}.opb-work,.opb-caps,.opb-testi,.opb-process{grid-template-columns:1fr 1fr;}.opb-stats{gap:28px;}.opb-cta-final{margin:0 20px 40px;padding:50px 24px;}}
 @media(max-width:520px){.opb-caps,.opb-testi{grid-template-columns:1fr;}}
       `}</style>
     </div>

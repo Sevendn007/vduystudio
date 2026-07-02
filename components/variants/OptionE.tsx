@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import { HeroOrb } from "@/components/art";
 import { BrandLogo, PlatformIcon, PersonAvatar, Platform } from "@/components/brand";
+import { VDuyLockup } from "@/components/logo";
 import Tilt from "@/components/tilt";
 import { site, siteText } from "@/lib/site";
 import { useLang, Lang } from "@/lib/i18n";
@@ -111,12 +112,15 @@ export default function OptionE() {
           <HeroOrb />
         </div>
         <div className="ope-hero-text">
-          <h1>VDuyStudio</h1>
-          <p>
-            {t.heroSub1}
-            <br />
-            {t.heroSub2}
-          </p>
+          <VDuyLockup
+            center
+            badgeSize={116}
+            wordSize={70}
+            iconSize={54}
+            taglineColor="#cdd8df"
+            barColor="var(--gold)"
+            tagline={t.heroSub2}
+          />
           <a href="#ope-services" className="ope-btn">
             {t.explore} <span>→</span>
           </a>
@@ -283,9 +287,7 @@ export default function OptionE() {
 
 .ope-hero{position:relative;min-height:68vh;display:flex;align-items:center;justify-content:center;padding:40px 44px 40px;}
 .ope-hero-orb{position:absolute;top:50%;left:50%;transform:translate(-50%,-56%);z-index:0;opacity:.95;}
-.ope-hero-text{position:relative;z-index:1;text-align:center;max-width:760px;}
-.ope-hero-text h1{font-size:clamp(52px,11vw,140px);font-weight:800;letter-spacing:-4px;line-height:.9;margin:0;text-shadow:0 8px 40px rgba(0,0,0,.6);}
-.ope-hero-text p{margin:20px auto 0;color:#cdd8df;font-size:clamp(15px,2.2vw,20px);line-height:1.5;text-shadow:0 2px 12px rgba(0,0,0,.7);}
+.ope-hero-text{position:relative;z-index:1;text-align:center;max-width:760px;display:flex;flex-direction:column;align-items:center;}
 .ope-btn{display:inline-flex;align-items:center;gap:10px;margin-top:34px;border:1px solid var(--gold);color:var(--gold-l);padding:15px 30px;border-radius:100px;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;transition:.28s;background:rgba(201,162,39,.06);}
 .ope-btn:hover{background:var(--gold);color:#1a1405;box-shadow:0 10px 30px rgba(201,162,39,.35);}
 .ope-btn span{transition:.28s;}
