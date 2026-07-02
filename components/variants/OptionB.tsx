@@ -4,16 +4,51 @@ import Link from "next/link";
 import { ProjectCover } from "@/components/art";
 import { BrandLogo, PlatformIcon, Platform } from "@/components/brand";
 import { PersonAvatar } from "@/components/brand";
-import { site } from "@/lib/site";
+import { site, siteText } from "@/lib/site";
+import { useLang, Lang } from "@/lib/i18n";
 
-const PLATFORMS: { slug: string; icon: Platform; name: string; desc: string }[] = [
-  { slug: "tiktok", icon: "tiktok", name: "TikTok", desc: "Tích xanh, mở khóa tài khoản, livestream & giỏ hàng." },
-  { slug: "facebook", icon: "facebook", name: "Facebook", desc: "Tích xanh, mở khóa cá nhân & Fanpage." },
-  { slug: "instagram-threads", icon: "instagram", name: "Instagram / Threads", desc: "Tích xanh chính thống, mở khóa tài khoản." },
-  { slug: "bao-chi", icon: "press", name: "Báo chí", desc: "Booking báo chí, viết bài PR trên đầu báo lớn." },
+const PLATFORMS = (lang: Lang): { slug: string; icon: Platform; name: string; desc: string }[] => [
+  { slug: "tiktok", icon: "tiktok", name: "TikTok", desc: lang === "en" ? "Badge, account recovery, livestream & shop cart." : "Tích xanh, mở khóa tài khoản, livestream & giỏ hàng." },
+  { slug: "facebook", icon: "facebook", name: "Facebook", desc: lang === "en" ? "Badge, personal & fanpage recovery." : "Tích xanh, mở khóa cá nhân & Fanpage." },
+  { slug: "instagram-threads", icon: "instagram", name: "Instagram / Threads", desc: lang === "en" ? "Official badge, account recovery." : "Tích xanh chính thống, mở khóa tài khoản." },
+  { slug: "bao-chi", icon: "press", name: lang === "en" ? "Press & PR" : "Báo chí", desc: lang === "en" ? "Press booking, PR writing on major outlets." : "Booking báo chí, viết bài PR trên đầu báo lớn." },
 ];
 
+const TX = {
+  vi: {
+    nav: ["Dịch vụ", "Dự án", "Feedback", "Bảng giá"], navCta: "Liên hệ ngay",
+    pill: "✓ Đối tác xác minh uy tín cho 500+ khách hàng",
+    h1a: "Tích xanh chính thống.", h1b: "Uy tín thật, kết quả thật.",
+    sub: "VDuyStudio hỗ trợ tích xanh, mở khóa tài khoản & booking báo chí cho TikTok, Facebook, Instagram/Threads — minh bạch quy trình, có bảo hành.",
+    btn1: "Xem bảng giá dịch vụ", btn2: "Xem dự án đã làm",
+    svcTag: "Hạng mục dịch vụ", svcTitle: "Chọn nền tảng bạn cần hỗ trợ", detail: "Xem chi tiết →",
+    workTag: "Featured Work", workTitle: "Dự án tiêu biểu đã triển khai",
+    work: [["TikTok · 18 ngày", "@brand.hub — 2.1M follow"], ["Facebook · 48 giờ", "Khôi phục Fanpage F&B"], ["Báo chí · 6 đầu báo", "PR ra mắt sản phẩm"]],
+    capsTag: "Capabilities", capsTitle: "Vì sao chọn VDuyStudio",
+    caps: [["⚡", "Nhanh chóng", "Cam kết thời gian rõ ràng theo từng gói."], ["🛡️", "Bảo hành", "Hỗ trợ xử lý nếu phát sinh sự cố."], ["📋", "Quy trình minh bạch", "Báo giá rõ, cập nhật tiến độ từng bước."], ["💬", "Hỗ trợ 24/7", "Tư vấn qua Zalo/Messenger mọi lúc."]],
+    testiTag: "Feedback", testiTitle: "Khách hàng nói gì",
+    ctaTitle: "Sẵn sàng để được xác minh?", ctaSub: "Nhắn tin để nhận tư vấn và báo giá miễn phí ngay hôm nay.", ctaBtn: "Liên hệ tư vấn",
+  },
+  en: {
+    nav: ["Services", "Work", "Feedback", "Pricing"], navCta: "Contact now",
+    pill: "✓ Trusted verification partner for 500+ clients",
+    h1a: "Official verification badges.", h1b: "Real trust, real results.",
+    sub: "VDuyStudio provides verification badges, account recovery & press booking for TikTok, Facebook, Instagram/Threads — transparent process, warranty included.",
+    btn1: "View service pricing", btn2: "View past projects",
+    svcTag: "Our services", svcTitle: "Pick the platform you need", detail: "View details →",
+    workTag: "Featured Work", workTitle: "Representative projects delivered",
+    work: [["TikTok · 18 days", "@brand.hub — 2.1M followers"], ["Facebook · 48 hours", "F&B fanpage recovered"], ["Press · 6 outlets", "Product-launch PR"]],
+    capsTag: "Capabilities", capsTitle: "Why choose VDuyStudio",
+    caps: [["⚡", "Fast", "Clear timeline commitment per package."], ["🛡️", "Warranty", "We handle any post-delivery issues."], ["📋", "Transparent process", "Clear quotes, step-by-step updates."], ["💬", "24/7 support", "Advice via Zalo/Messenger anytime."]],
+    testiTag: "Feedback", testiTitle: "What clients say",
+    ctaTitle: "Ready to get verified?", ctaSub: "Message us today for free consultation and a quote.", ctaBtn: "Get in touch",
+  },
+};
+
 export default function OptionB() {
+  const { lang } = useLang();
+  const t = TX[lang];
+  const st = siteText(lang);
   return (
     <div className="opb-root">
       <nav className="opb-nav">
@@ -21,135 +56,108 @@ export default function OptionB() {
           <BrandLogo size={30} showText textColor="#0f1115" />
         </div>
         <div className="opb-menu">
-          <a href="#opb-services">Dịch vụ</a>
-          <a href="#opb-work">Dự án</a>
-          <a href="#opb-testi">Feedback</a>
-          <a href="#opb-services">Bảng giá</a>
+          <a href="#opb-services">{t.nav[0]}</a>
+          <a href="#opb-work">{t.nav[1]}</a>
+          <a href="#opb-testi">{t.nav[2]}</a>
+          <a href="#opb-services">{t.nav[3]}</a>
         </div>
         <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opb-nav-cta">
-          Liên hệ ngay
+          {t.navCta}
         </a>
       </nav>
 
       <section className="opb-hero">
-        <div className="opb-pill">✓ Đối tác xác minh uy tín cho 500+ khách hàng</div>
+        <div className="opb-pill">{t.pill}</div>
         <h1>
-          Tích xanh chính thống.
+          {t.h1a}
           <br />
-          <span className="grad">Uy tín thật, kết quả thật.</span>
+          <span className="grad">{t.h1b}</span>
         </h1>
-        <p>
-          VDuyStudio hỗ trợ tích xanh, mở khóa tài khoản &amp; booking báo chí
-          cho TikTok, Facebook, Instagram/Threads — minh bạch quy trình, có bảo
-          hành.
-        </p>
+        <p>{t.sub}</p>
         <div className="opb-hero-ctas">
-          <a href="#opb-services" className="opb-btn-primary">Xem bảng giá dịch vụ</a>
-          <a href="#opb-work" className="opb-btn-secondary">Xem dự án đã làm</a>
+          <a href="#opb-services" className="opb-btn-primary">{t.btn1}</a>
+          <a href="#opb-work" className="opb-btn-secondary">{t.btn2}</a>
         </div>
         <div className="opb-stats">
-          <div className="opb-stat">
-            <b>1.200+</b>
-            <span>Tài khoản đã lên tích</span>
-          </div>
-          <div className="opb-stat">
-            <b>98%</b>
-            <span>Tỉ lệ thành công</span>
-          </div>
-          <div className="opb-stat">
-            <b>4.9/5</b>
-            <span>Đánh giá khách hàng</span>
-          </div>
-          <div className="opb-stat">
-            <b>3+ năm</b>
-            <span>Kinh nghiệm</span>
-          </div>
+          {st.stats.map((s, i) => (
+            <div className="opb-stat" key={i}>
+              <b>{s.value}</b>
+              <span>{s.label}</span>
+            </div>
+          ))}
         </div>
       </section>
 
       <section className="opb-section" id="opb-services">
-        <div className="opb-section-tag">Hạng mục dịch vụ</div>
-        <h2>Chọn nền tảng bạn cần hỗ trợ</h2>
+        <div className="opb-section-tag">{t.svcTag}</div>
+        <h2>{t.svcTitle}</h2>
         <div className="opb-bento">
-          {PLATFORMS.map((p) => (
+          {PLATFORMS(lang).map((p) => (
             <Link href={`/dich-vu/${p.slug}`} className="opb-card" key={p.slug}>
               <PlatformIcon kind={p.icon} size={48} />
               <h3>{p.name}</h3>
               <p>{p.desc}</p>
-              <div className="cta">Xem chi tiết →</div>
+              <div className="cta">{t.detail}</div>
             </Link>
           ))}
         </div>
       </section>
 
       <section className="opb-section" id="opb-work">
-        <div className="opb-section-tag">Featured Work</div>
-        <h2>Dự án tiêu biểu đã triển khai</h2>
+        <div className="opb-section-tag">{t.workTag}</div>
+        <h2>{t.workTitle}</h2>
         <div className="opb-work">
           <div className="opb-work-card">
             <div className="opb-cover">
               <ProjectCover platform="tiktok" handle="brandhub2" tag="TikTok" />
             </div>
-            <div className="res">TikTok · 18 ngày</div>
-            <h4>@brand.hub — 2.1M follow</h4>
+            <div className="res">{t.work[0][0]}</div>
+            <h4>{t.work[0][1]}</h4>
           </div>
           <div className="opb-work-card">
             <div className="opb-cover">
               <ProjectCover platform="facebook" handle="fnbpage2" tag="Facebook" />
             </div>
-            <div className="res">Facebook · 48 giờ</div>
-            <h4>Khôi phục Fanpage F&amp;B</h4>
+            <div className="res">{t.work[1][0]}</div>
+            <h4>{t.work[1][1]}</h4>
           </div>
           <div className="opb-work-card">
             <div className="opb-cover">
-              <ProjectCover platform="bao-chi" handle="prlaunch" tag="Báo chí" />
+              <ProjectCover platform="bao-chi" handle="prlaunch" tag="PR" />
             </div>
-            <div className="res">Báo chí · 6 đầu báo</div>
-            <h4>PR ra mắt sản phẩm</h4>
+            <div className="res">{t.work[2][0]}</div>
+            <h4>{t.work[2][1]}</h4>
           </div>
         </div>
       </section>
 
       <section className="opb-section">
-        <div className="opb-section-tag">Capabilities</div>
-        <h2>Vì sao chọn VDuyStudio</h2>
+        <div className="opb-section-tag">{t.capsTag}</div>
+        <h2>{t.capsTitle}</h2>
         <div className="opb-caps">
-          <div className="opb-cap">
-            <div className="em">⚡</div>
-            <h4>Nhanh chóng</h4>
-            <p>Cam kết thời gian rõ ràng theo từng gói.</p>
-          </div>
-          <div className="opb-cap">
-            <div className="em">🛡️</div>
-            <h4>Bảo hành</h4>
-            <p>Hỗ trợ xử lý nếu phát sinh sự cố.</p>
-          </div>
-          <div className="opb-cap">
-            <div className="em">📋</div>
-            <h4>Quy trình minh bạch</h4>
-            <p>Báo giá rõ, cập nhật tiến độ từng bước.</p>
-          </div>
-          <div className="opb-cap">
-            <div className="em">💬</div>
-            <h4>Hỗ trợ 24/7</h4>
-            <p>Tư vấn qua Zalo/Messenger mọi lúc.</p>
-          </div>
+          {t.caps.map((c, i) => (
+            <div className="opb-cap" key={i}>
+              <div className="em">{c[0]}</div>
+              <h4>{c[1]}</h4>
+              <p>{c[2]}</p>
+            </div>
+          ))}
         </div>
       </section>
 
       <section className="opb-section" id="opb-testi">
-        <div className="opb-section-tag">Feedback</div>
-        <h2>Khách hàng nói gì</h2>
+        <div className="opb-section-tag">{t.testiTag}</div>
+        <h2>{t.testiTitle}</h2>
         <div className="opb-testi">
-          {site.testimonials.map((t) => (
-            <div className="opb-tcard" key={t.name}>
+          {st.testimonials.map((c) => (
+            <div className="opb-tcard" key={c.name}>
               <div className="stars">★★★★★</div>
-              <p>&quot;{t.quote}&quot;</p>
+              <p>&quot;{c.quote}&quot;</p>
               <div className="opb-tperson">
-                <PersonAvatar name={t.name} hue={t.hue} size={44} />
+                <PersonAvatar name={c.name} hue={c.hue} size={44} />
                 <div>
-                  <b>{t.name}</b>
-                  <span>{t.company}</span>
+                  <b>{c.name}</b>
+                  <span>{c.company}</span>
                 </div>
               </div>
             </div>
@@ -158,10 +166,10 @@ export default function OptionB() {
       </section>
 
       <div className="opb-cta-final">
-        <h2>Sẵn sàng để được xác minh?</h2>
-        <p>Nhắn tin để nhận tư vấn và báo giá miễn phí ngay hôm nay.</p>
+        <h2>{t.ctaTitle}</h2>
+        <p>{t.ctaSub}</p>
         <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opb-btn-primary">
-          Liên hệ tư vấn
+          {t.ctaBtn}
         </a>
       </div>
 

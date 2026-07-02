@@ -4,21 +4,53 @@ import Link from "next/link";
 import { VerifiedBadge } from "@/components/art";
 import { BrandLogo, PlatformIcon, Platform } from "@/components/brand";
 import { site } from "@/lib/site";
+import { useLang, Lang } from "@/lib/i18n";
 
-const SERVICES = [
-  { slug: "tiktok", n: "01", name: "TikTok", tags: "Tích xanh · Mở khóa · Livestream" },
-  { slug: "facebook", n: "02", name: "Facebook", tags: "Tích xanh · Cá nhân · Fanpage" },
-  { slug: "instagram-threads", n: "03", name: "Instagram / Threads", tags: "Tích xanh · Mở khóa tài khoản" },
-  { slug: "bao-chi", n: "04", name: "Báo chí", tags: "Booking · Viết bài PR" },
+const SERVICES = (lang: Lang) => [
+  { slug: "tiktok", n: "01", name: "TikTok", tags: lang === "en" ? "Badge · Recovery · Livestream" : "Tích xanh · Mở khóa · Livestream" },
+  { slug: "facebook", n: "02", name: "Facebook", tags: lang === "en" ? "Badge · Personal · Fanpage" : "Tích xanh · Cá nhân · Fanpage" },
+  { slug: "instagram-threads", n: "03", name: "Instagram / Threads", tags: lang === "en" ? "Badge · Account recovery" : "Tích xanh · Mở khóa tài khoản" },
+  { slug: "bao-chi", n: "04", name: lang === "en" ? "Press & PR" : "Báo chí", tags: lang === "en" ? "Booking · PR writing" : "Booking · Viết bài PR" },
 ];
 
-const WORK: { slug: string; icon: Platform; tag: string; title: string; desc: string; bg: string }[] = [
-  { slug: "tiktok", icon: "tiktok", tag: "TikTok · Tích xanh", title: "@brand.hub — 2.1M follow", desc: "Đạt tích xanh sau 18 ngày, mở khóa giỏ hàng TikTok Shop.", bg: "linear-gradient(150deg,#111,#25333a)" },
-  { slug: "facebook", icon: "facebook", tag: "Facebook · Fanpage", title: "Fanpage F&B miền Bắc", desc: "Khôi phục fanpage bị khóa trong 48 giờ.", bg: "linear-gradient(150deg,#0e1b33,#1877f2)" },
-  { slug: "bao-chi", icon: "press", tag: "Báo chí · PR", title: "Booking 6 đầu báo lớn", desc: "Chiến dịch PR ra mắt sản phẩm mới.", bg: "linear-gradient(150deg,#1a1206,#7a5a1e)" },
+const WORK = (lang: Lang): { slug: string; icon: Platform; tag: string; title: string; desc: string; bg: string }[] => [
+  { slug: "tiktok", icon: "tiktok", tag: lang === "en" ? "TikTok · Verified" : "TikTok · Tích xanh", title: lang === "en" ? "@brand.hub — 2.1M followers" : "@brand.hub — 2.1M follow", desc: lang === "en" ? "Verified in 18 days, TikTok Shop cart unlocked." : "Đạt tích xanh sau 18 ngày, mở khóa giỏ hàng TikTok Shop.", bg: "linear-gradient(150deg,#111,#25333a)" },
+  { slug: "facebook", icon: "facebook", tag: "Facebook · Fanpage", title: lang === "en" ? "Northern F&B fanpage" : "Fanpage F&B miền Bắc", desc: lang === "en" ? "Locked fanpage recovered within 48 hours." : "Khôi phục fanpage bị khóa trong 48 giờ.", bg: "linear-gradient(150deg,#0e1b33,#1877f2)" },
+  { slug: "bao-chi", icon: "press", tag: lang === "en" ? "Press · PR" : "Báo chí · PR", title: lang === "en" ? "6 major outlets booked" : "Booking 6 đầu báo lớn", desc: lang === "en" ? "PR campaign for a new product launch." : "Chiến dịch PR ra mắt sản phẩm mới.", bg: "linear-gradient(150deg,#1a1206,#7a5a1e)" },
 ];
+
+const TX = {
+  vi: {
+    nav: ["Dịch vụ", "Dự án", "Feedback", "Liên hệ"],
+    heroA: "Xây dựng ", heroAccent: "uy tín số", heroB: " cho thương hiệu của bạn.",
+    heroSub: "VDuyStudio giúp cá nhân & thương hiệu đạt tích xanh chính thống, mở khóa tài khoản và chinh phục báo chí — bằng quy trình minh bạch, kết quả thật.",
+    heroBtn1: "Xem dịch vụ", heroBtn2: "Xem case study →",
+    svcTitle: "Hạng mục dịch vụ",
+    svcSub: "Bốn nền tảng chủ lực — mỗi nền tảng một quy trình riêng, minh bạch từ A-Z.",
+    workTitle: "Featured Work",
+    workSub: "Một vài dự án tiêu biểu đã triển khai gần đây.",
+    workLink: "Xem chi tiết →",
+    quotes: ["Nhanh, minh bạch, đúng cam kết", "Tích xanh thật, không rủi ro", "Đội ngũ chuyên nghiệp"],
+    ctaBtn: "Liên hệ tư vấn",
+  },
+  en: {
+    nav: ["Services", "Work", "Feedback", "Contact"],
+    heroA: "Building ", heroAccent: "digital trust", heroB: " for your brand.",
+    heroSub: "VDuyStudio helps individuals & brands earn official verification badges, recover accounts and win press coverage — with a transparent process and real results.",
+    heroBtn1: "View services", heroBtn2: "View case studies →",
+    svcTitle: "Our services",
+    svcSub: "Four core platforms — each with its own transparent A-to-Z process.",
+    workTitle: "Featured Work",
+    workSub: "A few recent, representative projects.",
+    workLink: "View details →",
+    quotes: ["Fast, transparent, as promised", "Real badges, zero risk", "A truly professional team"],
+    ctaBtn: "Get in touch",
+  },
+};
 
 export default function OptionA() {
+  const { lang } = useLang();
+  const t = TX[lang];
   return (
     <div className="opa-root">
       <div className="opa-grain" />
@@ -27,46 +59,39 @@ export default function OptionA() {
           <BrandLogo size={30} showText textColor="#f5f4f0" />
         </a>
         <div className="opa-menu">
-          <a href="#opa-services">Dịch vụ</a>
-          <a href="#opa-work">Dự án</a>
-          <a href="#opa-feedback">Feedback</a>
-          <a href="#opa-contact">Liên hệ</a>
+          <a href="#opa-services">{t.nav[0]}</a>
+          <a href="#opa-work">{t.nav[1]}</a>
+          <a href="#opa-feedback">{t.nav[2]}</a>
+          <a href="#opa-contact">{t.nav[3]}</a>
         </div>
         <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opa-nav-cta">
-          Liên hệ
+          {t.nav[3]}
         </a>
       </nav>
 
       <section className="opa-hero" id="opa-top">
         <div className="opa-eyebrow">Verified Identity Studio — Est. 2021</div>
         <h1>
-          Xây dựng <span className="accent">uy tín số</span> cho thương hiệu của bạn.
+          {t.heroA}<span className="accent">{t.heroAccent}</span>{t.heroB}
         </h1>
-        <p className="opa-hero-sub">
-          VDuyStudio giúp cá nhân &amp; thương hiệu đạt tích xanh chính thống, mở
-          khóa tài khoản và chinh phục báo chí — bằng quy trình minh bạch, kết
-          quả thật.
-        </p>
+        <p className="opa-hero-sub">{t.heroSub}</p>
         <div className="opa-hero-cta">
           <a href="#opa-services" className="opa-btn">
-            Xem dịch vụ
+            {t.heroBtn1}
           </a>
           <a href="#opa-work" className="opa-btn-ghost">
-            Xem case study →
+            {t.heroBtn2}
           </a>
         </div>
       </section>
 
       <section className="opa-section" id="opa-services">
         <div className="opa-section-head">
-          <h2>Hạng mục dịch vụ</h2>
-          <p>
-            Bốn nền tảng chủ lực — mỗi nền tảng một quy trình riêng, minh bạch từ
-            A-Z.
-          </p>
+          <h2>{t.svcTitle}</h2>
+          <p>{t.svcSub}</p>
         </div>
         <div className="opa-services">
-          {SERVICES.map((s) => (
+          {SERVICES(lang).map((s) => (
             <Link href={`/dich-vu/${s.slug}`} className="opa-service-row" key={s.slug}>
               <div className="opa-service-left">
                 <span className="opa-service-idx">{s.n}</span>
@@ -81,11 +106,11 @@ export default function OptionA() {
 
       <section className="opa-section" id="opa-work">
         <div className="opa-section-head">
-          <h2>Featured Work</h2>
-          <p>Một vài dự án tiêu biểu đã triển khai gần đây.</p>
+          <h2>{t.workTitle}</h2>
+          <p>{t.workSub}</p>
         </div>
         <div className="opa-work-grid">
-          {WORK.map((w) => (
+          {WORK(lang).map((w) => (
             <Link href={`/dich-vu/${w.slug}`} className="opa-wcard" key={w.title}>
               <div className="opa-wimg" style={{ background: w.bg }}>
                 <PlatformIcon kind={w.icon} size={62} />
@@ -97,7 +122,7 @@ export default function OptionA() {
               <div className="opa-wbody">
                 <h4>{w.title}</h4>
                 <p>{w.desc}</p>
-                <span className="opa-wlink">Xem chi tiết →</span>
+                <span className="opa-wlink">{t.workLink}</span>
               </div>
             </Link>
           ))}
@@ -106,25 +131,19 @@ export default function OptionA() {
 
       <div className="opa-marquee" id="opa-feedback">
         <div className="opa-marquee-track">
-          <span className="hl">&quot;Nhanh, minh bạch, đúng cam kết&quot;</span>
-          <span>★★★★★</span>
-          <span className="hl">&quot;Tích xanh thật, không rủi ro&quot;</span>
-          <span>★★★★★</span>
-          <span className="hl">&quot;Đội ngũ chuyên nghiệp&quot;</span>
-          <span>★★★★★</span>
-          <span className="hl">&quot;Nhanh, minh bạch, đúng cam kết&quot;</span>
-          <span>★★★★★</span>
-          <span className="hl">&quot;Tích xanh thật, không rủi ro&quot;</span>
-          <span>★★★★★</span>
-          <span className="hl">&quot;Đội ngũ chuyên nghiệp&quot;</span>
-          <span>★★★★★</span>
+          {[...t.quotes, ...t.quotes].map((q, i) => (
+            <span key={i}>
+              <span className="hl">&quot;{q}&quot;</span>
+              <span> ★★★★★ </span>
+            </span>
+          ))}
         </div>
       </div>
 
       <section className="opa-cta" id="opa-contact">
         <h2>Let&apos;s talk.</h2>
         <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opa-btn">
-          Liên hệ tư vấn
+          {t.ctaBtn}
         </a>
       </section>
       <div className="opa-footer">

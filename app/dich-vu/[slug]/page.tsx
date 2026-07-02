@@ -31,5 +31,5 @@ export default function ServicePage({
 }) {
   const platform = getPlatform(params.slug);
   if (!platform) notFound();
-  return <ServiceDetail platform={platform} />;
+  return <ServiceDetail slug={params.slug} />;
 }

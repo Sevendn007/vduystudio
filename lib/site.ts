@@ -1,12 +1,12 @@
-// Thông tin liên hệ & thương hiệu dùng chung toàn site.
+// Thông tin liên hệ & thương hiệu dùng chung toàn site (song ngữ VI/EN).
 // Thay các giá trị placeholder bên dưới bằng thông tin thật của bạn.
+
+import type { Lang } from "@/lib/i18n";
 
 export const site = {
   name: "VDuyStudio",
   domain: "vduystudio.com",
   tagline: "Verified Identity Studio",
-  description:
-    "Tích xanh chính thống, mở khóa tài khoản & booking báo chí cho TikTok, Facebook, Instagram/Threads. Minh bạch quy trình, kết quả thật.",
   contact: {
     zalo: "https://zalo.me/0000000000",
     telegram: "https://t.me/vduystudio",
@@ -14,6 +14,24 @@ export const site = {
     phone: "0000 000 000",
     email: "hello@vduystudio.com",
   },
+} as const;
+
+export type Testimonial = {
+  name: string;
+  company: string;
+  quote: string;
+  hue: number;
+};
+
+type SiteText = {
+  description: string;
+  stats: { value: string; label: string }[];
+  testimonials: Testimonial[];
+};
+
+const vi: SiteText = {
+  description:
+    "Tích xanh chính thống, mở khóa tài khoản & booking báo chí cho TikTok, Facebook, Instagram/Threads. Minh bạch quy trình, kết quả thật.",
   stats: [
     { value: "1.200+", label: "Tài khoản đã lên tích" },
     { value: "98%", label: "Tỉ lệ thành công" },
@@ -43,4 +61,42 @@ export const site = {
       hue: 160,
     },
   ],
-} as const;
+};
+
+const en: SiteText = {
+  description:
+    "Official verification badges, account recovery & press booking for TikTok, Facebook, Instagram/Threads. Transparent process, real results.",
+  stats: [
+    { value: "1,200+", label: "Accounts verified" },
+    { value: "98%", label: "Success rate" },
+    { value: "4.9/5", label: "Client rating" },
+    { value: "3+ yrs", label: "Experience" },
+  ],
+  testimonials: [
+    {
+      name: "Minh Anh",
+      company: "CEO — LuxHouse Cosmetics",
+      quote:
+        "Got the TikTok blue badge exactly as promised, with dedicated support. Livestream revenue clearly grew after verification.",
+      hue: 330,
+    },
+    {
+      name: "Quốc Huy",
+      company: "Founder — Huy's Kitchen (F&B)",
+      quote:
+        "Our locked fanpage was recovered within 48 hours, with transparent pricing. Extremely professional.",
+      hue: 210,
+    },
+    {
+      name: "Thu Trang",
+      company: "Marketing Director — Bloom Beauty",
+      quote:
+        "The press booking team is very professional — quality articles that match our brand message.",
+      hue: 160,
+    },
+  ],
+};
+
+export function siteText(lang: Lang): SiteText {
+  return lang === "en" ? en : vi;
+}

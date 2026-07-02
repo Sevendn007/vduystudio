@@ -1,21 +1,29 @@
-# vduystudio — Landing Page
+# VDuyStudio — Landing Page
 
-Landing page portfolio cho dịch vụ **vduystudio** (tích xanh chính thống, mở khóa tài khoản, booking báo chí cho TikTok / Facebook / Instagram-Threads).
+Landing page portfolio cho dịch vụ **VDuyStudio** (tích xanh chính thống, mở khóa tài khoản, booking báo chí cho TikTok / Facebook / Instagram-Threads).
 
-Bản này gồm **3 phong cách giao diện** dựng sẵn, chuyển đổi trực tiếp trên UI bằng thanh switcher ở giữa-dưới màn hình. Lựa chọn được lưu vào `localStorage` nên giữ nguyên khi tải lại trang.
+Bản này gồm **7 phong cách giao diện** dựng sẵn, chuyển đổi trực tiếp trên UI bằng thanh switcher ở giữa-dưới màn hình. Lựa chọn được lưu vào `localStorage` nên giữ nguyên khi tải lại trang.
 
 | Option | Phong cách | Ghi chú |
 |--------|-----------|---------|
 | **A — Editorial** | Dark cinematic, grain, grotesk khổ lớn, accent xanh | Editorial tối |
 | **B — Bento SaaS** | Sạch, chuyên nghiệp, trust-first, light theme | Dễ maintain, an toàn để launch |
-| **C — Gradient** | Trẻ trung, gradient, glassmorphism, mobile-first | Sticky CTA Chat Zalo |
-| **D — ID Passport** | **Độc đáo:** thẻ định danh hologram 3D + live verification feed + trust gauge | Biến "được xác minh" thành tấm thẻ |
-| **E — Cinematic** | Nền navy 3D, accent vàng gold, hero orb shield-lock phát sáng, carousel case study | Hiệu ứng 3D tilt theo chuột |
-| **F — Glass** | Glassmorphism bento, ring tiến trình, có **toggle sáng/tối** | Hiệu ứng 3D tilt + kính mờ |
+| **C — Gradient** | Trẻ trung, gradient, glassmorphism, mobile-first | Phone mockup, chat bubble |
+| **D — Verified Hub** | Trung tâm xác minh đa nền tảng: thẻ trạng thái 3D + live feed + trust gauge | Logo lockup nguyên bản ở đầu trang |
+| **E — Cinematic** | Nền navy 3D, accent vàng gold, hero orb shield-lock, đầy đủ dịch vụ/quy trình/feedback | Hiệu ứng 3D tilt theo chuột |
+| **F — Glass** | Glassmorphism bento, ring tiến trình, quy trình 4 bước, **toggle sáng/tối** | Hiệu ứng 3D tilt + kính mờ |
+| **G — 2079** | **VDuyOS**: hệ điều hành uy tín số từ tương lai — boot sequence, radar quét định danh tương tác, chẩn đoán lỗi → dịch vụ, live ticker, terminal liên hệ | Điên rồ nhưng mỗi bước là một bước phễu bán hàng |
 
 Toàn bộ nút bấm (nav, CTA, service card, tab) đều hoạt động: điều hướng sang trang
 chi tiết, cuộn mượt tới section, hoặc mở Zalo/Messenger. Card ở D/E/F có hiệu ứng
 nghiêng 3D theo con trỏ ([components/tilt.tsx](components/tilt.tsx)).
+
+## Song ngữ VI/EN
+
+Toàn site có 2 ngôn ngữ, **mặc định tiếng Việt** — chuyển bằng nút VI/EN trên thanh
+switcher (trang chủ) hoặc trên nav trang chi tiết. Lựa chọn lưu vào `localStorage`.
+Hạ tầng: [lib/i18n.tsx](lib/i18n.tsx) (`LangProvider`, `useLang`, `LangToggle`);
+dữ liệu dịch vụ/feedback song ngữ trong [lib/services.ts](lib/services.ts) và [lib/site.ts](lib/site.ts).
 
 ## Thương hiệu & icon
 

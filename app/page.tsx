@@ -7,7 +7,8 @@ import OptionC from "@/components/variants/OptionC";
 import OptionG from "@/components/variants/OptionG";
 import OptionE from "@/components/variants/OptionE";
 import OptionF from "@/components/variants/OptionF";
-import VariantSwitcher, { Variant } from "@/components/VariantSwitcher";
+import Option2079 from "@/components/variants/Option2079";
+import VariantSwitcher, { Variant, VARIANT_KEYS } from "@/components/VariantSwitcher";
 
 const STORAGE_KEY = "vduy-variant";
 
@@ -17,7 +18,7 @@ export default function Home() {
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY) as Variant | null;
-    if (saved && ["A", "B", "C", "D", "E", "F"].includes(saved)) {
+    if (saved && VARIANT_KEYS.includes(saved)) {
       setVariant(saved);
     }
     setMounted(true);
@@ -43,6 +44,7 @@ export default function Home() {
       {variant === "D" && <OptionG />}
       {variant === "E" && <OptionE />}
       {variant === "F" && <OptionF />}
+      {variant === "G" && <Option2079 />}
     </>
   );
 }

@@ -4,25 +4,82 @@ import Link from "next/link";
 import Tilt from "@/components/tilt";
 import { BrandLogo, PlatformIcon, PersonAvatar, Platform } from "@/components/brand";
 import { VDuyLockup } from "@/components/logo";
-import { site } from "@/lib/site";
+import { site, siteText } from "@/lib/site";
+import { useLang, Lang } from "@/lib/i18n";
 
-const STAMPS: { slug: string; icon: Platform; name: string; sub: string }[] = [
-  { slug: "tiktok", icon: "tiktok", name: "TikTok", sub: "Tích xanh · Livestream · Giỏ hàng" },
-  { slug: "facebook", icon: "facebook", name: "Facebook", sub: "Tích xanh · Cá nhân · Fanpage" },
-  { slug: "instagram-threads", icon: "instagram", name: "Instagram / Threads", sub: "Tích xanh · Mở khóa" },
-  { slug: "bao-chi", icon: "press", name: "Báo chí", sub: "Booking · Viết bài PR" },
+const STAMPS = (lang: Lang): { slug: string; icon: Platform; name: string; sub: string }[] => [
+  { slug: "tiktok", icon: "tiktok", name: "TikTok", sub: lang === "en" ? "Badge · Livestream · Shop cart" : "Tích xanh · Livestream · Giỏ hàng" },
+  { slug: "facebook", icon: "facebook", name: "Facebook", sub: lang === "en" ? "Badge · Personal · Fanpage" : "Tích xanh · Cá nhân · Fanpage" },
+  { slug: "instagram-threads", icon: "instagram", name: "Instagram / Threads", sub: lang === "en" ? "Badge · Recovery" : "Tích xanh · Mở khóa" },
+  { slug: "bao-chi", icon: "press", name: lang === "en" ? "Press & PR" : "Báo chí", sub: lang === "en" ? "Booking · PR writing" : "Booking · Viết bài PR" },
 ];
 
-const FEED: { handle: string; icon: Platform; label: string; time: string }[] = [
-  { handle: "@brand.hub", icon: "tiktok", label: "Tích xanh", time: "2 phút trước" },
-  { handle: "@luxhouse.vn", icon: "instagram", label: "Verified", time: "8 phút trước" },
-  { handle: "Huy's Kitchen", icon: "facebook", label: "Khôi phục", time: "21 phút trước" },
-  { handle: "@bloom.beauty", icon: "instagram", label: "Verified", time: "35 phút trước" },
-  { handle: "Fanpage F&B", icon: "facebook", label: "Mở khóa", time: "52 phút trước" },
-  { handle: "@creator.minh", icon: "tiktok", label: "Livestream", time: "1 giờ trước" },
-];
+const FEED = (lang: Lang): { handle: string; icon: Platform; label: string; time: string }[] => {
+  const m = (n: number) => (lang === "en" ? `${n} min ago` : `${n} phút trước`);
+  return [
+    { handle: "@brand.hub", icon: "tiktok", label: lang === "en" ? "Verified" : "Tích xanh", time: m(2) },
+    { handle: "@luxhouse.vn", icon: "instagram", label: "Verified", time: m(8) },
+    { handle: "Huy's Kitchen", icon: "facebook", label: lang === "en" ? "Recovered" : "Khôi phục", time: m(21) },
+    { handle: "@bloom.beauty", icon: "instagram", label: "Verified", time: m(35) },
+    { handle: "Fanpage F&B", icon: "facebook", label: lang === "en" ? "Unlocked" : "Mở khóa", time: m(52) },
+    { handle: "@creator.minh", icon: "tiktok", label: "Livestream", time: lang === "en" ? "1 hr ago" : "1 giờ trước" },
+  ];
+};
+
+const TX = {
+  vi: {
+    navFeed: "Live Feed", navServices: "Dịch vụ", navFeedback: "Feedback", navCta: "Get Verified",
+    eyebrow: "Trung tâm xác minh đa nền tảng · từ 2021",
+    heroA: "Xác minh mọi nền tảng của bạn — ",
+    heroB: "tích xanh, mở khóa & báo chí.",
+    heroSub: "VDuyStudio giúp thương hiệu của bạn được xác minh chính thống và gỡ mọi rào cản tài khoản trên TikTok, Facebook, Instagram/Threads — minh bạch quy trình, có bảo hành.",
+    heroBtn: "Bắt đầu xác minh", heroBtn2: "Xem dịch vụ",
+    trustline: <><b>1.200+</b> tài khoản đã được xác minh · 98% thành công</>,
+    cardIssuer: "VERIFIED STATUS · VDuyStudio",
+    cardBrand: "Thương hiệu", cardBrandV: "Thương hiệu của bạn",
+    cardSvc: "Dịch vụ", cardSvcV: "Tích xanh · Mở khóa · Báo chí",
+    cardStatus: "Trạng thái", cardStatusV: "✓ ĐÃ XÁC MINH",
+    cardId: "HỒ SƠ · VDUY-2026", cardValid: "BẢO HÀNH ∞",
+    feedHead: "LIVE VERIFICATION FEED",
+    gaugeHead: "TRUST SCORE", gaugeWord: "THÀNH CÔNG",
+    gaugeNote: "Tỉ lệ hồ sơ được xác minh thành công qua 1.200+ dự án.",
+    stampsTitle: "Đóng dấu xác minh cho nền tảng của bạn",
+    stampsSub: "Mỗi nền tảng là một con dấu — chạm để xem quy trình, bảng giá & FAQ.",
+    stampGo: "Xem chi tiết →",
+    voicesTitle: "Khách hàng đã được xác minh",
+    voicesSub: "Feedback thật từ khách hàng đã được xác minh thành công.",
+    ctaA: "Hồ sơ xác minh của bạn ", ctaB: "đang chờ hoàn tất.",
+    ctaBtn: "Bắt đầu xác minh",
+  },
+  en: {
+    navFeed: "Live Feed", navServices: "Services", navFeedback: "Feedback", navCta: "Get Verified",
+    eyebrow: "Multi-platform verification hub · since 2021",
+    heroA: "Verify every platform you own — ",
+    heroB: "badges, recovery & press.",
+    heroSub: "VDuyStudio gets your brand officially verified and removes every account barrier across TikTok, Facebook, Instagram/Threads — transparent process, warranty included.",
+    heroBtn: "Start verification", heroBtn2: "View services",
+    trustline: <><b>1,200+</b> accounts verified · 98% success</>,
+    cardIssuer: "VERIFIED STATUS · VDuyStudio",
+    cardBrand: "Brand", cardBrandV: "Your brand",
+    cardSvc: "Services", cardSvcV: "Badge · Recovery · Press",
+    cardStatus: "Status", cardStatusV: "✓ VERIFIED",
+    cardId: "PROFILE · VDUY-2026", cardValid: "WARRANTY ∞",
+    feedHead: "LIVE VERIFICATION FEED",
+    gaugeHead: "TRUST SCORE", gaugeWord: "SUCCESS",
+    gaugeNote: "Verification success rate across 1,200+ projects.",
+    stampsTitle: "Stamp verification on your platforms",
+    stampsSub: "Each platform is a stamp — tap to see process, pricing & FAQ.",
+    stampGo: "View details →",
+    voicesTitle: "Verified clients",
+    voicesSub: "Real feedback from successfully verified clients.",
+    ctaA: "Your verification profile is ", ctaB: "waiting to be completed.",
+    ctaBtn: "Start verification",
+  },
+};
 
 export default function OptionG() {
+  const { lang } = useLang();
+  const t = TX[lang];
   return (
     <div className="opg-root" id="opg-top">
       <div className="opg-bg" />
@@ -31,12 +88,12 @@ export default function OptionG() {
           <BrandLogo size={30} showText textColor="#eaf0ff" />
         </a>
         <div className="opg-menu">
-          <a href="#opg-feed">Live Feed</a>
-          <a href="#opg-stamps">Dịch vụ</a>
-          <a href="#opg-voices">Feedback</a>
+          <a href="#opg-feed">{t.navFeed}</a>
+          <a href="#opg-stamps">{t.navServices}</a>
+          <a href="#opg-voices">{t.navFeedback}</a>
         </div>
         <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opg-navcta">
-          Get Verified
+          {t.navCta}
         </a>
       </nav>
 
@@ -49,32 +106,26 @@ export default function OptionG() {
       <header className="opg-hero">
         <div className="opg-hero-left">
           <div className="opg-eyebrow">
-            <span className="opg-livedot" /> Trung tâm xác minh đa nền tảng · từ 2021
+            <span className="opg-livedot" /> {t.eyebrow}
           </div>
           <h1>
-            Xác minh mọi nền tảng của bạn —{" "}
-            <span className="opg-holo">tích xanh, mở khóa &amp; báo chí.</span>
+            {t.heroA}
+            <span className="opg-holo">{t.heroB}</span>
           </h1>
-          <p>
-            VDuyStudio giúp thương hiệu của bạn được xác minh chính thống và gỡ
-            mọi rào cản tài khoản trên TikTok, Facebook, Instagram/Threads —
-            minh bạch quy trình, có bảo hành.
-          </p>
+          <p>{t.heroSub}</p>
           <div className="opg-hero-cta">
             <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opg-btn">
-              Bắt đầu xác minh
+              {t.heroBtn}
             </a>
             <a href="#opg-stamps" className="opg-btn ghost">
-              Xem dịch vụ
+              {t.heroBtn2}
             </a>
           </div>
           <div className="opg-trustline">
             <PersonAvatar name="A" hue={200} size={30} verified={false} />
             <PersonAvatar name="B" hue={320} size={30} verified={false} />
             <PersonAvatar name="C" hue={150} size={30} verified={false} />
-            <span>
-              <b>1.200+</b> tài khoản đã được xác minh · 98% thành công
-            </span>
+            <span>{t.trustline}</span>
           </div>
         </div>
 
@@ -82,7 +133,7 @@ export default function OptionG() {
           <div className="opg-card-sheen" />
           <div className="opg-card-top">
             <span className="opg-card-issuer">
-              VERIFIED STATUS · VDuyStudio<sup>®</sup>
+              {t.cardIssuer}<sup>®</sup>
             </span>
             <span className="opg-chip" />
           </div>
@@ -95,22 +146,22 @@ export default function OptionG() {
             </div>
             <div className="opg-card-fields">
               <div>
-                <label>Thương hiệu</label>
-                <b>Thương hiệu của bạn</b>
+                <label>{t.cardBrand}</label>
+                <b>{t.cardBrandV}</b>
               </div>
               <div>
-                <label>Dịch vụ</label>
-                <b>Tích xanh · Mở khóa · Báo chí</b>
+                <label>{t.cardSvc}</label>
+                <b>{t.cardSvcV}</b>
               </div>
               <div className="opg-card-status">
-                <label>Trạng thái</label>
-                <b>✓ ĐÃ XÁC MINH</b>
+                <label>{t.cardStatus}</label>
+                <b>{t.cardStatusV}</b>
               </div>
             </div>
           </div>
           <div className="opg-card-bottom">
-            <span className="opg-card-id">HỒ SƠ · VDUY-2026</span>
-            <span className="opg-card-valid">BẢO HÀNH ∞</span>
+            <span className="opg-card-id">{t.cardId}</span>
+            <span className="opg-card-valid">{t.cardValid}</span>
           </div>
           <div className="opg-card-strip" />
         </Tilt>
@@ -120,11 +171,11 @@ export default function OptionG() {
       <section className="opg-section" id="opg-feed">
         <div className="opg-panel opg-feedpanel">
           <div className="opg-panel-head">
-            <span className="opg-livedot" /> LIVE VERIFICATION FEED
+            <span className="opg-livedot" /> {t.feedHead}
           </div>
           <div className="opg-feed">
             <div className="opg-feed-track">
-              {[...FEED, ...FEED].map((f, i) => (
+              {[...FEED(lang), ...FEED(lang)].map((f, i) => (
                 <div className="opg-feed-row" key={i}>
                   <PlatformIcon kind={f.icon} size={30} />
                   <div className="opg-feed-info">
@@ -139,7 +190,7 @@ export default function OptionG() {
         </div>
 
         <div className="opg-panel opg-gaugepanel">
-          <div className="opg-panel-head">TRUST SCORE</div>
+          <div className="opg-panel-head">{t.gaugeHead}</div>
           <div className="opg-gauge">
             <svg viewBox="0 0 120 120" width="150" height="150">
               <defs>
@@ -166,29 +217,29 @@ export default function OptionG() {
                 98%
               </text>
               <text x="60" y="76" textAnchor="middle" fontSize="9" fill="#8ea0c0" letterSpacing="1">
-                THÀNH CÔNG
+                {t.gaugeWord}
               </text>
             </svg>
           </div>
-          <p>Tỉ lệ hồ sơ được xác minh thành công qua 1.200+ dự án.</p>
+          <p>{t.gaugeNote}</p>
         </div>
       </section>
 
       {/* STAMPS — dịch vụ */}
       <section className="opg-section-block" id="opg-stamps">
         <div className="opg-block-head">
-          <h2>Đóng dấu xác minh cho nền tảng của bạn</h2>
-          <p>Mỗi nền tảng là một con dấu — chạm để xem quy trình, bảng giá &amp; FAQ.</p>
+          <h2>{t.stampsTitle}</h2>
+          <p>{t.stampsSub}</p>
         </div>
         <div className="opg-stamps">
-          {STAMPS.map((s) => (
+          {STAMPS(lang).map((s) => (
             <Tilt className="opg-stampwrap" max={8} key={s.slug}>
               <Link href={`/dich-vu/${s.slug}`} className="opg-stamp">
                 <div className="opg-stamp-ring">✦ VERIFIED ✦</div>
                 <PlatformIcon kind={s.icon} size={46} />
                 <h3>{s.name}</h3>
                 <p>{s.sub}</p>
-                <span className="opg-stamp-go">Xem chi tiết →</span>
+                <span className="opg-stamp-go">{t.stampGo}</span>
               </Link>
             </Tilt>
           ))}
@@ -198,19 +249,19 @@ export default function OptionG() {
       {/* TESTIMONIALS */}
       <section className="opg-section-block" id="opg-voices">
         <div className="opg-block-head">
-          <h2>Khách hàng đã được xác minh</h2>
-          <p>Feedback thật từ khách hàng đã được xác minh thành công.</p>
+          <h2>{t.voicesTitle}</h2>
+          <p>{t.voicesSub}</p>
         </div>
         <div className="opg-voices">
-          {site.testimonials.map((t) => (
-            <div className="opg-voice" key={t.name}>
+          {siteText(lang).testimonials.map((c) => (
+            <div className="opg-voice" key={c.name}>
               <div className="opg-voice-stars">★★★★★</div>
-              <p>“{t.quote}”</p>
+              <p>“{c.quote}”</p>
               <div className="opg-voice-person">
-                <PersonAvatar name={t.name} hue={t.hue} size={44} />
+                <PersonAvatar name={c.name} hue={c.hue} size={44} />
                 <div>
-                  <b>{t.name}</b>
-                  <span>{t.company}</span>
+                  <b>{c.name}</b>
+                  <span>{c.company}</span>
                 </div>
               </div>
             </div>
@@ -223,15 +274,15 @@ export default function OptionG() {
         <div className="opg-cta">
           <div className="opg-livedot" />
           <h2>
-            Hồ sơ xác minh của bạn <span className="opg-holo">đang chờ hoàn tất.</span>
+            {t.ctaA}<span className="opg-holo">{t.ctaB}</span>
           </h2>
           <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opg-btn big">
-            Bắt đầu xác minh
+            {t.ctaBtn}
           </a>
         </div>
         <div className="opg-footbar">
           <BrandLogo size={26} showText textColor="#8ea0c0" />
-          <span>© 2026 vduystudio® · {site.domain}</span>
+          <span>© 2026 VDuyStudio® · {site.domain}</span>
         </div>
       </footer>
 

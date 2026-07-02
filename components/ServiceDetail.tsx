@@ -1,13 +1,73 @@
 "use client";
 
 import Link from "next/link";
-import type { Platform } from "@/lib/services";
-import { platforms } from "@/lib/services";
+import { getPlatform, getPlatforms } from "@/lib/services";
 import { site } from "@/lib/site";
 import { BrandMark, ProjectCover } from "@/components/art";
+import { useLang, LangToggle } from "@/lib/i18n";
 
-export default function ServiceDetail({ platform }: { platform: Platform }) {
-  const others = platforms.filter((p) => p.slug !== platform.slug);
+const TX = {
+  vi: {
+    home: "Trang chủ",
+    contactCta: "Liên hệ tư vấn",
+    allServices: "← Tất cả dịch vụ",
+    serviceOf: (n: string) => `Dịch vụ ${n}`,
+    getQuote: "Nhận báo giá",
+    viewPricing: "Xem bảng giá",
+    catTag: "Hạng mục",
+    catTitle: "Chi tiết dịch vụ",
+    priceTag: "Bảng giá",
+    priceTitle: "Báo giá & thời gian",
+    thService: "Dịch vụ",
+    thDuration: "Thời gian",
+    thWarranty: "Bảo hành",
+    thPrice: "Giá",
+    priceNote: "* Giá cụ thể phụ thuộc hiện trạng tài khoản. Liên hệ để nhận báo giá chính xác và cam kết bằng văn bản.",
+    processTag: "Quy trình",
+    processTitle: "Cách chúng tôi làm việc",
+    projectsTag: "Dự án liên quan",
+    projectsTitle: "Kết quả đã triển khai",
+    faqTag: "FAQ",
+    faqTitle: "Câu hỏi thường gặp",
+    othersTag: "Nền tảng khác",
+    othersTitle: "Bạn cũng có thể quan tâm",
+    ctaTitle: (n: string) => `Sẵn sàng bắt đầu với ${n}?`,
+    ctaSub: "Nhắn tin để được tư vấn và nhận báo giá miễn phí.",
+  },
+  en: {
+    home: "Home",
+    contactCta: "Get in touch",
+    allServices: "← All services",
+    serviceOf: (n: string) => `${n} services`,
+    getQuote: "Get a quote",
+    viewPricing: "View pricing",
+    catTag: "Services",
+    catTitle: "What we do",
+    priceTag: "Pricing",
+    priceTitle: "Pricing & timeline",
+    thService: "Service",
+    thDuration: "Timeline",
+    thWarranty: "Warranty",
+    thPrice: "Price",
+    priceNote: "* Final pricing depends on your account's current state. Contact us for an exact quote with a written commitment.",
+    processTag: "Process",
+    processTitle: "How we work",
+    projectsTag: "Related projects",
+    projectsTitle: "Delivered results",
+    faqTag: "FAQ",
+    faqTitle: "Frequently asked questions",
+    othersTag: "Other platforms",
+    othersTitle: "You may also need",
+    ctaTitle: (n: string) => `Ready to start with ${n}?`,
+    ctaSub: "Message us for free consultation and a quote.",
+  },
+};
+
+export default function ServiceDetail({ slug }: { slug: string }) {
+  const { lang } = useLang();
+  const t = TX[lang];
+  const platform = getPlatform(slug, lang) ?? getPlatform(slug, "vi")!;
+  const others = getPlatforms(lang).filter((p) => p.slug !== platform.slug);
 
   return (
     <div className="sd-root" style={{ ["--accent" as string]: platform.accent }}>
@@ -16,9 +76,10 @@ export default function ServiceDetail({ platform }: { platform: Platform }) {
           <BrandMark height={22} />
         </Link>
         <div className="sd-nav-links">
-          <Link href="/">Trang chủ</Link>
+          <Link href="/">{t.home}</Link>
+          <LangToggle compact />
           <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="sd-nav-cta">
-            Liên hệ tư vấn
+            {t.contactCta}
           </a>
         </div>
       </nav>
@@ -26,27 +87,27 @@ export default function ServiceDetail({ platform }: { platform: Platform }) {
       {/* HERO */}
       <header className="sd-hero">
         <Link href="/" className="sd-crumb">
-          ← Tất cả dịch vụ
+          {t.allServices}
         </Link>
         <div className="sd-hero-badge" style={{ background: platform.accent }}>
           {platform.name}
         </div>
-        <h1>Dịch vụ {platform.name}</h1>
+        <h1>{t.serviceOf(platform.name)}</h1>
         <p>{platform.tagline}</p>
         <div className="sd-hero-ctas">
           <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="sd-btn">
-            Nhận báo giá
+            {t.getQuote}
           </a>
           <a href="#bang-gia" className="sd-btn ghost">
-            Xem bảng giá
+            {t.viewPricing}
           </a>
         </div>
       </header>
 
       {/* SERVICES */}
       <section className="sd-section">
-        <div className="sd-tag">Hạng mục</div>
-        <h2>Chi tiết dịch vụ</h2>
+        <div className="sd-tag">{t.catTag}</div>
+        <h2>{t.catTitle}</h2>
         <div className="sd-services">
           {platform.services.map((s, i) => (
             <div className="sd-service" key={i}>
@@ -62,40 +123,37 @@ export default function ServiceDetail({ platform }: { platform: Platform }) {
 
       {/* PRICING */}
       <section className="sd-section" id="bang-gia">
-        <div className="sd-tag">Bảng giá</div>
-        <h2>Báo giá &amp; thời gian</h2>
+        <div className="sd-tag">{t.priceTag}</div>
+        <h2>{t.priceTitle}</h2>
         <div className="sd-table-wrap">
           <table className="sd-table">
             <thead>
               <tr>
-                <th>Dịch vụ</th>
-                <th>Thời gian</th>
-                <th>Bảo hành</th>
-                <th>Giá</th>
+                <th>{t.thService}</th>
+                <th>{t.thDuration}</th>
+                <th>{t.thWarranty}</th>
+                <th>{t.thPrice}</th>
               </tr>
             </thead>
             <tbody>
               {platform.pricing.map((row, i) => (
                 <tr key={i}>
-                  <td data-label="Dịch vụ">{row.service}</td>
-                  <td data-label="Thời gian">{row.duration}</td>
-                  <td data-label="Bảo hành">{row.warranty}</td>
-                  <td data-label="Giá" className="sd-price">{row.price}</td>
+                  <td data-label={t.thService}>{row.service}</td>
+                  <td data-label={t.thDuration}>{row.duration}</td>
+                  <td data-label={t.thWarranty}>{row.warranty}</td>
+                  <td data-label={t.thPrice} className="sd-price">{row.price}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <p className="sd-note">
-          * Giá cụ thể phụ thuộc hiện trạng tài khoản. Liên hệ để nhận báo giá
-          chính xác và cam kết bằng văn bản.
-        </p>
+        <p className="sd-note">{t.priceNote}</p>
       </section>
 
       {/* PROCESS */}
       <section className="sd-section">
-        <div className="sd-tag">Quy trình</div>
-        <h2>Cách chúng tôi làm việc</h2>
+        <div className="sd-tag">{t.processTag}</div>
+        <h2>{t.processTitle}</h2>
         <div className="sd-steps">
           {platform.process.map((step, i) => (
             <div className="sd-step" key={i}>
@@ -109,8 +167,8 @@ export default function ServiceDetail({ platform }: { platform: Platform }) {
 
       {/* PROJECTS */}
       <section className="sd-section">
-        <div className="sd-tag">Dự án liên quan</div>
-        <h2>Kết quả đã triển khai</h2>
+        <div className="sd-tag">{t.projectsTag}</div>
+        <h2>{t.projectsTitle}</h2>
         <div className="sd-projects">
           {platform.projects.map((pj, i) => (
             <div className="sd-project" key={i}>
@@ -128,8 +186,8 @@ export default function ServiceDetail({ platform }: { platform: Platform }) {
 
       {/* FAQ */}
       <section className="sd-section">
-        <div className="sd-tag">FAQ</div>
-        <h2>Câu hỏi thường gặp</h2>
+        <div className="sd-tag">{t.faqTag}</div>
+        <h2>{t.faqTitle}</h2>
         <div className="sd-faq">
           {platform.faq.map((f, i) => (
             <div className="sd-faq-item" key={i}>
@@ -142,8 +200,8 @@ export default function ServiceDetail({ platform }: { platform: Platform }) {
 
       {/* OTHER PLATFORMS */}
       <section className="sd-section">
-        <div className="sd-tag">Nền tảng khác</div>
-        <h2>Bạn cũng có thể quan tâm</h2>
+        <div className="sd-tag">{t.othersTag}</div>
+        <h2>{t.othersTitle}</h2>
         <div className="sd-others">
           {others.map((o) => (
             <Link href={`/dich-vu/${o.slug}`} key={o.slug} className="sd-other">
@@ -160,8 +218,8 @@ export default function ServiceDetail({ platform }: { platform: Platform }) {
 
       {/* CTA */}
       <section className="sd-cta">
-        <h2>Sẵn sàng bắt đầu với {platform.name}?</h2>
-        <p>Nhắn tin để được tư vấn và nhận báo giá miễn phí.</p>
+        <h2>{t.ctaTitle(platform.name)}</h2>
+        <p>{t.ctaSub}</p>
         <div className="sd-cta-btns">
           <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="sd-btn light">
             Chat Zalo

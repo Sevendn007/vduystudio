@@ -4,14 +4,62 @@ import { useState } from "react";
 import Link from "next/link";
 import Tilt from "@/components/tilt";
 import { BrandLogo, PlatformIcon, PersonAvatar, Platform } from "@/components/brand";
-import { site } from "@/lib/site";
+import { site, siteText } from "@/lib/site";
+import { useLang, Lang } from "@/lib/i18n";
 
-const SERVICES: { slug: string; n: string; name: string; tags: string; icon: Platform; pct: number }[] = [
-  { slug: "tiktok", n: "01", name: "TikTok", tags: "Tích xanh · Mở khóa · Livestream", icon: "tiktok", pct: 92 },
-  { slug: "facebook", n: "02", name: "Facebook", tags: "Tích xanh · Cá nhân · Fanpage", icon: "facebook", pct: 88 },
-  { slug: "instagram-threads", n: "03", name: "Instagram / Threads", tags: "Tích xanh · Mở khóa tài khoản", icon: "instagram", pct: 84 },
-  { slug: "bao-chi", n: "04", name: "Báo chí", tags: "Booking · Viết bài PR", icon: "press", pct: 80 },
+const SERVICES = (lang: Lang): { slug: string; n: string; name: string; tags: string; icon: Platform; pct: number }[] => [
+  { slug: "tiktok", n: "01", name: "TikTok", tags: lang === "en" ? "Badge · Recovery · Livestream" : "Tích xanh · Mở khóa · Livestream", icon: "tiktok", pct: 92 },
+  { slug: "facebook", n: "02", name: "Facebook", tags: lang === "en" ? "Badge · Personal · Fanpage" : "Tích xanh · Cá nhân · Fanpage", icon: "facebook", pct: 88 },
+  { slug: "instagram-threads", n: "03", name: "Instagram / Threads", tags: lang === "en" ? "Badge · Account recovery" : "Tích xanh · Mở khóa tài khoản", icon: "instagram", pct: 84 },
+  { slug: "bao-chi", n: "04", name: lang === "en" ? "Press & PR" : "Báo chí", tags: lang === "en" ? "Booking · PR writing" : "Booking · Viết bài PR", icon: "press", pct: 80 },
 ];
+
+const TX = {
+  vi: {
+    navServices: "Dịch vụ", navWork: "Dự án", navFeedback: "Feedback", navContact: "Liên hệ",
+    heroTitle: "Xây dựng uy tín số cho thương hiệu của bạn.",
+    heroSub: "VDuyStudio giúp cá nhân & thương hiệu đạt tích xanh chính thống, mở khóa tài khoản và chinh phục báo chí — bằng quy trình minh bạch, kết quả thật.",
+    heroBtn1: "Xem dịch vụ", heroBtn2: "Xem case study →",
+    services: "Dịch vụ", work: "Featured Work",
+    workTile1: "Fanpage F&B miền Bắc", workTile2: "Booking 6 đầu báo lớn",
+    caps: "Capabilities",
+    cap1: "Xác minh mạng xã hội", cap2: "Khôi phục tài khoản", cap3: "Chiến lược nội dung",
+    process: "Quy trình 4 bước",
+    steps: [
+      ["Tư vấn & khảo sát", "Đánh giá hiện trạng tài khoản"],
+      ["Báo giá & cam kết", "Minh bạch, có văn bản"],
+      ["Triển khai", "Đúng chính sách nền tảng"],
+      ["Bàn giao & bảo hành", "Hỗ trợ theo cam kết"],
+    ],
+    statBig: "1.200+", statLabel: "Tài khoản đã lên tích xanh",
+    statRow: [["98%", "Thành công"], ["4.9★", "Đánh giá"], ["3+ năm", "Kinh nghiệm"]],
+    testi: "Khách hàng nói gì",
+    cta: "Let’s talk.", ctaBtn: "Liên hệ tư vấn",
+    theme: "GIAO DIỆN",
+  },
+  en: {
+    navServices: "Services", navWork: "Work", navFeedback: "Feedback", navContact: "Contact",
+    heroTitle: "Build digital trust for your brand.",
+    heroSub: "VDuyStudio helps individuals & brands earn official verification badges, recover accounts and win press coverage — with a transparent process and real results.",
+    heroBtn1: "View services", heroBtn2: "View case studies →",
+    services: "Services", work: "Featured Work",
+    workTile1: "Northern F&B fanpage", workTile2: "6 major press outlets booked",
+    caps: "Capabilities",
+    cap1: "Social Media Verification", cap2: "Account Recovery", cap3: "Content Strategy",
+    process: "4-step process",
+    steps: [
+      ["Consultation & audit", "Assess your account's state"],
+      ["Quote & commitment", "Transparent, in writing"],
+      ["Execution", "Within platform policies"],
+      ["Handover & warranty", "Support as committed"],
+    ],
+    statBig: "1,200+", statLabel: "Accounts verified",
+    statRow: [["98%", "Success"], ["4.9★", "Rating"], ["3+ yrs", "Experience"]],
+    testi: "What clients say",
+    cta: "Let’s talk.", ctaBtn: "Get in touch",
+    theme: "THEME",
+  },
+};
 
 function Ring({ pct, color }: { pct: number; color: string }) {
   const r = 20;
@@ -37,6 +85,8 @@ function Ring({ pct, color }: { pct: number; color: string }) {
 
 export default function OptionF() {
   const [light, setLight] = useState(false);
+  const { lang } = useLang();
+  const t = TX[lang];
 
   return (
     <div className={`opf-root${light ? " opf-light" : ""}`} id="opf-top">
@@ -47,13 +97,13 @@ export default function OptionF() {
             <BrandLogo size={30} showText />
           </a>
           <div className="opf-menu">
-            <a href="#opf-services">Dịch vụ</a>
-            <a href="#opf-work">Dự án</a>
-            <a href="#opf-testi">Feedback</a>
-            <a href="#opf-cta">Liên hệ</a>
+            <a href="#opf-services">{t.navServices}</a>
+            <a href="#opf-work">{t.navWork}</a>
+            <a href="#opf-testi">{t.navFeedback}</a>
+            <a href="#opf-cta">{t.navContact}</a>
           </div>
           <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opf-navcta">
-            Liên hệ
+            {t.navContact}
           </a>
         </nav>
 
@@ -62,18 +112,14 @@ export default function OptionF() {
           <span className="opf-spark s1">✦</span>
           <span className="opf-spark s2">✦</span>
           <span className="opf-spark s3">✧</span>
-          <h1>Xây dựng uy tín số cho thương hiệu của bạn.</h1>
-          <p>
-            VDuyStudio giúp cá nhân &amp; thương hiệu đạt tích xanh chính thống,
-            mở khóa tài khoản và chinh phục báo chí — bằng quy trình minh bạch,
-            kết quả thật.
-          </p>
+          <h1>{t.heroTitle}</h1>
+          <p>{t.heroSub}</p>
           <div className="opf-hero-ctas">
             <a href="#opf-services" className="opf-btn primary">
-              Xem dịch vụ
+              {t.heroBtn1}
             </a>
             <a href="#opf-work" className="opf-btn">
-              Xem case study →
+              {t.heroBtn2}
             </a>
           </div>
         </Tilt>
@@ -82,9 +128,9 @@ export default function OptionF() {
         <div className="opf-bento">
           {/* Dịch vụ */}
           <Tilt className="opf-card opf-services" max={5} id="opf-services">
-            <h2>Dịch vụ</h2>
+            <h2>{t.services}</h2>
             <div className="opf-list">
-              {SERVICES.map((s) => (
+              {SERVICES(lang).map((s) => (
                 <Link href={`/dich-vu/${s.slug}`} className="opf-listrow" key={s.slug}>
                   <div className="opf-ringwrap">
                     <Ring pct={s.pct} color="#2dd4bf" />
@@ -105,71 +151,81 @@ export default function OptionF() {
 
           {/* Featured Work */}
           <Tilt className="opf-card opf-work" max={6} id="opf-work">
-            <h2>Featured Work</h2>
+            <h2>{t.work}</h2>
             <div className="opf-tiles">
               <Link href="/dich-vu/facebook" className="opf-tile blue">
-                <span>Fanpage F&amp;B miền Bắc</span>
+                <span>{t.workTile1}</span>
                 <div className="opf-vbadge">✓</div>
               </Link>
               <Link href="/dich-vu/bao-chi" className="opf-tile gold">
-                <span>Booking 6 đầu báo lớn</span>
+                <span>{t.workTile2}</span>
                 <div className="opf-vbadge">✓</div>
               </Link>
             </div>
           </Tilt>
 
+          {/* Process */}
+          <Tilt className="opf-card opf-process" max={6}>
+            <h2>{t.process}</h2>
+            <ol className="opf-steps">
+              {t.steps.map((s, i) => (
+                <li key={i}>
+                  <span className="opf-step-n">{i + 1}</span>
+                  <div>
+                    <b>{s[0]}</b>
+                    <span>{s[1]}</span>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </Tilt>
+
           {/* Capabilities */}
           <Tilt className="opf-card opf-caps" max={6}>
-            <h2>Capabilities</h2>
+            <h2>{t.caps}</h2>
             <div className="opf-capgrid">
               <div className="opf-cap">
                 <div className="opf-capic">◈</div>
-                <span>Social Media Verification</span>
+                <span>{t.cap1}</span>
               </div>
               <div className="opf-cap">
                 <div className="opf-capic">⟳</div>
-                <span>Account Recovery</span>
+                <span>{t.cap2}</span>
               </div>
               <div className="opf-cap">
                 <div className="opf-capic">✦</div>
-                <span>Content Strategy</span>
+                <span>{t.cap3}</span>
               </div>
             </div>
           </Tilt>
 
           {/* Stat / minh chứng */}
           <Tilt className="opf-card opf-stat" max={6}>
-            <div className="opf-statbig">1.200+</div>
-            <span>Tài khoản đã lên tích xanh</span>
+            <div className="opf-statbig">{t.statBig}</div>
+            <span>{t.statLabel}</span>
             <div className="opf-statrow">
-              <div>
-                <b>98%</b>
-                <span>Thành công</span>
-              </div>
-              <div>
-                <b>4.9★</b>
-                <span>Đánh giá</span>
-              </div>
-              <div>
-                <b>3+ năm</b>
-                <span>Kinh nghiệm</span>
-              </div>
+              {t.statRow.map((r, i) => (
+                <div key={i}>
+                  <b>{r[0]}</b>
+                  <span>{r[1]}</span>
+                </div>
+              ))}
             </div>
           </Tilt>
 
           {/* Testimonials */}
           <Tilt className="opf-card opf-testi" max={5} id="opf-testi">
-            <h2>Khách hàng nói gì</h2>
+            <h2>{t.testi}</h2>
             <div className="opf-quotes">
-              {site.testimonials.map((t) => (
-                <div className="opf-q" key={t.name}>
+              {siteText(lang).testimonials.map((c) => (
+                <div className="opf-q" key={c.name}>
                   <span className="opf-stars">★★★★★</span>
-                  <p>“{t.quote}”</p>
+                  <p>“{c.quote}”</p>
                   <div className="opf-qperson">
-                    <PersonAvatar name={t.name} hue={t.hue} size={40} />
+                    <PersonAvatar name={c.name} hue={c.hue} size={40} />
                     <div>
-                      <b>{t.name}</b>
-                      <span>{t.company}</span>
+                      <b>{c.name}</b>
+                      <span>{c.company}</span>
                     </div>
                   </div>
                 </div>
@@ -180,9 +236,9 @@ export default function OptionF() {
 
         {/* CTA */}
         <Tilt className="opf-card opf-ctacard" max={4} id="opf-cta">
-          <h2>Let&apos;s talk.</h2>
+          <h2>{t.cta}</h2>
           <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opf-btn primary">
-            Liên hệ tư vấn
+            {t.ctaBtn}
           </a>
         </Tilt>
 
@@ -190,7 +246,7 @@ export default function OptionF() {
         <footer className="opf-footer">
           <span>© 2026 VDuyStudio</span>
           <div className="opf-themetoggle">
-            <span>GIAO DIỆN</span>
+            <span>{t.theme}</span>
             <span className="opf-dot">·</span>
             <span>{site.domain}</span>
             <button
@@ -267,6 +323,12 @@ export default function OptionF() {
 .opf-tile.gold{background:linear-gradient(150deg,#e0a53a,#b4791b);}
 .opf-tile span{position:relative;z-index:1;max-width:80%;}
 .opf-vbadge{position:absolute;bottom:16px;left:16px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;backdrop-filter:blur(4px);}
+
+.opf-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;}
+.opf-steps li{display:flex;align-items:center;gap:13px;background:var(--glass2);border:1px solid var(--stroke);border-radius:13px;padding:12px 14px;}
+.opf-step-n{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#1a1405;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;}
+.opf-steps b{display:block;font-size:14px;}
+.opf-steps li div span{font-size:12px;color:var(--muted);}
 
 .opf-capgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .opf-cap{background:var(--glass2);border:1px solid var(--stroke);border-radius:14px;padding:18px 10px;text-align:center;}

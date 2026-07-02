@@ -4,8 +4,56 @@ import Link from "next/link";
 import { PhoneMock, ProjectCover } from "@/components/art";
 import { BrandLogo, PlatformIcon } from "@/components/brand";
 import { site } from "@/lib/site";
+import { useLang } from "@/lib/i18n";
+
+const TX = {
+  vi: {
+    navCta: "Chat ngay",
+    pill: "🔥 1.200+ tài khoản đã lên tích xanh",
+    h1a: "Biến kênh của bạn", h1b: "thành ", h1grad: "tài khoản xịn",
+    sub: "Tích xanh · Mở khóa tài khoản · Booking báo chí cho TikTok, Facebook, Instagram & Threads.",
+    heroCta: "Nhận tư vấn miễn phí 🚀",
+    stats: [["1.200+", "Đã lên tích"], ["500+", "Khách tin tưởng"], ["4.9★", "Đánh giá"], ["7 ngày", "Trung bình xử lý"]],
+    pickTitle: "Chọn nền tảng của bạn", pickSub: "Chạm để xem chi tiết dịch vụ, bảng giá & quy trình",
+    press: "Báo chí",
+    cards: [["✅", "Tích xanh chính thống", "Xác minh danh tính thật, đúng chính sách nền tảng."], ["🔓", "Mở khóa tài khoản", "Khôi phục tài khoản bị khóa/hạn chế nhanh chóng."], ["🛒", "Mở khóa giỏ hàng", "Kích hoạt tính năng bán hàng trên TikTok Shop."], ["🎥", "Mở khóa Livestream", "Kích hoạt quyền livestream cho kênh của bạn."]],
+    workTitle: "Dự án tiêu biểu", workSub: "Ảnh chụp thực tế kết quả đã bàn giao",
+    tags: ["TikTok · Tích xanh", "Instagram · Mở khóa", "Facebook · Fanpage", "Báo chí · PR", "TikTok · Giỏ hàng", "Threads · Tích xanh"],
+    chatTitle: "Khách hàng nói gì", chatSub: "Feedback thật từ tin nhắn Zalo/Messenger",
+    chats: [
+      ["Ảnh: Tích xanh lên rồi ạ 🎉 cảm ơn team nhiều!", false],
+      ["Dạ chúc mừng shop nha, chúc bán hàng thật tốt ạ 🥳", true],
+      ["Fanpage mình mở khóa lại được rồi, quá nhanh luôn", false],
+      ["Dạ team đã theo sát case này, cảm ơn anh đã tin tưởng ❤️", true],
+    ] as [string, boolean][],
+    ctaTitle: "Sẵn sàng lên tích xanh chưa?", ctaSub: "Nhắn ngay để được tư vấn gói phù hợp nhất với bạn", ctaBtn: "Chat Zalo ngay",
+  },
+  en: {
+    navCta: "Chat now",
+    pill: "🔥 1,200+ accounts verified",
+    h1a: "Turn your channel", h1b: "into a ", h1grad: "verified account",
+    sub: "Verification badges · Account recovery · Press booking for TikTok, Facebook, Instagram & Threads.",
+    heroCta: "Get free consultation 🚀",
+    stats: [["1,200+", "Verified"], ["500+", "Happy clients"], ["4.9★", "Rating"], ["7 days", "Avg. turnaround"]],
+    pickTitle: "Pick your platform", pickSub: "Tap to see service details, pricing & process",
+    press: "Press & PR",
+    cards: [["✅", "Official badge", "Genuine identity verification, per platform policy."], ["🔓", "Account recovery", "Quickly restore locked/restricted accounts."], ["🛒", "Shop cart unlock", "Activate selling features on TikTok Shop."], ["🎥", "Livestream unlock", "Activate livestream permission for your channel."]],
+    workTitle: "Featured projects", workSub: "Real screenshots of delivered results",
+    tags: ["TikTok · Verified", "Instagram · Recovery", "Facebook · Fanpage", "Press · PR", "TikTok · Shop cart", "Threads · Verified"],
+    chatTitle: "What clients say", chatSub: "Real feedback from Zalo/Messenger chats",
+    chats: [
+      ["Photo: the badge is live 🎉 thank you so much team!", false],
+      ["Congrats! Wishing your shop great sales 🥳", true],
+      ["My fanpage is unlocked again, that was so fast", false],
+      ["We followed your case closely — thanks for trusting us ❤️", true],
+    ] as [string, boolean][],
+    ctaTitle: "Ready to get verified?", ctaSub: "Message us now for the package that fits you best", ctaBtn: "Chat on Zalo",
+  },
+};
 
 export default function OptionC() {
+  const { lang } = useLang();
+  const t = TX[lang];
   return (
     <div className="opc-root">
       <div className="opc-bgblob opc-blob1" />
@@ -14,21 +62,18 @@ export default function OptionC() {
 
       <nav className="opc-nav">
         <a href="#opc-top" className="opc-logo"><BrandLogo size={30} showText textColor="#0f0f14" /></a>
-        <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opc-nav-cta">Chat ngay</a>
+        <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opc-nav-cta">{t.navCta}</a>
       </nav>
 
       <section className="opc-hero" id="opc-top">
-        <div className="opc-pill">🔥 1.200+ tài khoản đã lên tích xanh</div>
+        <div className="opc-pill">{t.pill}</div>
         <h1>
-          Biến kênh của bạn
+          {t.h1a}
           <br />
-          thành <span className="grad">tài khoản xịn</span>
+          {t.h1b}<span className="grad">{t.h1grad}</span>
         </h1>
-        <p>
-          Tích xanh · Mở khóa tài khoản · Booking báo chí cho TikTok, Facebook,
-          Instagram &amp; Threads.
-        </p>
-        <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opc-hero-cta">Nhận tư vấn miễn phí 🚀</a>
+        <p>{t.sub}</p>
+        <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opc-hero-cta">{t.heroCta}</a>
 
         <div className="opc-phones">
           <div className="opc-phone-wrap">
@@ -43,112 +88,73 @@ export default function OptionC() {
         </div>
 
         <div className="opc-stats">
-          <div className="opc-stat">
-            <b>1.200+</b>
-            <span>Đã lên tích</span>
-          </div>
-          <div className="opc-stat">
-            <b>500+</b>
-            <span>Khách tin tưởng</span>
-          </div>
-          <div className="opc-stat">
-            <b>4.9★</b>
-            <span>Đánh giá</span>
-          </div>
-          <div className="opc-stat">
-            <b>7 ngày</b>
-            <span>Trung bình xử lý</span>
-          </div>
+          {t.stats.map((s, i) => (
+            <div className="opc-stat" key={i}>
+              <b>{s[0]}</b>
+              <span>{s[1]}</span>
+            </div>
+          ))}
         </div>
       </section>
 
       <section className="opc-section">
-        <h2>Chọn nền tảng của bạn</h2>
-        <p className="sub">Chạm để xem chi tiết dịch vụ, bảng giá &amp; quy trình</p>
+        <h2>{t.pickTitle}</h2>
+        <p className="sub">{t.pickSub}</p>
         <div className="opc-tabs">
           <Link href="/dich-vu/tiktok" className="opc-tab active"><PlatformIcon kind="tiktok" size={22} /> TikTok</Link>
           <Link href="/dich-vu/facebook" className="opc-tab"><PlatformIcon kind="facebook" size={22} /> Facebook</Link>
           <Link href="/dich-vu/instagram-threads" className="opc-tab"><PlatformIcon kind="instagram" size={22} /> Instagram/Threads</Link>
-          <Link href="/dich-vu/bao-chi" className="opc-tab"><PlatformIcon kind="press" size={22} /> Báo chí</Link>
+          <Link href="/dich-vu/bao-chi" className="opc-tab"><PlatformIcon kind="press" size={22} /> {t.press}</Link>
         </div>
         <div className="opc-cardrow">
-          <Link href="/dich-vu/tiktok" className="opc-scard">
-            <div className="ic">✅</div>
-            <h4>Tích xanh chính thống</h4>
-            <p>Xác minh danh tính thật, đúng chính sách nền tảng.</p>
-          </Link>
-          <Link href="/dich-vu/tiktok" className="opc-scard">
-            <div className="ic">🔓</div>
-            <h4>Mở khóa tài khoản</h4>
-            <p>Khôi phục tài khoản bị khóa/hạn chế nhanh chóng.</p>
-          </Link>
-          <Link href="/dich-vu/tiktok" className="opc-scard">
-            <div className="ic">🛒</div>
-            <h4>Mở khóa giỏ hàng</h4>
-            <p>Kích hoạt tính năng bán hàng trên TikTok Shop.</p>
-          </Link>
-          <Link href="/dich-vu/tiktok" className="opc-scard">
-            <div className="ic">🎥</div>
-            <h4>Mở khóa Livestream</h4>
-            <p>Kích hoạt quyền livestream cho kênh của bạn.</p>
-          </Link>
+          {t.cards.map((c, i) => (
+            <Link href="/dich-vu/tiktok" className="opc-scard" key={i}>
+              <div className="ic">{c[0]}</div>
+              <h4>{c[1]}</h4>
+              <p>{c[2]}</p>
+            </Link>
+          ))}
         </div>
       </section>
 
       <section className="opc-section">
-        <h2>Dự án tiêu biểu</h2>
-        <p className="sub">Ảnh chụp thực tế kết quả đã bàn giao</p>
+        <h2>{t.workTitle}</h2>
+        <p className="sub">{t.workSub}</p>
         <div className="opc-masonry">
-          <div className="opc-mitem">
-            <div className="opc-cover"><ProjectCover platform="tiktok" handle="c1" tag="TikTok" /></div>
-            <span>TikTok · Tích xanh</span>
-          </div>
-          <div className="opc-mitem">
-            <div className="opc-cover"><ProjectCover platform="instagram-threads" handle="c2" tag="IG" /></div>
-            <span>Instagram · Mở khóa</span>
-          </div>
-          <div className="opc-mitem">
-            <div className="opc-cover"><ProjectCover platform="facebook" handle="c3" tag="FB" /></div>
-            <span>Facebook · Fanpage</span>
-          </div>
-          <div className="opc-mitem">
-            <div className="opc-cover"><ProjectCover platform="bao-chi" handle="c4" tag="PR" /></div>
-            <span>Báo chí · PR</span>
-          </div>
-          <div className="opc-mitem">
-            <div className="opc-cover"><ProjectCover platform="tiktok" handle="c5" tag="Shop" /></div>
-            <span>TikTok · Giỏ hàng</span>
-          </div>
-          <div className="opc-mitem">
-            <div className="opc-cover"><ProjectCover platform="instagram-threads" handle="c6" tag="Threads" /></div>
-            <span>Threads · Tích xanh</span>
-          </div>
+          {(
+            [
+              ["tiktok", "c1", "TikTok"],
+              ["instagram-threads", "c2", "IG"],
+              ["facebook", "c3", "FB"],
+              ["bao-chi", "c4", "PR"],
+              ["tiktok", "c5", "Shop"],
+              ["instagram-threads", "c6", "Threads"],
+            ] as const
+          ).map((m, i) => (
+            <div className="opc-mitem" key={i}>
+              <div className="opc-cover"><ProjectCover platform={m[0]} handle={m[1]} tag={m[2]} /></div>
+              <span>{t.tags[i]}</span>
+            </div>
+          ))}
         </div>
       </section>
 
       <section className="opc-section">
-        <h2>Khách hàng nói gì</h2>
-        <p className="sub">Feedback thật từ tin nhắn Zalo/Messenger</p>
+        <h2>{t.chatTitle}</h2>
+        <p className="sub">{t.chatSub}</p>
         <div className="opc-chats">
-          <div className="opc-bubble">
-            Ảnh: Tích xanh lên rồi ạ 🎉 cảm ơn team nhiều!
-          </div>
-          <div className="opc-bubble me">
-            Dạ chúc mừng shop nha, chúc bán hàng thật tốt ạ 🥳
-          </div>
-          <div className="opc-bubble">
-            Fanpage mình mở khóa lại được rồi, quá nhanh luôn
-          </div>
-          <div className="opc-bubble me">
-            Dạ team đã theo sát case này, cảm ơn anh đã tin tưởng ❤️
-          </div>
+          {t.chats.map((c, i) => (
+            <div className={`opc-bubble${c[1] ? " me" : ""}`} key={i}>
+              {c[0]}
+            </div>
+          ))}
         </div>
       </section>
 
       <section className="opc-cta-final">
-        <h2>Sẵn sàng lên tích xanh chưa?</h2>
-        <p>Nhắn ngay để được tư vấn gói phù hợp nhất với bạn</p>
-        <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opc-hero-cta">Chat Zalo ngay</a>
+        <h2>{t.ctaTitle}</h2>
+        <p>{t.ctaSub}</p>
+        <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="opc-hero-cta">{t.ctaBtn}</a>
       </section>
 
 

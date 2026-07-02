@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Poppins, Space_Grotesk, Instrument_Serif, Comfortaa } from "next/font/google";
 import "./globals.css";
 import ChatFab from "@/components/ChatFab";
+import { LangProvider } from "@/lib/i18n";
 
 const inter = Inter({
   subsets: ["latin", "vietnamese"],
@@ -65,8 +66,10 @@ export default function RootLayout({
       className={`${inter.variable} ${poppins.variable} ${spaceGrotesk.variable} ${instrumentSerif.variable} ${comfortaa.variable}`}
     >
       <body>
-        {children}
-        <ChatFab />
+        <LangProvider>
+          {children}
+          <ChatFab />
+        </LangProvider>
       </body>
     </html>
   );
