@@ -62,6 +62,45 @@ insert into public.settings (key, value) values
 on conflict (key) do nothing;
 
 -- ============================================================
+-- Hòa giải với bảng CŨ (nếu trước đây đã tạo với schema khác):
+-- bỏ ràng buộc NOT NULL ở các cột cũ (name/client/description/avatar…) để
+-- seed + form admin mới (dùng title/quote…) chạy được; backfill sang cột mới.
+-- ============================================================
+do $$
+declare
+  pairs text[][] := array[
+    ['projects','name'],['projects','client'],['projects','description'],
+    ['feedbacks','avatar'],['feedbacks','description']
+  ];
+  p text[];
+begin
+  foreach p slice 1 in array pairs loop
+    if exists (
+      select 1 from information_schema.columns
+      where table_schema='public' and table_name=p[1] and column_name=p[2]
+    ) then
+      execute format('alter table public.%I alter column %I drop not null', p[1], p[2]);
+    end if;
+  end loop;
+
+  -- backfill dữ liệu cũ sang cột mới (nếu cột cũ còn tồn tại)
+  if exists (select 1 from information_schema.columns where table_schema='public' and table_name='projects' and column_name='name') then
+    execute 'update public.projects set title = coalesce(title, name) where title is null';
+  end if;
+  if exists (select 1 from information_schema.columns where table_schema='public' and table_name='feedbacks' and column_name='description') then
+    execute 'update public.feedbacks set quote = coalesce(quote, description) where quote is null';
+  end if;
+  if exists (select 1 from information_schema.columns where table_schema='public' and table_name='feedbacks' and column_name='avatar') then
+    execute 'update public.feedbacks set company = coalesce(company, avatar) where company is null';
+  end if;
+end $$;
+
+-- Đảm bảo cột chính không rỗng cho các dòng cũ (tránh landing hiển thị trống)
+update public.projects  set title = coalesce(title, 'Dự án')      where title is null or title = '';
+update public.feedbacks set quote = coalesce(quote, '(chưa có nội dung)') where quote is null or quote = '';
+update public.feedbacks set name  = coalesce(name, 'Khách hàng')  where name is null or name = '';
+
+-- ============================================================
 -- Dữ liệu mẫu (chỉ chèn khi bảng đang trống) — để admin & landing khớp nhau
 -- ngay từ đầu. Xóa/sửa thoải mái trong trang admin sau khi chạy.
 -- ============================================================
