@@ -1,10 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getPlatform, getPlatforms } from "@/lib/services";
+import { getPlatform, getPlatforms, PriceRow } from "@/lib/services";
 import { site } from "@/lib/site";
 import { BrandMark, ProjectCover } from "@/components/art";
 import { useLang, LangToggle } from "@/lib/i18n";
+import { fetchPricing } from "@/lib/data";
+import { useContact } from "@/lib/useContact";
 
 const TX = {
   vi: {
@@ -66,8 +69,31 @@ const TX = {
 export default function ServiceDetail({ slug }: { slug: string }) {
   const { lang } = useLang();
   const t = TX[lang];
+  const contact = useContact();
   const platform = getPlatform(slug, lang) ?? getPlatform(slug, "vi")!;
   const others = getPlatforms(lang).filter((p) => p.slug !== platform.slug);
+
+  // Bảng giá: admin nhập trong DB thì ưu tiên, chưa có thì dùng mặc định.
+  const [pricing, setPricing] = useState<PriceRow[]>(platform.pricing);
+  useEffect(() => {
+    let mounted = true;
+    setPricing(platform.pricing);
+    fetchPricing(slug).then((rows) => {
+      if (!mounted || !rows) return;
+      setPricing(
+        rows.map((r) => ({
+          service: r.service,
+          duration: r.duration ?? "—",
+          warranty: r.warranty ?? "—",
+          price: r.price ?? "—",
+        }))
+      );
+    });
+    return () => {
+      mounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug, lang]);
 
   return (
     <div className="sd-root" style={{ ["--accent" as string]: platform.accent }}>
@@ -78,7 +104,7 @@ export default function ServiceDetail({ slug }: { slug: string }) {
         <div className="sd-nav-links">
           <Link href="/">{t.home}</Link>
           <LangToggle compact />
-          <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="sd-nav-cta">
+          <a href={contact.zalo} target="_blank" rel="noreferrer" className="sd-nav-cta">
             {t.contactCta}
           </a>
         </div>
@@ -95,7 +121,7 @@ export default function ServiceDetail({ slug }: { slug: string }) {
         <h1>{t.serviceOf(platform.name)}</h1>
         <p>{platform.tagline}</p>
         <div className="sd-hero-ctas">
-          <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="sd-btn">
+          <a href={contact.zalo} target="_blank" rel="noreferrer" className="sd-btn">
             {t.getQuote}
           </a>
           <a href="#bang-gia" className="sd-btn ghost">
@@ -136,7 +162,7 @@ export default function ServiceDetail({ slug }: { slug: string }) {
               </tr>
             </thead>
             <tbody>
-              {platform.pricing.map((row, i) => (
+              {pricing.map((row, i) => (
                 <tr key={i}>
                   <td data-label={t.thService}>{row.service}</td>
                   <td data-label={t.thDuration}>{row.duration}</td>
@@ -221,10 +247,10 @@ export default function ServiceDetail({ slug }: { slug: string }) {
         <h2>{t.ctaTitle(platform.name)}</h2>
         <p>{t.ctaSub}</p>
         <div className="sd-cta-btns">
-          <a href={site.contact.zalo} target="_blank" rel="noreferrer" className="sd-btn light">
+          <a href={contact.zalo} target="_blank" rel="noreferrer" className="sd-btn light">
             Chat Zalo
           </a>
-          <a href={site.contact.messenger} target="_blank" rel="noreferrer" className="sd-btn ghost-light">
+          <a href={contact.messenger} target="_blank" rel="noreferrer" className="sd-btn ghost-light">
             Messenger
           </a>
         </div>

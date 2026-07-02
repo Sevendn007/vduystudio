@@ -88,11 +88,13 @@ export function VDuyWordmark({ fontSize = 30, shine = true }: { fontSize?: numbe
       style={{
         position: "relative",
         display: "inline-block",
-        fontFamily: "var(--font-comfortaa), cursive",
-        fontWeight: 700,
+        fontFamily: "'Druk Wide Super','Druk Wide',var(--font-archivo),var(--font-grotesk),sans-serif",
+        fontWeight: 900,
+        fontStretch: "125%",
         fontSize,
         lineHeight: 1.08,
-        letterSpacing: ".004em",
+        letterSpacing: ".01em",
+        textTransform: "none",
       }}
     >
       <span aria-hidden style={{ position: "absolute", top: 0, left: 0, whiteSpace: "nowrap", color: "#5a4418", textShadow: `${backShadow},${extrude + 1}px ${extrude + 3}px 16px rgba(0,0,0,.55)` }}>

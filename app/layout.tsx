@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Inter, Poppins, Space_Grotesk, Instrument_Serif, Comfortaa } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Space_Grotesk, Archivo } from "next/font/google";
 import "./globals.css";
 import ChatFab from "@/components/ChatFab";
 import { LangProvider } from "@/lib/i18n";
@@ -10,13 +10,6 @@ const inter = Inter({
   display: "swap",
 });
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-poppins",
-  display: "swap",
-});
-
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin", "vietnamese"],
   weight: ["400", "500", "600", "700"],
@@ -24,20 +17,20 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
-const instrumentSerif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--font-serif",
+// Fallback cho Druk Wide Super: Archivo variable (trục width mở rộng tới 125%).
+const archivo = Archivo({
+  subsets: ["latin", "vietnamese"],
+  axes: ["wdth"],
+  variable: "--font-archivo",
   display: "swap",
 });
 
-const comfortaa = Comfortaa({
-  subsets: ["latin", "vietnamese"],
-  weight: ["500", "700"],
-  variable: "--font-comfortaa",
-  display: "swap",
-});
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#03040c",
+};
 
 export const metadata: Metadata = {
   title: "VDuyStudio — Tích xanh chính thống & mở khóa tài khoản",
@@ -63,7 +56,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${inter.variable} ${poppins.variable} ${spaceGrotesk.variable} ${instrumentSerif.variable} ${comfortaa.variable}`}
+      className={`${inter.variable} ${spaceGrotesk.variable} ${archivo.variable}`}
     >
       <body>
         <LangProvider>

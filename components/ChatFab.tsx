@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { site } from "@/lib/site";
+import { useContact } from "@/lib/useContact";
 
 export default function ChatFab() {
   const [open, setOpen] = useState(false);
+  const contact = useContact();
 
   return (
     <div className={`cfab${open ? " open" : ""}`}>
-      <a className="cfab-item cfab-zalo" href={site.contact.zalo} target="_blank" rel="noreferrer" aria-label="Chat Zalo">
+      <a className="cfab-item cfab-zalo" href={contact.zalo} target="_blank" rel="noreferrer" aria-label="Chat Zalo">
         <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden>
           <rect width="48" height="48" rx="12" fill="#fff" />
           <path
@@ -22,7 +23,7 @@ export default function ChatFab() {
         <span className="cfab-label">Chat Zalo</span>
       </a>
 
-      <a className="cfab-item cfab-tele" href={site.contact.telegram} target="_blank" rel="noreferrer" aria-label="Chat Telegram">
+      <a className="cfab-item cfab-tele" href={contact.telegram} target="_blank" rel="noreferrer" aria-label="Chat Telegram">
         <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden>
           <circle cx="24" cy="24" r="22" fill="#fff" />
           <path
@@ -51,7 +52,7 @@ export default function ChatFab() {
       </button>
 
       <style>{`
-.cfab{position:fixed;right:22px;bottom:96px;z-index:9998;display:flex;flex-direction:column;align-items:flex-end;gap:12px;font-family:var(--font-inter),system-ui,sans-serif;}
+.cfab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:9998;display:flex;flex-direction:column;align-items:flex-end;gap:12px;font-family:var(--font-inter),system-ui,sans-serif;}
 .cfab-item{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 16px;border-radius:100px;background:#fff;color:#0f1115;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.25);text-decoration:none;
  opacity:0;transform:translateY(12px) scale(.9);pointer-events:none;transition:.25s cubic-bezier(.2,.8,.2,1);}
 .cfab.open .cfab-item{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
@@ -69,7 +70,7 @@ export default function ChatFab() {
 .cfab.open .cfab-ping{display:none;}
 @keyframes cfabPing{0%{box-shadow:0 0 0 0 rgba(24,119,242,.5)}70%{box-shadow:0 0 0 16px rgba(24,119,242,0)}100%{box-shadow:0 0 0 0 rgba(24,119,242,0)}}
 @media(prefers-reduced-motion:reduce){.cfab-ping{animation:none}}
-@media(max-width:560px){.cfab{bottom:90px;right:16px;}}
+@media(max-width:560px){.cfab{right:16px;bottom:calc(16px + env(safe-area-inset-bottom));}}
       `}</style>
     </div>
   );

@@ -1,75 +1,70 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Settings, DollarSign, MessageSquare, Briefcase, LogOut } from 'lucide-react'
-import { createClient } from '@/utils/supabase/client'
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { LayoutDashboard, Settings, DollarSign, MessageSquare, Briefcase, LogOut } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
 
 const navigation = [
-  { name: 'Tổng quan', href: '/admin', icon: LayoutDashboard },
-  { name: 'Cấu hình liên hệ', href: '/admin/settings', icon: Settings },
-  { name: 'Bảng giá', href: '/admin/pricing', icon: DollarSign },
-  { name: 'Đánh giá (Feedback)', href: '/admin/feedbacks', icon: MessageSquare },
-  { name: 'Dự án đã làm', href: '/admin/projects', icon: Briefcase },
-]
+  { name: "Tổng quan", href: "/admin", icon: LayoutDashboard },
+  { name: "Feedback", href: "/admin/feedbacks", icon: MessageSquare },
+  { name: "Dự án", href: "/admin/projects", icon: Briefcase },
+  { name: "Bảng giá", href: "/admin/pricing", icon: DollarSign },
+  { name: "Liên hệ", href: "/admin/settings", icon: Settings },
+];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const router = useRouter()
-  const supabase = createClient()
+  const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    router.push('/admin/login')
-    router.refresh()
-  }
+    await supabase.auth.signOut();
+    router.push("/admin/login");
+    router.refresh();
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-white shadow-md">
-        <div className="h-16 flex items-center justify-center border-b px-4">
-          <h1 className="text-xl font-bold text-gray-800">Admin Panel</h1>
+    <div className="min-h-screen bg-gray-100 flex flex-col md:flex-row">
+      {/* Sidebar (desktop) / thanh ngang (mobile) */}
+      <div className="w-full md:w-60 bg-white shadow-sm md:shadow-md flex-shrink-0 md:flex md:flex-col">
+        <div className="h-14 md:h-16 flex items-center justify-between md:justify-center border-b px-4">
+          <h1 className="text-lg font-bold text-gray-800">VDuyStudio Admin</h1>
+          <button onClick={handleLogout} className="md:hidden text-red-600" aria-label="Đăng xuất">
+            <LogOut className="h-5 w-5" />
+          </button>
         </div>
-        <nav className="mt-4 px-2 space-y-1">
+        <nav className="flex md:flex-col gap-1 px-2 py-2 md:mt-2 overflow-x-auto md:flex-1">
           {navigation.map((item) => {
-            const isActive = pathname === item.href
+            const isActive = pathname === item.href;
             return (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-                  isActive
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                className={`flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium rounded-lg whitespace-nowrap ${
+                  isActive ? "bg-blue-50 text-blue-600" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
               >
-                <item.icon
-                  className={`mr-3 flex-shrink-0 h-5 w-5 ${
-                    isActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-500'
-                  }`}
-                  aria-hidden="true"
-                />
+                <item.icon className={`h-5 w-5 flex-shrink-0 ${isActive ? "text-blue-600" : "text-gray-400"}`} aria-hidden />
                 {item.name}
               </Link>
-            )
+            );
           })}
         </nav>
-        <div className="absolute bottom-0 w-64 p-4 border-t">
+        <div className="hidden md:block p-3 border-t">
           <button
             onClick={handleLogout}
-            className="group flex w-full items-center px-2 py-2 text-sm font-medium rounded-md text-red-600 hover:bg-red-50"
+            className="flex w-full items-center gap-2.5 px-3 py-2.5 text-sm font-medium rounded-lg text-red-600 hover:bg-red-50"
           >
-            <LogOut className="mr-3 flex-shrink-0 h-5 w-5 text-red-500" aria-hidden="true" />
+            <LogOut className="h-5 w-5 text-red-500" aria-hidden />
             Đăng xuất
           </button>
         </div>
       </div>
 
-      {/* Main content */}
       <div className="flex-1 overflow-auto">
-        <main className="p-8">{children}</main>
+        <main className="p-4 md:p-8">{children}</main>
       </div>
     </div>
-  )
+  );
 }

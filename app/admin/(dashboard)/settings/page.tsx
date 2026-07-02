@@ -1,88 +1,75 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
+// Cấu hình liên hệ (key-value trong bảng settings) — dùng cho nút Zalo/Telegram,
+// chat nổi và mọi CTA trên landing.
+
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { Loader2 } from "lucide-react";
+
+const FIELDS: { key: string; label: string; placeholder: string }[] = [
+  { key: "zalo", label: "Link Zalo", placeholder: "https://zalo.me/0912345678" },
+  { key: "telegram", label: "Link Telegram", placeholder: "https://t.me/vduystudio" },
+  { key: "messenger", label: "Link Messenger", placeholder: "https://m.me/vduystudio" },
+  { key: "phone", label: "Số điện thoại", placeholder: "0912 345 678" },
+  { key: "email", label: "Email", placeholder: "hello@vduystudio.com" },
+];
 
 export default function SettingsPage() {
-  const [tele, setTele] = useState('')
-  const [zalo, setZalo] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState('')
-  const supabase = createClient()
+  const supabase = createClient();
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
-    fetchSettings()
-  }, [])
-
-  const fetchSettings = async () => {
-    setLoading(true)
-    const { data, error } = await supabase.from('settings').select('*')
-    if (data) {
-      const teleSetting = data.find((s) => s.key === 'contact_tele')
-      const zaloSetting = data.find((s) => s.key === 'contact_zalo')
-      if (teleSetting) setTele(teleSetting.value)
-      if (zaloSetting) setZalo(zaloSetting.value)
-    }
-    setLoading(false)
-  }
+    (async () => {
+      const { data } = await supabase.from("settings").select("key,value");
+      if (data) {
+        setValues(Object.fromEntries(data.map((r: { key: string; value: string }) => [r.key, r.value])));
+      }
+      setLoading(false);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSaving(true)
-    setMessage('')
+    e.preventDefault();
+    setSaving(true);
+    setMessage("");
+    const rows = FIELDS.map((f) => ({ key: f.key, value: values[f.key] ?? "" }));
+    const { error } = await supabase.from("settings").upsert(rows, { onConflict: "key" });
+    setMessage(error ? `Lỗi: ${error.message}` : "Đã lưu ✓");
+    setSaving(false);
+  };
 
-    // Upsert tele
-    await supabase.from('settings').upsert({ key: 'contact_tele', value: tele }, { onConflict: 'key' })
-    // Upsert zalo
-    await supabase.from('settings').upsert({ key: 'contact_zalo', value: zalo }, { onConflict: 'key' })
-
-    setSaving(false)
-    setMessage('Đã lưu cấu hình thành công!')
-    setTimeout(() => setMessage(''), 3000)
-  }
-
-  if (loading) return <div>Đang tải dữ liệu...</div>
+  if (loading) return <div className="text-gray-500">Đang tải…</div>;
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Cấu hình liên hệ</h2>
-      <div className="bg-white rounded-lg shadow p-6 max-w-2xl">
-        <form onSubmit={handleSave} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Link Telegram</label>
+      <h2 className="text-2xl font-bold text-gray-900 mb-1">Cấu hình liên hệ</h2>
+      <p className="text-sm text-gray-500 mb-6">Áp dụng cho mọi nút liên hệ / chat trên website.</p>
+
+      <form onSubmit={handleSave} className="bg-white shadow-sm border border-gray-200 rounded-xl p-5 space-y-4 max-w-xl">
+        {FIELDS.map((f) => (
+          <div key={f.key}>
+            <label className="text-sm font-medium text-gray-700">{f.label}</label>
             <input
-              type="text"
-              value={tele}
-              onChange={(e) => setTele(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-              placeholder="https://t.me/yourusername"
+              value={values[f.key] ?? ""}
+              onChange={(e) => setValues({ ...values, [f.key]: e.target.value })}
+              placeholder={f.placeholder}
+              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Link Zalo</label>
-            <input
-              type="text"
-              value={zalo}
-              onChange={(e) => setZalo(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-              placeholder="https://zalo.me/yourphone"
-            />
-          </div>
-
-          {message && <div className="text-green-600 text-sm">{message}</div>}
-
-          <div>
-            <button
-              type="submit"
-              disabled={saving}
-              className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
-            >
-              {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
-            </button>
-          </div>
-        </form>
-      </div>
+        ))}
+        <div className="flex items-center gap-3">
+          <button disabled={saving} type="submit" className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-60">
+            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+            Lưu cấu hình
+          </button>
+          {message && <span className={`text-sm ${message.startsWith("Lỗi") ? "text-red-600" : "text-green-600"}`}>{message}</span>}
+        </div>
+      </form>
     </div>
-  )
+  );
 }

@@ -1,122 +1,73 @@
-# VDuyStudio — Landing Page
+# VDuyStudio — Website chính thức
 
-Landing page portfolio cho dịch vụ **VDuyStudio** (tích xanh chính thống, mở khóa tài khoản, booking báo chí cho TikTok / Facebook / Instagram-Threads).
+Landing page + trang chi tiết dịch vụ + trang quản trị cho **VDuyStudio**
+(tích xanh chính thống, mở khóa tài khoản, booking báo chí cho TikTok /
+Facebook / Instagram-Threads).
 
-Bản này gồm **7 phong cách giao diện** dựng sẵn, chuyển đổi trực tiếp trên UI bằng thanh switcher ở giữa-dưới màn hình. Lựa chọn được lưu vào `localStorage` nên giữ nguyên khi tải lại trang.
-
-| Option | Phong cách | Ghi chú |
-|--------|-----------|---------|
-| **A — Editorial** | Dark cinematic, grain, grotesk khổ lớn, accent xanh | Editorial tối |
-| **B — Bento SaaS** | Sạch, chuyên nghiệp, trust-first, light theme | Dễ maintain, an toàn để launch |
-| **C — Gradient** | Trẻ trung, gradient, glassmorphism, mobile-first | Phone mockup, chat bubble |
-| **D — Verified Hub** | Trung tâm xác minh đa nền tảng: thẻ trạng thái 3D + live feed + trust gauge | Logo lockup nguyên bản ở đầu trang |
-| **E — Cinematic** | Nền navy 3D, accent vàng gold, hero orb shield-lock, đầy đủ dịch vụ/quy trình/feedback | Hiệu ứng 3D tilt theo chuột |
-| **F — Glass** | Glassmorphism bento, ring tiến trình, quy trình 4 bước, **toggle sáng/tối** | Hiệu ứng 3D tilt + kính mờ |
-| **G — 2079** | **VDuyOS**: hệ điều hành uy tín số từ tương lai — boot sequence, radar quét định danh tương tác, chẩn đoán lỗi → dịch vụ, live ticker, terminal liên hệ | Điên rồ nhưng mỗi bước là một bước phễu bán hàng |
-
-Toàn bộ nút bấm (nav, CTA, service card, tab) đều hoạt động: điều hướng sang trang
-chi tiết, cuộn mượt tới section, hoặc mở Zalo/Messenger. Card ở D/E/F có hiệu ứng
-nghiêng 3D theo con trỏ ([components/tilt.tsx](components/tilt.tsx)).
-
-## Song ngữ VI/EN
-
-Toàn site có 2 ngôn ngữ, **mặc định tiếng Việt** — chuyển bằng nút VI/EN trên thanh
-switcher (trang chủ) hoặc trên nav trang chi tiết. Lựa chọn lưu vào `localStorage`.
-Hạ tầng: [lib/i18n.tsx](lib/i18n.tsx) (`LangProvider`, `useLang`, `LangToggle`);
-dữ liệu dịch vụ/feedback song ngữ trong [lib/services.ts](lib/services.ts) và [lib/site.ts](lib/site.ts).
-
-## Thương hiệu & icon
-
-- **Logo động** ([components/brand.tsx](components/brand.tsx) — `BrandLogo`): con dấu tích xanh #1877f2 + dấu check, dựng lại từ file logo, có hiệu ứng động; dùng ở nav/footer mọi variant.
-- **Icon nền tảng chuẩn brand** (`PlatformIcon`): TikTok, Facebook, Instagram, Threads, Báo chí dạng app-tile — đồng nhất kích thước.
-- **Avatar khách hàng** (`PersonAvatar`): chân dung + badge tích xanh; testimonials đều có tên + doanh nghiệp.
-
-## Tech stack
-
-- **Next.js 14** (App Router) — deploy free trên Vercel
-- **TypeScript**
-- **Tailwind CSS** (dùng cho switcher; các variant dùng CSS scoped riêng)
-- **next/font** — Inter + Poppins (self-host, free)
-
-## Chạy local
-
-```bash
-npm install
-npm run dev      # http://localhost:3000
-npm run build    # build production
-```
+Giao diện chính thức: **Galaxy** — nền vũ trụ, hero hệ quỹ đạo (logo ở tâm,
+4 nền tảng xoay quanh), từ ngữ chuyên nghiệp, song ngữ **VI/EN** (mặc định VI),
+tối ưu mobile từ iPhone 13 trở lên (safe-area, nút bấm full-width).
 
 ## Cấu trúc
 
 ```
 app/
-  layout.tsx                 # metadata, fonts
-  page.tsx                   # state switcher + render variant đang chọn
-  icon.svg                   # favicon (huy hiệu tích xanh)
-  globals.css
-  dich-vu/[slug]/page.tsx    # trang chi tiết dịch vụ (SSG cho 4 nền tảng)
+  page.tsx                   # trang chủ (Galaxy)
+  dich-vu/[slug]/page.tsx    # chi tiết dịch vụ (giá đọc từ DB, fallback mặc định)
+  admin/                     # trang quản trị (Supabase Auth)
 components/
-  VariantSwitcher.tsx        # thanh chuyển A/B/C
-  ServiceDetail.tsx          # UI trang chi tiết (hero, giá, quy trình, FAQ...)
-  art.tsx                    # ảnh SVG vector: logo, badge, phone, cover, avatar
-  variants/
-    OptionA.tsx              # Editorial
-    OptionB.tsx              # Bento SaaS
-    OptionC.tsx              # Gradient
+  variants/Option2079.tsx    # giao diện Galaxy
+  ServiceDetail.tsx          # trang chi tiết
+  logo.tsx                   # logo động nguyên bản (badge + wordmark + icon)
+  ChatFab.tsx                # nút chat nổi Zalo/Telegram
 lib/
-  services.ts                # dữ liệu dịch vụ tập trung (giá, quy trình, FAQ, dự án)
-  site.ts                    # thông tin liên hệ & thương hiệu dùng chung
+  services.ts / site.ts      # nội dung mặc định (song ngữ)
+  data.ts                    # đọc feedback/dự án/giá/liên hệ từ Supabase
+  i18n.tsx                   # chuyển ngôn ngữ VI/EN
+supabase/schema.sql          # schema DB — chạy 1 lần trong Supabase SQL Editor
 ```
 
-## Trang chi tiết dịch vụ
+## Font logo
 
-Mỗi nền tảng có 1 trang riêng, prerender static:
+Chữ logo dùng **Druk Wide Super** (font thương mại). Thả file
+`public/fonts/DrukWideSuper.woff2` vào là tự nhận; chưa có file thì fallback
+**Archivo Expanded 900** (Google Fonts, miễn phí).
 
-- `/dich-vu/tiktok`
-- `/dich-vu/facebook`
-- `/dich-vu/instagram-threads`
-- `/dich-vu/bao-chi`
+## Thiết lập database (1 lần)
 
-Gồm: chi tiết dịch vụ · bảng giá + thời gian + bảo hành · quy trình 4 bước · dự án
-liên quan · FAQ (accordion) · link nền tảng khác · CTA. Toàn bộ nội dung nằm trong
-[`lib/services.ts`](lib/services.ts) để dễ sửa (và sau này nối trang admin).
-
-## Ảnh thương hiệu
-
-Không dùng ảnh ngoài — tất cả là SVG vector trong [`components/art.tsx`](components/art.tsx):
-`VerifiedBadge`, `BrandMark`, `PhoneMock` (hồ sơ đã xác minh), `ProjectCover`
-(ảnh bìa case study), `Avatar`. Sắc nét ở mọi kích thước, nhẹ, đúng branding.
-
-## Cần chỉnh trước khi chạy thật
-
-- **Liên hệ**: sửa Zalo / Messenger / phone / email trong [`lib/site.ts`](lib/site.ts).
-- **Giá**: hiện để "Liên hệ báo giá" trong [`lib/services.ts`](lib/services.ts) — thay số thật nếu muốn.
-- **Feedback / ảnh thật**: có thể thay `ProjectCover`/`Avatar` bằng ảnh chụp thật khi có.
-
-## Deploy Vercel (free)
-
-**Cách 1 — qua GitHub (khuyến nghị, không cần CLI):**
-
-1. Tạo repo trên GitHub rồi push (repo đã `git init` + commit sẵn):
-   ```bash
-   git remote add origin https://github.com/<user>/vduystudio.git
-   git branch -M main
-   git push -u origin main
+1. Tạo project trên [supabase.com](https://supabase.com), lấy URL + anon key
+   điền vào `.env.local`:
    ```
-2. Vào [vercel.com/new](https://vercel.com/new) → Import repo → Vercel tự nhận Next.js → **Deploy** (không cần config).
-3. Vào **Settings → Domains**, thêm `vduystudio.com` và trỏ DNS theo hướng dẫn.
+   NEXT_PUBLIC_SUPABASE_URL=...
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+   ```
+2. Supabase Dashboard → **SQL Editor** → dán nội dung `supabase/schema.sql` → Run.
+   (Tạo bảng feedbacks / projects / pricing / settings + bucket ảnh `uploads`.)
+3. **Authentication → Users** → tạo tài khoản admin (email + mật khẩu).
 
-**Cách 2 — qua Vercel CLI:**
+## Trang quản trị — `/admin`
+
+Đăng nhập bằng tài khoản Supabase. Gồm 5 mục, dữ liệu hiển thị ngay trên web,
+không cần deploy lại:
+
+| Mục | Nội dung |
+|---|---|
+| Tổng quan | Đếm nhanh dữ liệu + hướng dẫn |
+| Feedback | Tên, công ty, nội dung, số sao, **ảnh minh chứng (upload)** |
+| Dự án | Tên, nền tảng, nhãn, kết quả, **ảnh dự án (upload)** — hiện dạng bento trên trang chủ |
+| Bảng giá | Nhập theo từng nền tảng; chưa nhập thì web dùng giá mặc định |
+| Liên hệ | Link Zalo / Telegram / Messenger / phone / email cho mọi nút CTA |
+
+Website luôn chạy được kể cả khi **chưa** cấu hình Supabase — mọi mục tự
+fallback về nội dung mặc định trong `lib/site.ts` và `lib/services.ts`.
+
+## Chạy local & deploy
 
 ```bash
-npm i -g vercel
-vercel        # đăng nhập & deploy preview
-vercel --prod # deploy production
+npm install
+npm run dev      # http://localhost:3000
+npm run build
 ```
 
-## Bước tiếp theo (chưa làm)
-
-- Trang **admin** để sửa giá / upload feedback / cập nhật chính sách (đề xuất: Supabase hoặc Sanity).
-- Form liên hệ lưu lead + gửi email (Resend).
-
-## Password DB: Db: !7#R,b3T?77b@C7
+Deploy Vercel: import repo → thêm 2 biến môi trường Supabase → Deploy →
+gắn domain `vduystudio.com`.
