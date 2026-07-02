@@ -1,11 +1,11 @@
 "use client";
 
-// Quản lý dự án đã thực hiện — hiển thị ở mục "Dự án" (dạng bento) trên trang chủ.
+// Quản lý dự án đã thực hiện: thêm / SỬA / xóa. Hiển thị dạng bento trên trang chủ.
 
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { uploadImage } from "@/lib/upload";
-import { Trash2, ImagePlus, Loader2 } from "lucide-react";
+import { Trash2, ImagePlus, Loader2, Pencil, X } from "lucide-react";
 
 type Project = {
   id: string;
@@ -33,12 +33,15 @@ export default function ProjectsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [tag, setTag] = useState("");
   const [result, setResult] = useState("");
   const [platform, setPlatform] = useState("tiktok");
   const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     (async () => {
@@ -52,21 +55,43 @@ export default function ProjectsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleAdd = async (e: React.FormEvent) => {
+  const resetForm = () => {
+    setEditingId(null); setTitle(""); setTag(""); setResult(""); setPlatform("tiktok");
+    setFile(null); setPreview(null);
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  const startEdit = (p: Project) => {
+    setEditingId(p.id); setTitle(p.title); setTag(p.tag ?? ""); setResult(p.result ?? "");
+    setPlatform(p.platform ?? "tiktok"); setFile(null); setPreview(p.image_url);
+    if (fileRef.current) fileRef.current.value = "";
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const pickFile = (f: File | null) => {
+    setFile(f);
+    if (f) setPreview(URL.createObjectURL(f));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setError("");
     try {
-      let image_url: string | null = null;
+      let image_url: string | null = preview && preview.startsWith("http") ? preview : null;
       if (file) image_url = await uploadImage(file);
-      const { data, error } = await supabase
-        .from("projects")
-        .insert([{ title, tag: tag || null, result: result || null, platform, image_url }])
-        .select("id,title,tag,result,platform,image_url");
-      if (error) throw new Error(error.message);
-      if (data) setItems([data[0] as Project, ...items]);
-      setTitle(""); setTag(""); setResult(""); setFile(null);
-      if (fileRef.current) fileRef.current.value = "";
+      const payload = { title, tag: tag || null, result: result || null, platform, image_url };
+
+      if (editingId) {
+        const { data, error } = await supabase.from("projects").update(payload).eq("id", editingId).select("id,title,tag,result,platform,image_url");
+        if (error) throw new Error(error.message);
+        if (data) setItems(items.map((p) => (p.id === editingId ? (data[0] as Project) : p)));
+      } else {
+        const { data, error } = await supabase.from("projects").insert([payload]).select("id,title,tag,result,platform,image_url");
+        if (error) throw new Error(error.message);
+        if (data) setItems([data[0] as Project, ...items]);
+      }
+      resetForm();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Có lỗi xảy ra");
     } finally {
@@ -78,6 +103,7 @@ export default function ProjectsPage() {
     if (!confirm("Xóa dự án này?")) return;
     await supabase.from("projects").delete().eq("id", id);
     setItems(items.filter((p) => p.id !== id));
+    if (editingId === id) resetForm();
   };
 
   if (loading) return <div className="text-gray-500">Đang tải…</div>;
@@ -85,9 +111,13 @@ export default function ProjectsPage() {
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-900 mb-1">Dự án đã thực hiện</h2>
-      <p className="text-sm text-gray-500 mb-6">Nên kèm ảnh thật (screenshot kết quả) — sẽ hiển thị làm ảnh bìa card trên trang chủ.</p>
+      <p className="text-sm text-gray-500 mb-6">Nên kèm ảnh thật (screenshot kết quả) — hiển thị làm ảnh bìa card trên trang chủ.</p>
 
-      <form onSubmit={handleAdd} className="bg-white shadow-sm border border-gray-200 rounded-xl p-5 mb-8 grid gap-4 md:grid-cols-2 max-w-3xl">
+      <form ref={formRef} onSubmit={handleSubmit} className="bg-white shadow-sm border border-gray-200 rounded-xl p-5 mb-8 grid gap-4 md:grid-cols-2 max-w-3xl scroll-mt-20">
+        <div className="md:col-span-2 flex items-center justify-between">
+          <h3 className="font-semibold text-gray-900">{editingId ? "Sửa dự án" : "Thêm dự án mới"}</h3>
+          {editingId && <button type="button" onClick={resetForm} className="text-sm text-gray-500 hover:text-gray-800 inline-flex items-center gap-1"><X className="h-4 w-4" />Hủy</button>}
+        </div>
         <div>
           <label className="text-sm font-medium text-gray-700">Tên dự án *</label>
           <input required value={title} onChange={(e) => setTitle(e.target.value)} className={inputCls} placeholder="@brand.hub — 2.1M follow" />
@@ -95,9 +125,7 @@ export default function ProjectsPage() {
         <div>
           <label className="text-sm font-medium text-gray-700">Nền tảng</label>
           <select value={platform} onChange={(e) => setPlatform(e.target.value)} className={inputCls}>
-            {PLATFORMS.map((p) => (
-              <option key={p.value} value={p.value}>{p.label}</option>
-            ))}
+            {PLATFORMS.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
           </select>
         </div>
         <div>
@@ -111,23 +139,29 @@ export default function ProjectsPage() {
         <div className="md:col-span-2">
           <label className="text-sm font-medium text-gray-700">Ảnh dự án (tùy chọn)</label>
           <label className="mt-1 flex items-center gap-2 rounded-lg border border-dashed border-gray-300 px-3 py-2.5 text-sm text-gray-600 cursor-pointer hover:border-blue-400">
-            <ImagePlus className="h-4 w-4" />
-            {file ? file.name : "Chọn ảnh…"}
-            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+            <ImagePlus className="h-4 w-4" />{file ? file.name : "Chọn ảnh…"}
+            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => pickFile(e.target.files?.[0] ?? null)} />
           </label>
+          {preview && (
+            <div className="mt-2 flex items-center gap-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={preview} alt="preview" className="h-20 rounded-lg object-cover" />
+              <button type="button" onClick={() => { setFile(null); setPreview(null); if (fileRef.current) fileRef.current.value = ""; }} className="text-xs text-red-600 hover:underline">Bỏ ảnh</button>
+            </div>
+          )}
         </div>
         {error && <p className="md:col-span-2 text-sm text-red-600">{error}</p>}
         <div className="md:col-span-2">
           <button disabled={saving} type="submit" className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-60">
             {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-            Thêm dự án
+            {editingId ? "Lưu thay đổi" : "Thêm dự án"}
           </button>
         </div>
       </form>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {items.map((p) => (
-          <div key={p.id} className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
+          <div key={p.id} className={`bg-white shadow-sm border rounded-xl overflow-hidden ${editingId === p.id ? "border-blue-400 ring-2 ring-blue-100" : "border-gray-200"}`}>
             {p.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={p.image_url} alt={p.title} className="h-36 w-full object-cover" />
@@ -139,10 +173,9 @@ export default function ProjectsPage() {
               <p className="text-sm font-semibold text-gray-900 mt-1">{p.title}</p>
               {p.result && <p className="text-xs text-gray-500 mt-1">{p.result}</p>}
             </div>
-            <div className="border-t px-4 py-2 flex justify-end">
-              <button onClick={() => handleDelete(p.id)} className="text-red-600 hover:text-red-800 text-sm inline-flex items-center gap-1">
-                <Trash2 className="h-4 w-4" /> Xóa
-              </button>
+            <div className="border-t px-4 py-2 flex justify-end gap-4">
+              <button onClick={() => startEdit(p)} className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-1"><Pencil className="h-4 w-4" />Sửa</button>
+              <button onClick={() => handleDelete(p.id)} className="text-red-600 hover:text-red-800 text-sm inline-flex items-center gap-1"><Trash2 className="h-4 w-4" />Xóa</button>
             </div>
           </div>
         ))}

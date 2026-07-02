@@ -47,18 +47,23 @@ create table if not exists public.pricing (
   sort int not null default 0,
   created_at timestamptz not null default now()
 );
+-- Bổ sung cột nếu bảng pricing cũ có schema khác (title/price/description/features)
+alter table public.pricing add column if not exists platform_slug text;
+alter table public.pricing add column if not exists service text;
+alter table public.pricing add column if not exists duration text;
+alter table public.pricing add column if not exists warranty text;
+alter table public.pricing add column if not exists price text;
+alter table public.pricing add column if not exists sort int default 0;
 
 -- 4) Cấu hình liên hệ (key-value)
 create table if not exists public.settings (
   key text primary key,          -- zalo | telegram | messenger | phone | email
   value text not null default ''
 );
+-- Tạo sẵn các khóa với giá trị RỖNG — admin điền link thật sau. Kênh rỗng
+-- sẽ không hiển thị trên landing (không cấu hình = ẩn).
 insert into public.settings (key, value) values
-  ('zalo', 'https://zalo.me/0000000000'),
-  ('telegram', 'https://t.me/vduystudio'),
-  ('messenger', 'https://m.me/vduystudio'),
-  ('phone', '0000 000 000'),
-  ('email', 'hello@vduystudio.com')
+  ('zalo', ''), ('telegram', ''), ('messenger', ''), ('phone', ''), ('email', '')
 on conflict (key) do nothing;
 
 -- ============================================================
@@ -70,7 +75,8 @@ do $$
 declare
   pairs text[][] := array[
     ['projects','name'],['projects','client'],['projects','description'],
-    ['feedbacks','avatar'],['feedbacks','description']
+    ['feedbacks','avatar'],['feedbacks','description'],
+    ['pricing','title'],['pricing','description'],['pricing','features']
   ];
   p text[];
 begin
@@ -92,6 +98,9 @@ begin
   end if;
   if exists (select 1 from information_schema.columns where table_schema='public' and table_name='feedbacks' and column_name='avatar') then
     execute 'update public.feedbacks set company = coalesce(company, avatar) where company is null';
+  end if;
+  if exists (select 1 from information_schema.columns where table_schema='public' and table_name='pricing' and column_name='title') then
+    execute 'update public.pricing set service = coalesce(service, title) where service is null';
   end if;
 end $$;
 
@@ -120,6 +129,22 @@ select * from (values
   ('Studio nhiếp ảnh','Instagram · Tích xanh','Tích xanh Instagram sau 7 ngày','instagram-threads')
 ) as v(title,tag,result,platform)
 where not exists (select 1 from public.projects);
+
+insert into public.pricing (platform_slug, service, duration, warranty, price, sort)
+select * from (values
+  ('tiktok','Tích xanh chính thống','7–15 ngày','12 tháng','Liên hệ báo giá',0),
+  ('tiktok','Mở khóa tài khoản','1–3 ngày','30 ngày','Liên hệ báo giá',1),
+  ('tiktok','Mở khóa Livestream','1–2 ngày','30 ngày','Liên hệ báo giá',2),
+  ('tiktok','Mở khóa Giỏ hàng (TikTok Shop)','1–3 ngày','30 ngày','Liên hệ báo giá',3),
+  ('facebook','Tích xanh cá nhân/Fanpage','5–10 ngày','12 tháng','Liên hệ báo giá',0),
+  ('facebook','Mở khóa tài khoản cá nhân','1–3 ngày','30 ngày','Liên hệ báo giá',1),
+  ('facebook','Mở khóa Fanpage','1–3 ngày','30 ngày','Liên hệ báo giá',2),
+  ('instagram-threads','Tích xanh chính thống','5–10 ngày','12 tháng','Liên hệ báo giá',0),
+  ('instagram-threads','Mở khóa tài khoản','1–3 ngày','30 ngày','Liên hệ báo giá',1),
+  ('bao-chi','Booking theo đầu báo','2–5 ngày','Giữ bài theo gói','Theo bảng đầu báo',0),
+  ('bao-chi','Viết bài PR chuẩn SEO','2–3 ngày','Chỉnh sửa 2 lần','Liên hệ báo giá',1)
+) as v(platform_slug,service,duration,warranty,price,sort)
+where not exists (select 1 from public.pricing);
 
 -- ============================================================
 -- RLS: ai cũng ĐỌC được (landing page), chỉ user đăng nhập được GHI (admin)
@@ -152,3 +177,9 @@ drop policy if exists "uploads auth delete"  on storage.objects;
 create policy "uploads public read" on storage.objects for select using (bucket_id = 'uploads');
 create policy "uploads auth insert" on storage.objects for insert to authenticated with check (bucket_id = 'uploads');
 create policy "uploads auth delete" on storage.objects for delete to authenticated using (bucket_id = 'uploads');
+
+-- ============================================================
+-- Nạp lại schema cache của PostgREST (khắc phục lỗi "Could not find the
+-- 'x' column ... in the schema cache" sau khi thêm/sửa cột).
+-- ============================================================
+notify pgrst, 'reload schema';

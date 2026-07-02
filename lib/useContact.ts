@@ -1,39 +1,43 @@
 "use client";
 
 // Hook liên hệ: lấy Zalo/Telegram/Messenger/phone/email từ bảng settings
-// trên Supabase; chưa cấu hình DB thì dùng giá trị mặc định trong lib/site.ts.
+// (Supabase). Kênh nào để trống / còn giá trị placeholder mặc định coi như
+// CHƯA cấu hình (isSet = false) → landing sẽ ẩn.
 
 import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
 import { fetchSettings } from "@/lib/data";
 
-export type Contact = {
-  zalo: string;
-  telegram: string;
-  messenger: string;
-  phone: string;
-  email: string;
+export type ContactKey = "zalo" | "telegram" | "messenger" | "phone" | "email";
+
+export type Contact = Record<ContactKey, string> & {
+  isSet: (k: ContactKey) => boolean;
 };
 
+const KEYS: ContactKey[] = ["zalo", "telegram", "messenger", "phone", "email"];
+
 export function useContact(): Contact {
-  const [contact, setContact] = useState<Contact>({ ...site.contact });
+  const [values, setValues] = useState<Record<ContactKey, string>>({ ...site.contact });
 
   useEffect(() => {
     let mounted = true;
     fetchSettings().then((s) => {
       if (!mounted || !s) return;
-      setContact((prev) => ({
-        zalo: s.zalo || prev.zalo,
-        telegram: s.telegram || prev.telegram,
-        messenger: s.messenger || prev.messenger,
-        phone: s.phone || prev.phone,
-        email: s.email || prev.email,
-      }));
+      setValues((prev) => {
+        const next = { ...prev };
+        for (const k of KEYS) if (s[k] !== undefined) next[k] = s[k];
+        return next;
+      });
     });
     return () => {
       mounted = false;
     };
   }, []);
 
-  return contact;
+  const isSet = (k: ContactKey) => {
+    const v = values[k]?.trim();
+    return Boolean(v) && v !== site.contact[k];
+  };
+
+  return { ...values, isSet };
 }

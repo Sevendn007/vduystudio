@@ -1,42 +1,31 @@
 "use client";
 
-import { useState } from "react";
+// Nút chat nổi góc dưới phải: chỉ hiện các kênh ĐÃ cấu hình (Zalo / Telegram /
+// Messenger). Không kênh nào cấu hình → ẩn hoàn toàn.
+
+import { useState, ReactNode } from "react";
 import { useContact } from "@/lib/useContact";
 
 export default function ChatFab() {
   const [open, setOpen] = useState(false);
   const contact = useContact();
 
+  const channels = [
+    contact.isSet("zalo") && { key: "zalo", url: contact.zalo, label: "Chat Zalo", cls: "cfab-zalo", icon: <ZaloIcon /> },
+    contact.isSet("telegram") && { key: "telegram", url: contact.telegram, label: "Chat Telegram", cls: "cfab-tele", icon: <TeleIcon /> },
+    contact.isSet("messenger") && { key: "messenger", url: contact.messenger, label: "Chat Messenger", cls: "cfab-mess", icon: <MessIcon /> },
+  ].filter(Boolean) as { key: string; url: string; label: string; cls: string; icon: ReactNode }[];
+
+  if (channels.length === 0) return null;
+
   return (
     <div className={`cfab${open ? " open" : ""}`}>
-      <a className="cfab-item cfab-zalo" href={contact.zalo} target="_blank" rel="noreferrer" aria-label="Chat Zalo">
-        <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden>
-          <rect width="48" height="48" rx="12" fill="#fff" />
-          <path
-            fill="#0068FF"
-            d="M24 6C13.5 6 5 13.4 5 22.5c0 5 2.5 9.5 6.6 12.4-.3 2-1.2 4-2.6 5.6-.4.5-.1 1.2.5 1.2 3.3-.1 6.2-1.2 8.4-2.8 2 .5 4 .8 6.1.8 10.5 0 19-7.4 19-16.5S34.5 6 24 6z"
-          />
-          <text x="24" y="28" textAnchor="middle" fontFamily="system-ui,sans-serif" fontSize="12" fontWeight="800" fill="#fff">
-            Zalo
-          </text>
-        </svg>
-        <span className="cfab-label">Chat Zalo</span>
-      </a>
-
-      <a className="cfab-item cfab-tele" href={contact.telegram} target="_blank" rel="noreferrer" aria-label="Chat Telegram">
-        <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden>
-          <circle cx="24" cy="24" r="22" fill="#fff" />
-          <path
-            fill="#229ED9"
-            d="M24 3C12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21S35.6 3 24 3z"
-          />
-          <path
-            fill="#fff"
-            d="M34.6 15.2 30.7 33c-.3 1.3-1.1 1.6-2.2.99l-6-4.42-2.9 2.8c-.32.32-.59.59-1.2.59l.43-6.1 11.1-10c.48-.43-.1-.67-.75-.24L15.4 24.2l-5.9-1.85c-1.28-.4-1.3-1.28.27-1.9l23.1-8.9c1.06-.4 1.99.24 1.64 1.65z"
-          />
-        </svg>
-        <span className="cfab-label">Chat Telegram</span>
-      </a>
+      {channels.map((c, i) => (
+        <a key={c.key} className={`cfab-item ${c.cls}`} style={{ transitionDelay: `${i * 0.04}s` }} href={c.url} target="_blank" rel="noreferrer" aria-label={c.label}>
+          {c.icon}
+          <span className="cfab-label">{c.label}</span>
+        </a>
+      ))}
 
       <button className="cfab-main" onClick={() => setOpen((v) => !v)} aria-label="Mở kênh chat" aria-expanded={open}>
         <span className="cfab-icon-chat">
@@ -56,7 +45,6 @@ export default function ChatFab() {
 .cfab-item{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 16px;border-radius:100px;background:#fff;color:#0f1115;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.25);text-decoration:none;
  opacity:0;transform:translateY(12px) scale(.9);pointer-events:none;transition:.25s cubic-bezier(.2,.8,.2,1);}
 .cfab.open .cfab-item{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
-.cfab.open .cfab-tele{transition-delay:.04s;}
 .cfab-item svg{border-radius:50%;flex-shrink:0;}
 .cfab-label{white-space:nowrap;}
 .cfab-main{position:relative;width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;
@@ -73,5 +61,39 @@ export default function ChatFab() {
 @media(max-width:560px){.cfab{right:16px;bottom:calc(16px + env(safe-area-inset-bottom));}}
       `}</style>
     </div>
+  );
+}
+
+function ZaloIcon() {
+  return (
+    <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden>
+      <rect width="48" height="48" rx="12" fill="#fff" />
+      <path fill="#0068FF" d="M24 6C13.5 6 5 13.4 5 22.5c0 5 2.5 9.5 6.6 12.4-.3 2-1.2 4-2.6 5.6-.4.5-.1 1.2.5 1.2 3.3-.1 6.2-1.2 8.4-2.8 2 .5 4 .8 6.1.8 10.5 0 19-7.4 19-16.5S34.5 6 24 6z" />
+      <text x="24" y="28" textAnchor="middle" fontFamily="system-ui,sans-serif" fontSize="12" fontWeight="800" fill="#fff">Zalo</text>
+    </svg>
+  );
+}
+function TeleIcon() {
+  return (
+    <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden>
+      <circle cx="24" cy="24" r="22" fill="#fff" />
+      <path fill="#229ED9" d="M24 3C12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21S35.6 3 24 3z" />
+      <path fill="#fff" d="M34.6 15.2 30.7 33c-.3 1.3-1.1 1.6-2.2.99l-6-4.42-2.9 2.8c-.32.32-.59.59-1.2.59l.43-6.1 11.1-10c.48-.43-.1-.67-.75-.24L15.4 24.2l-5.9-1.85c-1.28-.4-1.3-1.28.27-1.9l23.1-8.9c1.06-.4 1.99.24 1.64 1.65z" />
+    </svg>
+  );
+}
+function MessIcon() {
+  return (
+    <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden>
+      <defs>
+        <linearGradient id="cfab-mg" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stopColor="#0099FF" />
+          <stop offset="0.6" stopColor="#A033FF" />
+          <stop offset="1" stopColor="#FF5280" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="24" fill="url(#cfab-mg)" />
+      <path fill="#fff" d="M24 9c-8.4 0-15 6.2-15 14.5 0 4.7 2.2 8.9 5.6 11.6V41l5.1-2.8c1.4.4 2.8.6 4.3.6 8.4 0 15-6.2 15-14.5S32.4 9 24 9zm1.5 19.5-3.8-4.1-7.5 4.1 8.2-8.7 3.9 4.1 7.4-4.1-8.2 8.7z" />
+    </svg>
   );
 }

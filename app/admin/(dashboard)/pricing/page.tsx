@@ -1,11 +1,11 @@
 "use client";
 
-// Quản lý bảng giá theo nền tảng — hiển thị ở trang chi tiết dịch vụ (/dich-vu/...).
-// Chưa nhập gì cho nền tảng nào thì trang đó dùng bảng giá mặc định.
+// Quản lý bảng giá theo nền tảng: thêm / SỬA / xóa. Có nút "Giá liên hệ".
+// Hiển thị ở trang chi tiết dịch vụ. Nền tảng chưa nhập → dùng giá mặc định.
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Trash2, Loader2 } from "lucide-react";
+import { Trash2, Loader2, Pencil, X } from "lucide-react";
 
 type Row = {
   id: string;
@@ -23,6 +23,7 @@ const PLATFORMS = [
   { value: "instagram-threads", label: "Instagram / Threads" },
   { value: "bao-chi", label: "Báo chí" },
 ];
+const CONTACT_PRICE = "Liên hệ báo giá";
 
 const inputCls =
   "block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none";
@@ -35,6 +36,7 @@ export default function PricingPage() {
   const [error, setError] = useState("");
   const [tab, setTab] = useState("tiktok");
 
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [service, setService] = useState("");
   const [duration, setDuration] = useState("");
   const [warranty, setWarranty] = useState("");
@@ -54,19 +56,35 @@ export default function PricingPage() {
 
   const current = rows.filter((r) => r.platform_slug === tab);
 
-  const handleAdd = async (e: React.FormEvent) => {
+  const resetForm = () => {
+    setEditingId(null); setService(""); setDuration(""); setWarranty(""); setPrice("");
+  };
+
+  const startEdit = (r: Row) => {
+    setTab(r.platform_slug); setEditingId(r.id); setService(r.service);
+    setDuration(r.duration ?? ""); setWarranty(r.warranty ?? ""); setPrice(r.price ?? "");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setError("");
     try {
-      const sort = current.length;
-      const { data, error } = await supabase
-        .from("pricing")
-        .insert([{ platform_slug: tab, service, duration: duration || null, warranty: warranty || null, price: price || null, sort }])
-        .select("id,platform_slug,service,duration,warranty,price,sort");
-      if (error) throw new Error(error.message);
-      if (data) setRows([...rows, data[0] as Row]);
-      setService(""); setDuration(""); setWarranty(""); setPrice("");
+      const payload = {
+        platform_slug: tab, service,
+        duration: duration || null, warranty: warranty || null, price: price || null,
+      };
+      if (editingId) {
+        const { data, error } = await supabase.from("pricing").update(payload).eq("id", editingId).select("id,platform_slug,service,duration,warranty,price,sort");
+        if (error) throw new Error(error.message);
+        if (data) setRows(rows.map((r) => (r.id === editingId ? (data[0] as Row) : r)));
+      } else {
+        const { data, error } = await supabase.from("pricing").insert([{ ...payload, sort: current.length }]).select("id,platform_slug,service,duration,warranty,price,sort");
+        if (error) throw new Error(error.message);
+        if (data) setRows([...rows, data[0] as Row]);
+      }
+      resetForm();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Có lỗi xảy ra");
     } finally {
@@ -78,6 +96,7 @@ export default function PricingPage() {
     if (!confirm("Xóa dòng giá này?")) return;
     await supabase.from("pricing").delete().eq("id", id);
     setRows(rows.filter((r) => r.id !== id));
+    if (editingId === id) resetForm();
   };
 
   if (loading) return <div className="text-gray-500">Đang tải…</div>;
@@ -85,23 +104,22 @@ export default function PricingPage() {
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-900 mb-1">Bảng giá dịch vụ</h2>
-      <p className="text-sm text-gray-500 mb-6">Giá hiển thị ở trang chi tiết từng nền tảng. Nền tảng chưa nhập giá sẽ dùng bảng mặc định.</p>
+      <p className="text-sm text-gray-500 mb-6">Giá hiển thị ở trang chi tiết từng nền tảng. Để trống ô Giá hoặc bấm &quot;Giá liên hệ&quot; nếu không muốn hiện số.</p>
 
       <div className="flex gap-2 mb-6 flex-wrap">
         {PLATFORMS.map((p) => (
-          <button
-            key={p.value}
-            onClick={() => setTab(p.value)}
-            className={`px-4 py-2 rounded-full text-sm font-medium border ${
-              tab === p.value ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-700 border-gray-300 hover:border-blue-400"
-            }`}
-          >
+          <button key={p.value} onClick={() => { setTab(p.value); resetForm(); }}
+            className={`px-4 py-2 rounded-full text-sm font-medium border ${tab === p.value ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-700 border-gray-300 hover:border-blue-400"}`}>
             {p.label}
           </button>
         ))}
       </div>
 
-      <form onSubmit={handleAdd} className="bg-white shadow-sm border border-gray-200 rounded-xl p-5 mb-6 grid gap-3 md:grid-cols-5 items-end max-w-4xl">
+      <form onSubmit={handleSubmit} className="bg-white shadow-sm border border-gray-200 rounded-xl p-5 mb-6 grid gap-3 md:grid-cols-5 items-end max-w-4xl">
+        <div className="md:col-span-5 flex items-center justify-between">
+          <h3 className="font-semibold text-gray-900 text-sm">{editingId ? "Sửa dòng giá" : "Thêm dòng giá"} — {PLATFORMS.find((p) => p.value === tab)?.label}</h3>
+          {editingId && <button type="button" onClick={resetForm} className="text-sm text-gray-500 hover:text-gray-800 inline-flex items-center gap-1"><X className="h-4 w-4" />Hủy</button>}
+        </div>
         <div className="md:col-span-2">
           <label className="text-sm font-medium text-gray-700">Dịch vụ *</label>
           <input required value={service} onChange={(e) => setService(e.target.value)} className={`${inputCls} mt-1`} placeholder="Tích xanh chính thống" />
@@ -118,12 +136,15 @@ export default function PricingPage() {
           <label className="text-sm font-medium text-gray-700">Giá</label>
           <input value={price} onChange={(e) => setPrice(e.target.value)} className={`${inputCls} mt-1`} placeholder="5.000.000đ" />
         </div>
-        {error && <p className="md:col-span-5 text-sm text-red-600">{error}</p>}
-        <div className="md:col-span-5">
+        <div className="md:col-span-5 flex items-center gap-3 flex-wrap">
           <button disabled={saving} type="submit" className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-60">
             {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-            Thêm dòng giá
+            {editingId ? "Lưu thay đổi" : "Thêm dòng giá"}
           </button>
+          <button type="button" onClick={() => setPrice(CONTACT_PRICE)} className="text-sm text-blue-600 border border-blue-200 bg-blue-50 px-3 py-2 rounded-lg hover:bg-blue-100">
+            Giá liên hệ
+          </button>
+          {error && <span className="text-sm text-red-600">{error}</span>}
         </div>
       </form>
 
@@ -138,24 +159,19 @@ export default function PricingPage() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {current.map((r) => (
-              <tr key={r.id}>
+              <tr key={r.id} className={editingId === r.id ? "bg-blue-50" : ""}>
                 <td className="px-5 py-3 font-medium text-gray-900">{r.service}</td>
-                <td className="px-5 py-3 text-gray-600">{r.duration ?? "—"}</td>
-                <td className="px-5 py-3 text-gray-600">{r.warranty ?? "—"}</td>
-                <td className="px-5 py-3 text-gray-900 font-semibold">{r.price ?? "—"}</td>
-                <td className="px-5 py-3 text-right">
-                  <button onClick={() => handleDelete(r.id)} className="text-red-600 hover:text-red-800">
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                <td className="px-5 py-3 text-gray-600">{r.duration || "—"}</td>
+                <td className="px-5 py-3 text-gray-600">{r.warranty || "—"}</td>
+                <td className="px-5 py-3 text-gray-900 font-semibold">{r.price || CONTACT_PRICE}</td>
+                <td className="px-5 py-3 text-right whitespace-nowrap">
+                  <button onClick={() => startEdit(r)} className="text-blue-600 hover:text-blue-800 mr-3 inline-flex"><Pencil className="h-4 w-4" /></button>
+                  <button onClick={() => handleDelete(r.id)} className="text-red-600 hover:text-red-800 inline-flex"><Trash2 className="h-4 w-4" /></button>
                 </td>
               </tr>
             ))}
             {current.length === 0 && (
-              <tr>
-                <td colSpan={5} className="px-5 py-6 text-center text-gray-500">
-                  Chưa có giá cho nền tảng này — trang chi tiết đang dùng bảng giá mặc định.
-                </td>
-              </tr>
+              <tr><td colSpan={5} className="px-5 py-6 text-center text-gray-500">Chưa có giá cho nền tảng này — trang chi tiết đang dùng bảng giá mặc định.</td></tr>
             )}
           </tbody>
         </table>

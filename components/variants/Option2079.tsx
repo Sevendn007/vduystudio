@@ -340,6 +340,18 @@ export default function OptionGalaxy() {
             {t.ctaBtn}
           </a>
         </div>
+        {(contact.isSet("email") || contact.isSet("phone") || contact.isSet("zalo") || contact.isSet("telegram") || contact.isSet("messenger")) && (
+          <div className="gx-footcontact">
+            <span className="gx-footcontact-label">{lang === "en" ? "Contact" : "Liên hệ"}</span>
+            <div className="gx-footcontact-links">
+              {contact.isSet("email") && <a href={`mailto:${contact.email}`}>✉&nbsp; {contact.email}</a>}
+              {contact.isSet("phone") && <a href={`tel:${contact.phone.replace(/[^0-9+]/g, "")}`}>☎&nbsp; {contact.phone}</a>}
+              {contact.isSet("zalo") && <a href={contact.zalo} target="_blank" rel="noreferrer">Zalo ↗</a>}
+              {contact.isSet("telegram") && <a href={contact.telegram} target="_blank" rel="noreferrer">Telegram ↗</a>}
+              {contact.isSet("messenger") && <a href={contact.messenger} target="_blank" rel="noreferrer">Messenger ↗</a>}
+            </div>
+          </div>
+        )}
         <div className="gx-footbar">
           <span>© 2026 VDuyStudio</span>
           <span>{site.domain}</span>
@@ -487,7 +499,12 @@ export default function OptionGalaxy() {
  radial-gradient(560px 280px at 50% 0%,rgba(103,232,249,.12),transparent 70%),rgba(139,147,184,.04);}
 .gx-cta h2{font-size:clamp(26px,4.4vw,46px);font-weight:700;letter-spacing:-1.2px;margin:0 0 14px;}
 .gx-cta p{color:var(--muted);margin:0 0 28px;font-size:15.5px;}
-.gx-footbar{display:flex;justify-content:space-between;margin-top:26px;color:var(--muted);font-size:13px;flex-wrap:wrap;gap:12px;}
+.gx-footcontact{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin-top:26px;padding-top:22px;border-top:1px solid var(--line);}
+.gx-footcontact-label{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);font-weight:700;}
+.gx-footcontact-links{display:flex;flex-wrap:wrap;gap:8px 22px;}
+.gx-footcontact-links a{color:var(--muted);font-size:14px;transition:.2s;}
+.gx-footcontact-links a:hover{color:var(--fg);}
+.gx-footbar{display:flex;justify-content:space-between;margin-top:22px;color:var(--muted);font-size:13px;flex-wrap:wrap;gap:12px;}
 
 @media(prefers-reduced-motion:reduce){.gx-root *{animation:none!important}}
 

@@ -80,12 +80,13 @@ export default function ServiceDetail({ slug }: { slug: string }) {
     setPricing(platform.pricing);
     fetchPricing(slug).then((rows) => {
       if (!mounted || !rows) return;
+      const contactPrice = lang === "en" ? "Contact for quote" : "Liên hệ báo giá";
       setPricing(
         rows.map((r) => ({
           service: r.service,
-          duration: r.duration ?? "—",
-          warranty: r.warranty ?? "—",
-          price: r.price ?? "—",
+          duration: r.duration || "—",
+          warranty: r.warranty || "—",
+          price: r.price || contactPrice,
         }))
       );
     });
