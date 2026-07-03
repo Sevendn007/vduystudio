@@ -475,9 +475,10 @@ export default function OptionGalaxy() {
 .gx-bento{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
 .gx-bcard{background:rgba(139,147,184,.06);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.25s;}
 .gx-bcard:hover{transform:translateY(-4px);border-color:rgba(103,232,249,.5);box-shadow:0 20px 44px rgba(0,0,0,.5);}
-.gx-bcover{position:relative;aspect-ratio:16/10;background:#0a0f1e;line-height:0;}
-.gx-bcover img{width:100%;height:100%;object-fit:contain;display:block;}
-.gx-btag{position:absolute;left:14px;top:14px;font-size:11.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#03040c;background:linear-gradient(90deg,var(--cyan),var(--vio));padding:6px 16px;border-radius:100px;box-shadow:0 6px 20px rgba(103,232,249,.35);z-index:2;}
+.gx-bcover{position:relative;aspect-ratio:9/16;background:#050505;border-radius:24px;border:5px solid #242b3d;margin:18px 18px 0;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 0 0 1px #000;line-height:0;}
+.gx-bcover::after{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);width:70px;height:20px;background:#000;border-radius:12px;z-index:10;}
+.gx-bcover img{width:100%;height:100%;object-fit:cover;display:block;}
+.gx-btag{position:absolute;left:14px;bottom:14px;font-size:11.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#03040c;background:linear-gradient(90deg,var(--cyan),var(--vio));padding:6px 16px;border-radius:100px;box-shadow:0 6px 20px rgba(103,232,249,.35);z-index:11;}
 .gx-bbody{padding:18px 20px 20px;}
 .gx-bbody h4{margin:0 0 6px;font-size:16.5px;font-weight:700;}
 .gx-bbody p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.5;}
@@ -525,6 +526,7 @@ export default function OptionGalaxy() {
  .gx-nav{padding:12px 16px;}
  .gx-hero{padding:26px 16px 40px;}
  .gx-hero-tag{font-size:10.5px;letter-spacing:1.5px;}
+ .gx-btag{font-size:9.5px;padding:4px 12px;bottom:10px;left:10px;}
  .gx-hero-lockup{margin-bottom:24px;}
  .gx-hero-text h1{font-size:27px;letter-spacing:-.8px;}
  .gx-hero-text p{font-size:15px;}
