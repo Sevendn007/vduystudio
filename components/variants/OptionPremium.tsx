@@ -105,23 +105,64 @@ const SVC_ICONS: Record<string, JSX.Element> = {
 };
 
 const SERVICES = [
-  { slug: "tiktok", icon: "verify", name: ["Social Media", "Verification"] },
-  { slug: "facebook", icon: "brand", name: ["Digital", "Branding"] },
-  { slug: "instagram-threads", icon: "growth", name: ["Strategy &", "Growth"] },
-  { slug: "bao-chi", icon: "mega", name: ["PR &", "Booking"] },
+  { slug: "tiktok", icon: "verify", en: ["Social Media", "Verification"], vi: ["Tích xanh", "Mạng xã hội"] },
+  { slug: "facebook", icon: "brand", en: ["Digital", "Branding"], vi: ["Xây dựng", "Thương hiệu"] },
+  { slug: "instagram-threads", icon: "growth", en: ["Strategy &", "Growth"], vi: ["Chiến lược", "Tăng trưởng"] },
+  { slug: "bao-chi", icon: "mega", en: ["PR &", "Booking"], vi: ["Báo chí &", "Booking"] },
 ];
+
+// Tên hiển thị của platform slug (dùng cho overlay khi dữ liệu lấy từ DB).
+const PLATFORM_NAME: Record<string, string> = {
+  tiktok: "TikTok",
+  facebook: "Facebook",
+  instagram: "Instagram",
+  "instagram-threads": "Instagram",
+  "bao-chi": "Báo chí",
+};
+
+// Chữ theo ngôn ngữ (switch VI/EN trên nav).
+const TX = {
+  vi: {
+    menu: ["Dịch vụ", "Quy trình", "Dự án", "Feedback"],
+    heroSub: "Xây dựng thương hiệu số & tích xanh chính thống.",
+    trusted: "Đồng hành cùng",
+    services: "Dịch vụ",
+    portfolio: "Dự án",
+    clients: "Khách hàng",
+    process: "Quy trình",
+    feedback: "Feedback",
+    cta: "Sẵn sàng bứt phá?",
+    btn: "Liên hệ ngay",
+  },
+  en: {
+    menu: ["Services", "Process", "Projects", "Feedback"],
+    heroSub: "Bold Digital Branding & Social Verification.",
+    trusted: "Trusted by",
+    services: "Services",
+    portfolio: "Portfolio",
+    clients: "Clients",
+    process: "Process",
+    feedback: "Feedback",
+    cta: "Ready to scale?",
+    btn: "Let's Talk",
+  },
+};
 
 /* ================= components ================= */
 
 // Khung iPhone: viền titan, Dynamic Island, phản chiếu mặt kính.
-function IPhone({ src, alt, size = "md", tilt }: { src: string | null; alt: string; size?: "lg" | "md" | "sm"; tilt?: "l" | "r" }) {
-  const [failed, setFailed] = useState(false);
+// Ảnh DB lỗi/thiếu thì tự rơi về ảnh fallback cục bộ (d1–d4) để khung
+// không bao giờ trống.
+function IPhone({ src, fallback, alt, size = "md", tilt }: { src: string | null; fallback?: string | null; alt: string; size?: "lg" | "md" | "sm"; tilt?: "l" | "r" }) {
+  const chain = [src, fallback].filter(Boolean) as string[];
+  const [idx, setIdx] = useState(0);
+  const cur = chain[idx];
   return (
     <div className={`pm-phone ${size} ${tilt === "l" ? "tilt-l" : tilt === "r" ? "tilt-r" : ""}`}>
       <div className="pm-phone-screen">
-        {src && !failed ? (
+        {cur ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} />
+          <img src={cur} alt={alt} loading="lazy" onError={() => setIdx((i) => i + 1)} />
         ) : (
           <div className="pm-phone-empty">{alt}</div>
         )}
@@ -151,39 +192,49 @@ export default function OptionPremium() {
     st.testimonials.map((c, i) => ({ id: `t${i}`, name: c.name, company: c.company, quote: c.quote, rating: 5, image_url: null }));
   const hueOf = (i: number) => [330, 210, 160, 40, 280, 120][i % 6];
   const projects: ShowProject[] = dbProjects && dbProjects.length > 0 ? dbProjects : DEFAULT_PROJECTS;
+  const t = TX[lang];
 
   return (
     <div className="pm-root" id="pm-top">
       {/* NAV */}
       <nav className="pm-nav">
         <a href="#pm-top" className="pm-brand">
-          <span className="pm-brandmark">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/logo.png" alt="" />
-          </span>
+          <span className="pm-brandmark" role="img" aria-label="VDuyStudio" />
           <span className="pm-brandname">VDUYSTUDIO</span>
         </a>
         <div className="pm-menu">
-          <a href="#pm-services">Services</a>
-          <a href="#pm-process">Process</a>
-          <a href="#pm-projects">Projects</a>
-          <a href="#pm-feedback">Feedback</a>
+          <a href="#pm-services">{t.menu[0]}</a>
+          <a href="#pm-process">{t.menu[1]}</a>
+          <a href="#pm-projects">{t.menu[2]}</a>
+          <a href="#pm-feedback">{t.menu[3]}</a>
         </div>
         <div className="pm-nav-right">
           <LangToggle compact />
         </div>
       </nav>
 
-      {/* HERO */}
+      {/* HERO — logo.png thật: mark quay như địa cầu, hành tinh & sao lấp lánh */}
       <header className="pm-hero">
         <div className="pm-hero-fx" aria-hidden />
-        <h1 className="pm-hero-title">VDUYSTUDIO</h1>
-        <p className="pm-hero-sub">Bold Digital Branding &amp; Social Verification.</p>
+        <span className="pm-planet p1" aria-hidden />
+        <span className="pm-planet p2" aria-hidden />
+        {["t1", "t2", "t3", "t4", "t5", "t6"].map((c) => (
+          <span key={c} className={`pm-twinkle ${c}`} aria-hidden />
+        ))}
+        <div className="pm-hero-logo">
+          <div className="pm-mark-wrap">
+            <span className="pm-orbit" aria-hidden />
+            <span className="pm-orbit o2" aria-hidden />
+            <div className="pm-mark" role="img" aria-label="VDuyStudio" />
+          </div>
+          <div className="pm-word" aria-hidden />
+        </div>
+        <p className="pm-hero-sub">{t.heroSub}</p>
       </header>
 
       {/* THƯƠNG HIỆU ĐÃ HỢP TÁC */}
       <div className="pm-marquee-wrap" aria-label="Thương hiệu đã hợp tác">
-        <span className="pm-marquee-label">Trusted by</span>
+        <span className="pm-marquee-label">{t.trusted}</span>
         <div className="pm-marquee">
           <div className="pm-marquee-track">
             {[...BRANDS, ...BRANDS].map((b, i) => (
@@ -198,14 +249,14 @@ export default function OptionPremium() {
       {/* SERVICES */}
       <section className="pm-section" id="pm-services">
         <div className="pm-container">
-          <h2 className="pm-label">Services</h2>
+          <h2 className="pm-label">{t.services}</h2>
           <div className="pm-services">
             {SERVICES.map((s) => (
               <Link href={`/dich-vu/${s.slug}`} className="pm-svc" key={s.slug}>
                 <span className="pm-svc-name">
-                  {s.name[0]}
+                  {(lang === "en" ? s.en : s.vi)[0]}
                   <br />
-                  {s.name[1]}
+                  {(lang === "en" ? s.en : s.vi)[1]}
                 </span>
                 <span className="pm-svc-icon">{SVC_ICONS[s.icon]}</span>
               </Link>
@@ -218,25 +269,28 @@ export default function OptionPremium() {
       <section className="pm-section" id="pm-projects">
         <div className="pm-container">
           <div className="pm-label-row">
-            <h2 className="pm-label">Portfolio</h2>
+            <h2 className="pm-label">{t.portfolio}</h2>
             <span className="pm-arrows" aria-hidden>← →</span>
           </div>
           <div className="pm-bento">
             {projects.map((p, i) => {
               const sp = p as ShowProject;
+              // Ảnh dự phòng theo vị trí (d1–d4) khi ảnh DB lỗi/thiếu.
+              const fb = DEFAULT_PROJECTS[i]?.image_url ?? null;
+              const platformName = PLATFORM_NAME[p.platform ?? ""] ?? "TikTok";
               return (
                 <article className="pm-card" key={p.id}>
                   <div className="pm-card-bgword" aria-hidden>
-                    {(sp.big ?? p.platform ?? "TIKTOK").toUpperCase()}
+                    {(sp.big ?? platformName).toUpperCase()}
                   </div>
 
                   {i === 0 && (
                     <div className="pm-stage hero-stage">
                       <div className="pm-ovl">
-                        <b>{sp.big ?? p.tag ?? "Verified"}</b>
-                        <span>{sp.small ?? p.platform ?? ""}</span>
+                        <b>{sp.big ?? "Verification"}</b>
+                        <span>{sp.small ?? platformName}</span>
                       </div>
-                      <IPhone src={p.image_url} alt={p.title} size="lg" tilt="r" />
+                      <IPhone src={p.image_url} fallback={fb} alt={p.title} size="lg" tilt="r" />
                       <div className="pm-year" aria-hidden>2024</div>
                     </div>
                   )}
@@ -244,16 +298,16 @@ export default function OptionPremium() {
                   {(i === 1 || i === 2) && (
                     <div className="pm-stage side-stage">
                       <div className="pm-ovl num">
-                        <b>{sp.big ?? p.tag ?? ""}</b>
-                        <span>{sp.small ?? p.platform ?? ""}</span>
+                        <b>{sp.big ?? platformName}</b>
+                        <span>{sp.small ?? p.tag ?? "Verified"}</span>
                       </div>
-                      <IPhone src={p.image_url} alt={p.title} size="md" tilt={i === 1 ? "l" : "r"} />
+                      <IPhone src={p.image_url} fallback={fb} alt={p.title} size="md" tilt={i === 1 ? "l" : "r"} />
                     </div>
                   )}
 
                   {i === 3 && (
                     <div className="pm-stage wide-stage">
-                      <IPhone src={p.image_url} alt={p.title} size="lg" />
+                      <IPhone src={p.image_url} fallback={fb} alt={p.title} size="lg" />
                       <div className="pm-spot">
                         <h3>{p.title}</h3>
                         {sp.handle && <span className="pm-handle">{sp.handle}</span>}
@@ -279,6 +333,7 @@ export default function OptionPremium() {
                     </div>
                   )}
 
+
                   {i !== 3 && (
                     <div className="pm-card-info">
                       <h3>{p.title}</h3>
@@ -295,7 +350,7 @@ export default function OptionPremium() {
       {/* KHÁCH HÀNG */}
       <section className="pm-section" id="pm-clients">
         <div className="pm-container">
-          <h2 className="pm-label center">Clients</h2>
+          <h2 className="pm-label center">{t.clients}</h2>
           <div className="pm-clients">
             {CLIENTS.map((c, i) => (
               <span className="pm-client" key={i}>
@@ -310,7 +365,7 @@ export default function OptionPremium() {
       {/* QUY TRÌNH */}
       <section className="pm-section" id="pm-process">
         <div className="pm-container">
-          <h2 className="pm-label">Process</h2>
+          <h2 className="pm-label">{t.process}</h2>
           <div className="pm-process">
             {getProcess(lang).map((s, i) => (
               <div className="pm-step" key={i}>
@@ -326,7 +381,7 @@ export default function OptionPremium() {
       {/* FEEDBACK */}
       <section className="pm-section" id="pm-feedback">
         <div className="pm-container">
-          <h2 className="pm-label">Feedback</h2>
+          <h2 className="pm-label">{t.feedback}</h2>
           <div className="pm-fb-grid">
             {feedbacks.slice(0, 3).map((c, i) => (
               <div className="pm-fb" key={c.id}>
@@ -350,9 +405,9 @@ export default function OptionPremium() {
         <div className="pm-container">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/logo.png" alt="VDuyStudio" className="pm-foot-logo" />
-          <h2 className="pm-foot-title">Ready to scale?</h2>
+          <h2 className="pm-foot-title">{t.cta}</h2>
           <a href={contact.zalo} target="_blank" rel="noreferrer" className="pm-btn">
-            Let&apos;s Talk
+            {t.btn}
           </a>
           {(contact.isSet("email") || contact.isSet("phone") || contact.isSet("telegram") || contact.isSet("messenger")) && (
             <div className="pm-foot-contact">
@@ -386,8 +441,10 @@ export default function OptionPremium() {
 .pm-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:14px;
  padding:12px clamp(16px,4vw,36px);background:rgba(4,8,13,.78);backdrop-filter:blur(16px);border-bottom:1px solid rgba(120,180,215,.1);}
 .pm-brand{display:flex;align-items:center;gap:11px;min-width:0;}
-.pm-brandmark{width:38px;height:38px;border-radius:11px;overflow:hidden;flex-shrink:0;box-shadow:0 0 0 1px rgba(120,180,215,.22),0 0 22px rgba(99,102,241,.35);}
-.pm-brandmark img{width:100%;height:100%;object-fit:cover;transform:scale(2.35);}
+/* Mark VD + tích xanh tách từ logo.png (crop bằng background-position) */
+.pm-brandmark{width:40px;height:40px;border-radius:30%;flex-shrink:0;
+ background:url('/images/logo.png') no-repeat #060a12;background-size:300% auto;background-position:55% 25%;
+ box-shadow:0 0 0 1px rgba(120,180,215,.25),0 0 24px rgba(99,102,241,.4);}
 .pm-brandname{font-family:'Anton',sans-serif;font-size:15px;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 20px rgba(56,189,248,.65);}
 .pm-menu{display:flex;gap:30px;font-size:13.5px;font-weight:600;color:var(--muted);}
 .pm-menu a{padding:8px 0;transition:.2s;}
@@ -396,7 +453,8 @@ export default function OptionPremium() {
 
 /* ===== hero ===== */
 .pm-hero{position:relative;margin:14px clamp(10px,2vw,20px) 0;border-radius:26px;overflow:hidden;text-align:center;
- padding:clamp(88px,13vw,170px) 20px clamp(96px,14vw,180px);
+ display:flex;flex-direction:column;align-items:center;
+ padding:clamp(48px,7vw,84px) 20px clamp(56px,8vw,104px);
  background:
   radial-gradient(1000px 460px at 50% 118%,rgba(34,211,238,.30),transparent 64%),
   radial-gradient(720px 340px at 14% 96%,rgba(8,90,120,.5),transparent 70%),
@@ -414,13 +472,50 @@ export default function OptionPremium() {
   radial-gradient(1px 1px at 86% 58%,rgba(190,240,255,.6),transparent),
   radial-gradient(1.4px 1.4px at 93% 14%,rgba(255,255,255,.75),transparent),
   radial-gradient(1px 1px at 8% 82%,rgba(255,255,255,.5),transparent);}
-.pm-hero-title{position:relative;margin:0;font-family:'Anton',sans-serif;font-weight:400;
- font-size:clamp(58px,12.5vw,182px);line-height:.98;letter-spacing:.5px;text-transform:uppercase;
- background:linear-gradient(180deg,#ffffff 6%,#e3edf5 36%,#93a9bc 52%,#eef5fa 62%,#aec0d0 100%);
- -webkit-background-clip:text;background-clip:text;color:transparent;
- filter:drop-shadow(0 14px 44px rgba(0,0,0,.55)) drop-shadow(0 0 60px rgba(56,189,248,.18));}
-.pm-hero-sub{position:relative;margin:22px 0 0;font-size:clamp(15px,2.2vw,23px);font-weight:700;color:#eaf3f9;
+/* hero logo: mark quay như quả địa cầu + wordmark (đều crop từ logo.png) */
+.pm-hero-logo{position:relative;display:flex;flex-direction:column;align-items:center;gap:clamp(2px,1vw,10px);}
+.pm-mark-wrap{position:relative;perspective:1000px;width:clamp(250px,36vw,400px);aspect-ratio:1.23;
+ animation:pmFloat 7s ease-in-out infinite;}
+.pm-mark{width:100%;height:100%;
+ background:url('/images/logo.png') no-repeat;background-size:232% auto;background-position:58% 21%;
+ -webkit-mask-image:radial-gradient(120% 120% at 50% 50%,#000 72%,transparent 100%);
+ mask-image:radial-gradient(120% 120% at 50% 50%,#000 72%,transparent 100%);
+ animation:pmGlobe 11s ease-in-out infinite;
+ filter:drop-shadow(0 0 46px rgba(99,102,241,.35));}
+@keyframes pmGlobe{0%,58%{transform:rotateY(0deg)}79%,100%{transform:rotateY(360deg)}}
+@keyframes pmFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.pm-orbit{position:absolute;inset:-6%;border:1px dashed rgba(56,189,248,.32);border-radius:50%;
+ animation:pmOrbitSpin 20s linear infinite;pointer-events:none;}
+.pm-orbit::after{content:"";position:absolute;top:-4px;left:calc(50% - 4px);width:8px;height:8px;border-radius:50%;
+ background:#7dd3fc;box-shadow:0 0 14px 3px rgba(56,189,248,.7);}
+.pm-orbit.o2{inset:-15%;border-color:rgba(167,139,250,.22);animation-duration:34s;animation-direction:reverse;}
+.pm-orbit.o2::after{width:6px;height:6px;background:#c4b5fd;box-shadow:0 0 12px 2px rgba(167,139,250,.7);}
+@keyframes pmOrbitSpin{to{transform:rotate(360deg)}}
+.pm-word{width:min(600px,82vw);aspect-ratio:3.37;
+ background:url('/images/logo.png') no-repeat;background-size:189% auto;background-position:55.3% 94.4%;
+ -webkit-mask-image:radial-gradient(85% 100% at 50% 50%,#000 58%,transparent 100%);
+ mask-image:radial-gradient(85% 100% at 50% 50%,#000 58%,transparent 100%);
+ filter:drop-shadow(0 10px 34px rgba(0,0,0,.55));}
+.pm-hero-sub{position:relative;margin:24px 0 0;font-size:clamp(15px,2.2vw,22px);font-weight:700;color:#eaf3f9;
  text-shadow:0 2px 22px rgba(0,0,0,.6);}
+
+/* hành tinh trôi + sao chớp nhẹ */
+.pm-planet{position:absolute;border-radius:50%;pointer-events:none;}
+.pm-planet.p1{width:52px;height:52px;left:11%;top:24%;
+ background:radial-gradient(circle at 32% 30%,#9fb3c8,#3c4a5c 58%,#111823);
+ box-shadow:0 0 34px rgba(120,170,215,.28);animation:pmFloat 13s ease-in-out infinite;}
+.pm-planet.p2{width:30px;height:30px;right:13%;bottom:24%;
+ background:radial-gradient(circle at 35% 30%,#c9b2ff,#5d43ac 58%,#221542);
+ box-shadow:0 0 26px rgba(167,139,250,.35);animation:pmFloat 9s ease-in-out infinite reverse;}
+.pm-twinkle{position:absolute;width:4px;height:4px;border-radius:50%;background:#fff;pointer-events:none;
+ box-shadow:0 0 12px 3px rgba(190,240,255,.75);opacity:0;animation:pmTwinkle 4.5s ease-in-out infinite;}
+.pm-twinkle.t1{top:20%;left:26%;animation-delay:.2s;}
+.pm-twinkle.t2{top:14%;left:64%;animation-delay:1.4s;animation-duration:5.5s;}
+.pm-twinkle.t3{top:38%;left:82%;animation-delay:2.6s;}
+.pm-twinkle.t4{top:66%;left:18%;animation-delay:3.2s;animation-duration:6s;}
+.pm-twinkle.t5{top:74%;left:70%;animation-delay:.9s;}
+.pm-twinkle.t6{top:48%;left:8%;animation-delay:2s;animation-duration:5s;}
+@keyframes pmTwinkle{0%,100%{opacity:0;transform:scale(.5)}50%{opacity:.95;transform:scale(1.15)}}
 
 /* ===== marquee thương hiệu ===== */
 .pm-marquee-wrap{display:flex;align-items:center;margin:26px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
