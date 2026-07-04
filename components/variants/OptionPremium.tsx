@@ -200,11 +200,7 @@ export default function OptionPremium() {
       {/* NAV */}
       <nav className="pm-nav">
         <a href="#pm-top" className="pm-brand">
-          <span className="pm-brand-vd">
-            VD
-            <span className="pm-brand-badge"><VDuyBadge size={15} intro={false} /></span>
-          </span>
-          <span className="pm-brandname">VDUYSTUDIO</span>
+          <img src="/images/logo.png" alt="VDuyStudio" style={{ height: "46px", width: "auto", objectFit: "contain" }} />
         </a>
         <div className="pm-menu">
           <a href="#pm-services">{t.menu[0]}</a>
@@ -453,15 +449,8 @@ export default function OptionPremium() {
 .pm-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:14px;
  padding:12px clamp(16px,4vw,36px);background:rgba(3,5,16,.8);backdrop-filter:blur(16px);border-bottom:1px solid rgba(135,155,225,.12);}
 .pm-brand{display:flex;align-items:center;gap:11px;min-width:0;}
-/* Mark nav: chữ VD gradient + badge tích xanh vector (nền trong suốt) */
-.pm-brand-vd{position:relative;font-family:'Anton',sans-serif;font-size:25px;line-height:1;flex-shrink:0;
- background:linear-gradient(135deg,#7dd3fc 0%,#8b5cf6 68%,#e879f9 100%);
- -webkit-background-clip:text;background-clip:text;color:transparent;
- padding-right:11px;filter:drop-shadow(0 0 14px rgba(129,140,248,.5));
- display:inline-block;transform-style:preserve-3d;animation:pmSpinY 5s linear infinite;}
-@keyframes pmSpinY{0%{transform:rotateY(0deg)}100%{transform:rotateY(360deg)}}
-.pm-brand-badge{position:absolute;top:-7px;right:-4px;}
-.pm-brandname{font-family:'Anton',sans-serif;font-size:15px;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 20px rgba(56,189,248,.65);}
+/* Mark nav */
+.pm-brand{display:flex;align-items:center;gap:11px;min-width:0; border-radius: 8px; overflow: hidden; mix-blend-mode: screen;}
 .pm-menu{display:flex;gap:30px;font-size:13.5px;font-weight:600;color:var(--muted);}
 .pm-menu a{padding:8px 0;transition:.2s;}
 .pm-menu a:hover{color:#fff;}
@@ -469,13 +458,12 @@ export default function OptionPremium() {
 
 /* ===== hero ===== */
 .pm-hero{position:relative;width:100%;height:100vh;min-height:600px;background:var(--bg);overflow:hidden;
- display:flex;flex-direction:column;align-items:center;justify-content:center;}
+ display:flex;flex-direction:column;align-items:center;justify-content:center; perspective: 1400px;}
 .pm-hero-art{position:absolute;inset:0;background:url('/images/logo.png') center/cover no-repeat;
- animation:pmSway 16s ease-in-out infinite;will-change:transform;}
-@keyframes pmSway{0%,100%{transform:perspective(1400px) rotateY(-1.5deg) scale(1.05)}
- 50%{transform:perspective(1400px) rotateY(1.5deg) scale(1.08)}}
+ animation:pmSpinY 8s linear infinite;will-change:transform; transform-style: preserve-3d;}
+@keyframes pmSpinY{0%{transform:rotateY(0deg)}100%{transform:rotateY(360deg)}}
 .pm-hero-veil{position:absolute;inset:0;pointer-events:none;background:
- linear-gradient(0deg, var(--bg) 0%, var(--bg) 18%, transparent 40%),
+ linear-gradient(0deg, var(--bg) 0%, var(--bg) 12%, transparent 24%),
  radial-gradient(145% 125% at 50% 42%,transparent 55%,rgba(3,5,16,.88) 98%);}
 .pm-sheen{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
  background:linear-gradient(115deg,transparent 43%,rgba(150,190,255,.13) 50%,transparent 57%) no-repeat;
@@ -508,10 +496,10 @@ export default function OptionPremium() {
 .pm-star.s7{top:84%;right:28%;font-size:12px;animation-delay:2.2s;}
 @keyframes pmStar{0%,100%{opacity:0;transform:scale(.5) rotate(0deg)}50%{opacity:.85;transform:scale(1.05) rotate(22deg)}}
 /* chữ đề dẫn nổi trên ảnh hero */
-.pm-hero-sub{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);margin:0;width:100%;text-align:center;
- font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(22px,4vw,46px);letter-spacing:1px;text-transform:uppercase;
+.pm-hero-sub{position:absolute;left:50%;bottom:5.5%;transform:translateX(-50%);margin:0;width:100%;text-align:center;
+ font-family:'Inter',sans-serif;font-weight:600;font-size:clamp(13px,2vw,22px);letter-spacing:4px;text-transform:uppercase;
  background:linear-gradient(180deg,#ffffff 0%,#8ba6be 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
- filter:drop-shadow(0 10px 24px rgba(0,0,0,.9));z-index:2;}
+ filter:drop-shadow(0 2px 14px rgba(0,0,0,1));z-index:10;}
 
 /* wordmark vector (footer) */
 .pm-wordmark{font-family:var(--font-archivo),var(--font-grotesk),sans-serif;font-weight:900;font-stretch:125%;
