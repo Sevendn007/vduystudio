@@ -267,24 +267,14 @@ export default function OptionPremium() {
         </div>
         <div className="pm-hero-inner">
           <div className="pm-hero-logo-row">
-            <div className="pm-word3d left">
-              <span className="pm-word3d-back" aria-hidden>VDUY</span>
-              <span className="pm-word3d-front">
-                <i>VDUY</i>
-              </span>
-            </div>
+            <div className="pm-word3d left">VDUY</div>
             
             <div className="pm-mark3d">
               <Mark3D alt="VDuyStudio" />
               <span className="pm-mark-glow" aria-hidden />
             </div>
 
-            <div className="pm-word3d right">
-              <span className="pm-word3d-back" aria-hidden>STUDIO</span>
-              <span className="pm-word3d-front">
-                <em>STUDIO</em>
-              </span>
-            </div>
+            <div className="pm-word3d right">STUDIO</div>
           </div>
 
           <div className="pm-hero-tag">✦ {t.heroTag}</div>
@@ -598,19 +588,11 @@ export default function OptionPremium() {
 .pm-mark-glow{position:absolute;left:50%;bottom:-6%;transform:translateX(-50%);width:72%;height:36px;border-radius:50%;
  background:radial-gradient(ellipse,rgba(20,184,166,.45),transparent 70%);filter:blur(9px);}
 .pm-word3d{position:relative;display:inline-block;z-index:1;
- font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(60px,14vw,210px);line-height:0.85;letter-spacing:-0.05em;transform:scaleX(1.15);}
-.pm-word3d.left {flex:1;text-align:right;margin-right:-2vw;}
-.pm-word3d.right {flex:1;text-align:left;margin-left:2vw;}
-.pm-word3d-back{position:absolute;inset:0;color:#062a2e;white-space:nowrap;
- text-shadow:1px 1px 0 #0a3a40,2px 2px 0 #083137,3px 3px 0 #06282d,4px 4px 0 #052024,5px 5px 0 #04181c,6px 6px 0 #031114,
- 10px 12px 24px rgba(0,0,0,.7);}
-.pm-word3d-front{position:relative;white-space:nowrap;filter:drop-shadow(0 10px 15px rgba(0,0,0,0.5));}
-.pm-word3d-front i{font-style:normal;background:linear-gradient(180deg,#a7f3d0 0%,#2dd4bf 45%,#0e7490 100%);
+ font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(60px,11.5vw,180px);line-height:0.85;letter-spacing:-0.01em;transform:scaleY(1.5);
+ background:linear-gradient(180deg,#f0f9ff 0%,#e0f2fe 45%,#bae6fd 100%);
  -webkit-background-clip:text;background-clip:text;color:transparent;}
-.pm-word3d-front em{font-style:normal;background:linear-gradient(180deg,#ffffff 10%,#cfdae4 40%,#8fa3b8 55%,#eef4f9 78%,#aab9c9 100%);
- background-size:100% 220%;-webkit-background-clip:text;background-clip:text;color:transparent;
- animation:pmChrome 6s ease-in-out infinite;}
-@keyframes pmChrome{0%,100%{background-position:0 0}50%{background-position:0 45%}}
+.pm-word3d.left {flex:1;text-align:right;margin-right:-1vw;}
+.pm-word3d.right {flex:1;text-align:left;margin-left:1.5vw;}
 .pm-hero-tag{margin-top:clamp(28px,4.5vh,48px);display:inline-block;font-size:11.5px;letter-spacing:2px;
  text-transform:uppercase;color:#5eead4;border:1px solid rgba(94,234,212,.32);background:rgba(94,234,212,.06);
  padding:7px 16px;border-radius:100px;font-weight:700;z-index:2;position:relative;}
