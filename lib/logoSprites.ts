@@ -44,63 +44,37 @@ function memo(key: string, fn: () => Promise<string>): Promise<string> {
 function keepLargeComponents(mask: Uint8Array, w: number, h: number, minSize: number): Uint8Array {
   const n = w * h;
   const label = new Int32Array(n);
+  const stack = new Int32Array(n);
+  const sizes: number[] = [0];
+  const touchesBottom: boolean[] = [false];
+  const bottomRow = n - w;
   let next = 1;
-  const uf = new Int32Array(n);
-  for (let i = 0; i < n; i++) uf[i] = i;
-  function find(i: number) {
-    let root = i;
-    while (root !== uf[root]) root = uf[root];
-    let curr = i;
-    while (curr !== root) {
-      const t = uf[curr];
-      uf[curr] = root;
-      curr = t;
-    }
-    return root;
-  }
-  function union(i: number, j: number) {
-    const rootI = find(i);
-    const rootJ = find(j);
-    if (rootI !== rootJ) {
-      if (rootI < rootJ) uf[rootJ] = rootI;
-      else uf[rootI] = rootJ;
-    }
-  }
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const i = y * w + x;
-      if (mask[i]) {
-        const top = y > 0 && mask[i - w];
-        const left = x > 0 && mask[i - 1];
-        if (top && left) {
-          union(label[i - w], label[i - 1]);
-          label[i] = find(label[i - w]);
-        } else if (top) {
-          label[i] = find(label[i - w]);
-        } else if (left) {
-          label[i] = find(label[i - 1]);
-        } else {
-          label[i] = next;
-          uf[next] = next;
-          next++;
-        }
-      }
-    }
-  }
   for (let i = 0; i < n; i++) {
-    if (mask[i]) label[i] = find(label[i]);
-  }
-  const sizes = new Int32Array(next);
-  for (let i = 0; i < n; i++) {
-    if (mask[i]) sizes[label[i]]++;
+    if (!mask[i] || label[i]) continue;
+    let top = 0;
+    let count = 0;
+    let tb = false;
+    stack[top++] = i;
+    label[i] = next;
+    while (top > 0) {
+      const p = stack[--top];
+      count++;
+      if (p >= bottomRow) tb = true;
+      const x = p % w;
+      if (x > 0 && mask[p - 1] && !label[p - 1]) { label[p - 1] = next; stack[top++] = p - 1; }
+      if (x < w - 1 && mask[p + 1] && !label[p + 1]) { label[p + 1] = next; stack[top++] = p + 1; }
+      if (p >= w && mask[p - w] && !label[p - w]) { label[p - w] = next; stack[top++] = p - w; }
+      if (p < n - w && mask[p + w] && !label[p + w]) { label[p + w] = next; stack[top++] = p + w; }
+    }
+    sizes[next] = count;
+    touchesBottom[next] = tb;
+    next++;
   }
   let maxSize = 0;
-  for (let l = 1; l < next; l++) {
-    if (sizes[l] > maxSize) maxSize = sizes[l];
-  }
+  for (let l = 1; l < next; l++) if (!touchesBottom[l] && sizes[l] > maxSize) maxSize = sizes[l];
   const keepLabel = new Uint8Array(next);
   for (let l = 1; l < next; l++) {
-    keepLabel[l] = sizes[l] >= 20 && sizes[l] >= maxSize * 0.005 ? 1 : 0;
+    keepLabel[l] = !touchesBottom[l] && sizes[l] >= minSize && sizes[l] >= maxSize * 0.06 ? 1 : 0;
   }
   const out = new Uint8Array(n);
   for (let i = 0; i < n; i++) if (keepLabel[label[i]]) out[i] = 1;
@@ -169,13 +143,12 @@ function fillHoles(keep: Uint8Array, w: number, h: number) {
   for (let i = 0; i < n; i++) if (!keep[i] && !outside[i]) keep[i] = 1;
 }
 
-// Box blur tách trục (bán kính 3, chạy 2 lượt) trên mask 0/1 → alpha 0..255.
-// Trả lại blur mềm mại để khử răng cưa, kết hợp opacity bên CSS để tạo 3D mịn màng (không sọc).
+// Box blur tách trục (bán kính 2, chạy 2 lượt) trên mask 0/1 → alpha 0..255.
 function featherAlpha(keep: Uint8Array, w: number, h: number): Uint8Array {
   const n = w * h;
   let a = new Float32Array(n);
   for (let i = 0; i < n; i++) a[i] = keep[i] * 255;
-  const R = 3;
+  const R = 2;
   const win = R * 2 + 1;
   for (let pass = 0; pass < 2; pass++) {
     const tmp = new Float32Array(n);
@@ -231,15 +204,12 @@ export function extractMark(): Promise<string> {
     for (let i = 0; i < n; i++) {
       const x = i % sw;
       const y = Math.floor(i / sw);
-      // Xóa 8 pixel dưới cùng để an toàn không dính chữ VDUYSTUDIO cũ.
-      if (y > sh - 8) {
-        mask[i] = 0;
-        continue;
-      }
       const j = i * 4;
       const L = 0.2126 * d[j] + 0.7152 * d[j + 1] + 0.0722 * d[j + 2];
-      // Ngưỡng sáng L > 20 để ăn trọn vòng tròn mờ, kết hợp R=3 blur sẽ cho ra khối mượt nhất.
-      if (L > 20) mask[i] = 1;
+      // Cứu vòng tròn (ring) bằng ngưỡng thấp (26) ở nửa trên,
+      // nhưng chặn dải sáng chạm đáy bằng ngưỡng cao (46) ở 20px cuối.
+      const threshold = y > sh - 20 ? 46 : 26;
+      if (L > threshold) mask[i] = 1;
     }
     const keep = keepLargeComponents(mask, sw, sh, Math.max(600, (n * 0.0015) | 0));
     fillHoles(keep, sw, sh);
