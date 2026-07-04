@@ -88,7 +88,7 @@ a {
 @media(prefers-reduced-motion:reduce){.pm-mark-stack{animation:none;}}
 
 /* --- iPhone mockup (premiumKit) --- */
-.pm-phone{position:relative;flex-shrink:0;border-radius:46px;padding:7px;
+.pm-phone{position:relative;flex-shrink:0;border-radius:36px;padding:6px;
  background:linear-gradient(160deg,#57616e 0%,#181e28 26%,#0a0f16 72%,#3b4450 100%);
  box-shadow:0 34px 74px rgba(0,0,0,.62),0 0 56px rgba(45,212,191,.13),inset 0 0 2px rgba(255,255,255,.4);}
 .pm-phone::before{content:"";position:absolute;right:-2.5px;top:118px;width:3px;height:62px;border-radius:2px;background:#3b4450;}
@@ -98,7 +98,7 @@ a {
 .pm-phone.sm{width:160px;}
 .pm-phone.tilt-l{transform:rotate(-6deg);}
 .pm-phone.tilt-r{transform:rotate(6deg);}
-.pm-phone-screen{position:relative;border-radius:39px;overflow:hidden;aspect-ratio:1320/2868;background:#000;}
+.pm-phone-screen{position:relative;border-radius:30px;overflow:hidden;aspect-ratio:1320/2868;background:#000;}
 .pm-phone-screen img{width:100%;height:100%;object-fit:cover;display:block;}
 .pm-phone-screen::after{content:"";position:absolute;inset:0;pointer-events:none;
  background:linear-gradient(115deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.03) 26%,transparent 44%);}

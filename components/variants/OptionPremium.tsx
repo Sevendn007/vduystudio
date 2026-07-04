@@ -647,7 +647,7 @@ export default function OptionPremium() {
 .side-stage .pm-ovl.num b{font-size:clamp(20px,3.2vw,38px);}
 .side-stage .pm-ovl span{font-size:clamp(11px,1.2vw,16px);margin-top:3px;}
 .side-stage .pm-ovl-ic{margin-bottom:3px;}
-.side-stage .pm-phone.md{width:clamp(150px,16vw,200px);}
+.side-stage .pm-phone.md{width:clamp(155px,16.5vw,205px);}
 .pm-card:nth-child(2) .pm-card-info,
 .pm-card:nth-child(3) .pm-card-info{padding:0 12px 8px;}
 .pm-card:nth-child(2) .pm-card-info h3,
@@ -669,7 +669,7 @@ export default function OptionPremium() {
  -webkit-background-clip:text;background-clip:text;color:transparent;
  filter:drop-shadow(0 10px 34px rgba(2,60,90,.65));position:absolute;z-index:0;opacity:0.3;pointer-events:none;}
 .hero-stage .pm-year{bottom:10%;left:5%;}
-.side-stage .pm-year{bottom:30%;right:5%;font-size:clamp(36px,4vw,70px);}
+.side-stage .pm-year{bottom:6%;left:5%;font-size:clamp(32px,3.5vw,60px);}
 .wide-stage .pm-year{bottom:15%;right:15%;}
 
 /* ===== iPhone mockup: style nằm trong premiumKit ===== */
