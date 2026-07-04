@@ -610,19 +610,19 @@ export default function OptionPremium() {
  font-size:clamp(40px,20cqw,180px);letter-spacing:6px;color:rgba(180,220,245,.04);white-space:nowrap;pointer-events:none;max-width:100%;overflow:hidden;text-overflow:clip;text-align:center;}
 
 .pm-stage{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
- gap:clamp(18px,4vw,50px);padding:clamp(24px,4vw,48px) clamp(16px,3vw,40px) clamp(16px,2vw,28px);flex:1;}
+ gap:clamp(14px,3vw,36px);padding:clamp(18px,3vw,36px) clamp(14px,2.5vw,32px) clamp(12px,1.5vw,20px);flex:1;}
 .pm-ovl{display:flex;flex-direction:column;line-height:1.02;}
-.pm-ovl b{font-family:var(--pm-font-display);font-weight:400;font-size:clamp(34px,4.6vw,60px);color:#fff;letter-spacing:1px;
+.pm-ovl b{font-family:var(--pm-font-display);font-weight:400;font-size:clamp(28px,3.8vw,52px);color:#fff;letter-spacing:1px;
  text-shadow:0 6px 34px rgba(0,0,0,.6);}
-.pm-ovl span{font-family:var(--pm-font-heading);font-weight:600;font-size:clamp(16px,2vw,25px);color:var(--cyan);
- letter-spacing:2px;margin-top:8px;text-shadow:0 0 26px rgba(56,189,248,.5);}
-.pm-ovl.num b{font-size:clamp(50px,6.4vw,92px);
+.pm-ovl span{font-family:var(--pm-font-heading);font-weight:600;font-size:clamp(14px,1.6vw,22px);color:var(--cyan);
+ letter-spacing:2px;margin-top:6px;text-shadow:0 0 26px rgba(56,189,248,.5);}
+.pm-ovl.num b{font-size:clamp(36px,5vw,72px);
  background:linear-gradient(180deg,#bae6fd 0%,#38bdf8 48%,#0369a1 100%);
  -webkit-background-clip:text;background-clip:text;color:transparent;
  filter:drop-shadow(0 8px 30px rgba(2,60,90,.6));}
 /* icon dịch vụ 3D trên thẻ dự án — trôi bồng bềnh + glow */
 .pm-card-icon{display:inline-flex;animation:pmFloat 6s ease-in-out infinite;}
-.pm-ovl-ic{display:inline-flex;margin-bottom:12px;}
+.pm-ovl-ic{display:inline-flex;margin-bottom:6px;}
 .pm-spot .pm-card-icon{margin-bottom:16px;}
 .pm-sic{display:inline-flex;align-items:center;justify-content:center;perspective:520px;}
 .pm-sic>svg{animation:pmIcSway 4.6s ease-in-out infinite alternate;
@@ -635,21 +635,34 @@ export default function OptionPremium() {
 /* card 3: đảo chiều để nhịp bento so le */
 .pm-card:nth-child(3) .pm-stage{flex-direction:row-reverse;}
 
+/* cards 2&3 (side-by-side) — phone nhỏ hơn, text gọn hơn để vừa viewport */
+.side-stage{gap:clamp(10px,2vw,24px);padding:clamp(14px,2vw,24px) clamp(10px,2vw,24px) clamp(8px,1vw,14px);}
+.side-stage .pm-ovl.num b{font-size:clamp(24px,4vw,48px);}
+.side-stage .pm-ovl span{font-size:clamp(12px,1.4vw,18px);margin-top:4px;}
+.side-stage .pm-ovl-ic{margin-bottom:4px;}
+.side-stage .pm-phone.md{width:clamp(130px,14vw,170px);}
+.pm-card:nth-child(2) .pm-card-info,
+.pm-card:nth-child(3) .pm-card-info{padding:0 12px 10px;}
+.pm-card:nth-child(2) .pm-card-info h3,
+.pm-card:nth-child(3) .pm-card-info h3{font-size:clamp(14px,1.5vw,18px);margin:0 0 2px;}
+.pm-card:nth-child(2) .pm-card-info p,
+.pm-card:nth-child(3) .pm-card-info p{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
 /* card 4: spotlight — phone trái, thông tin phải */
 .pm-spot{max-width:460px;}
 .pm-spot h3{font-family:var(--pm-font-heading);font-weight:700;font-size:clamp(28px,3.4vw,44px);margin:0;letter-spacing:.5px;}
 .pm-spot-sub{color:var(--muted);font-size:14px;margin:18px 0 0;}
 
-.pm-card-info{position:relative;z-index:2;padding:0 clamp(20px,3vw,30px) clamp(20px,3vw,26px);}
-.pm-card-info h3{font-family:var(--pm-font-heading);font-weight:700;font-size:clamp(19px,2.2vw,25px);margin:0 0 6px;letter-spacing:.5px;}
-.pm-card-info p{margin:0;color:var(--muted);font-size:13px;}
+.pm-card-info{position:relative;z-index:2;padding:0 clamp(16px,2vw,24px) clamp(10px,1.5vw,16px);}
+.pm-card-info h3{font-family:var(--pm-font-heading);font-weight:700;font-size:clamp(16px,1.8vw,22px);margin:0 0 4px;letter-spacing:.5px;}
+.pm-card-info p{margin:0;color:var(--muted);font-size:12px;line-height:1.4;}
 
-.pm-year{font-family:var(--pm-font-display);font-size:clamp(58px,8.5vw,128px);letter-spacing:2px;line-height:1;
+.pm-year{font-family:var(--pm-font-display);font-size:clamp(42px,6vw,100px);letter-spacing:2px;line-height:1;
  background:linear-gradient(180deg,#7dd3fc 0%,#0ea5e9 52%,#075985 100%);
  -webkit-background-clip:text;background-clip:text;color:transparent;
  filter:drop-shadow(0 10px 34px rgba(2,60,90,.65));position:absolute;z-index:0;opacity:0.3;pointer-events:none;}
 .hero-stage .pm-year{bottom:10%;left:5%;}
-.side-stage .pm-year{bottom:25%;right:5%;font-size:clamp(48px,5vw,90px);}
+.side-stage .pm-year{bottom:30%;right:5%;font-size:clamp(36px,4vw,70px);}
 .wide-stage .pm-year{bottom:15%;right:15%;}
 
 /* ===== iPhone mockup: style nằm trong premiumKit ===== */
