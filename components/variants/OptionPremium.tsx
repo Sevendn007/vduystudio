@@ -598,7 +598,7 @@ export default function OptionPremium() {
   radial-gradient(520px 280px at 85% 12%,rgba(8,145,178,.15),transparent 70%),
   linear-gradient(180deg,#06161c 0%,#03090d 100%);
  display:flex;flex-direction:column;justify-content:center;box-shadow:0 24px 60px rgba(0,0,0,.45);
- container-type:inline-size;max-height:calc(100svh - 80px);}
+ container-type:inline-size;max-height:calc(100svh - 60px);}
 .pm-card:nth-child(1),.pm-card:nth-child(4){grid-column:span 12;}
 .pm-card:nth-child(2),.pm-card:nth-child(3){grid-column:span 6;}
 
@@ -606,8 +606,15 @@ export default function OptionPremium() {
 .pm-mini-tag{display:inline-block;margin-top:10px;font-size:10.5px;font-weight:800;letter-spacing:1px;
  text-transform:uppercase;color:#03222e;background:linear-gradient(90deg,#5eead4,#22d3ee);
  padding:4px 12px;border-radius:100px;}
-.pm-card-bgword{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);font-family:var(--pm-font-display);
- font-size:clamp(40px,20cqw,180px);letter-spacing:6px;color:rgba(180,220,245,.04);white-space:nowrap;pointer-events:none;max-width:100%;overflow:hidden;text-overflow:clip;text-align:center;}
+/* Watermark chữ nền mờ — đặt khác vị trí tùy loại card để không bị phone che */
+.pm-card-bgword{position:absolute;font-family:var(--pm-font-display);
+ font-size:clamp(40px,20cqw,180px);letter-spacing:6px;color:rgba(180,220,245,.04);white-space:nowrap;pointer-events:none;max-width:100%;overflow:hidden;text-overflow:clip;text-align:center;z-index:0;}
+/* Card 1 hero: watermark góc dưới-trái (phone ở phải) */
+.pm-card:nth-child(1) .pm-card-bgword{bottom:8%;left:5%;transform:none;}
+/* Card 2&3 side: watermark trung tâm-trên (phone ở dưới) */
+.pm-card:nth-child(2) .pm-card-bgword,.pm-card:nth-child(3) .pm-card-bgword{top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(30px,14cqw,100px);}
+/* Card 4 wide: watermark góc dưới-phải (phone ở trái) */
+.pm-card:nth-child(4) .pm-card-bgword{bottom:10%;right:5%;transform:none;}
 
 .pm-stage{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
  gap:clamp(14px,3vw,36px);padding:clamp(18px,3vw,36px) clamp(14px,2.5vw,32px) clamp(12px,1.5vw,20px);flex:1;}
@@ -635,16 +642,16 @@ export default function OptionPremium() {
 /* card 3: đảo chiều để nhịp bento so le */
 .pm-card:nth-child(3) .pm-stage{flex-direction:row-reverse;}
 
-/* cards 2&3 (side-by-side) — phone nhỏ hơn, text gọn hơn để vừa viewport */
-.side-stage{gap:clamp(10px,2vw,24px);padding:clamp(14px,2vw,24px) clamp(10px,2vw,24px) clamp(8px,1vw,14px);}
-.side-stage .pm-ovl.num b{font-size:clamp(24px,4vw,48px);}
-.side-stage .pm-ovl span{font-size:clamp(12px,1.4vw,18px);margin-top:4px;}
-.side-stage .pm-ovl-ic{margin-bottom:4px;}
-.side-stage .pm-phone.md{width:clamp(130px,14vw,170px);}
+/* cards 2&3 (side-by-side) — phone lớn hơn, text gọn hơn để vừa viewport */
+.side-stage{gap:clamp(8px,1.5vw,20px);padding:clamp(12px,1.8vw,22px) clamp(10px,2vw,24px) clamp(6px,0.8vw,12px);}
+.side-stage .pm-ovl.num b{font-size:clamp(20px,3.2vw,38px);}
+.side-stage .pm-ovl span{font-size:clamp(11px,1.2vw,16px);margin-top:3px;}
+.side-stage .pm-ovl-ic{margin-bottom:3px;}
+.side-stage .pm-phone.md{width:clamp(150px,16vw,200px);}
 .pm-card:nth-child(2) .pm-card-info,
-.pm-card:nth-child(3) .pm-card-info{padding:0 12px 10px;}
+.pm-card:nth-child(3) .pm-card-info{padding:0 12px 8px;}
 .pm-card:nth-child(2) .pm-card-info h3,
-.pm-card:nth-child(3) .pm-card-info h3{font-size:clamp(14px,1.5vw,18px);margin:0 0 2px;}
+.pm-card:nth-child(3) .pm-card-info h3{font-size:clamp(13px,1.4vw,17px);margin:0 0 2px;}
 .pm-card:nth-child(2) .pm-card-info p,
 .pm-card:nth-child(3) .pm-card-info p{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
@@ -748,12 +755,25 @@ export default function OptionPremium() {
   .pm-marquee-item i{margin-left:22px;}
   .pm-services{grid-template-columns:1fr;}
   .pm-svc{padding:22px 18px;}
-  .pm-stage{gap:22px;padding:28px 16px 20px;}
-  .pm-ovl b{font-size:30px;}
-  .pm-ovl span{font-size:15px;}
-  .pm-card-icon.big{transform:scale(.62);transform-origin:center;}
-  .pm-spot h3{font-size:24px;}
-  .pm-card-bgword{font-size:78px;}
+  /* Bento cards mobile: full width, compact layout */
+  .pm-card{max-height:none;}
+  .pm-card:nth-child(n){grid-column:span 12;}
+  .pm-stage{gap:14px;padding:16px 14px 10px;}
+  .side-stage{gap:12px;padding:14px 12px 8px;}
+  .pm-ovl b{font-size:24px;}
+  .pm-ovl span{font-size:13px;}
+  .pm-ovl.num b{font-size:28px;}
+  .side-stage .pm-ovl.num b{font-size:24px;}
+  .side-stage .pm-phone.md{width:min(180px,48vw);}
+  .pm-card-icon.big{transform:scale(.5);transform-origin:center;}
+  .pm-card-info{padding:0 14px 10px;}
+  .pm-card-info h3{font-size:15px;}
+  .pm-card-info p{font-size:11px;}
+  .pm-card-bgword{font-size:40px!important;}
+  .pm-year{font-size:36px!important;}
+  .side-stage .pm-year{font-size:28px!important;}
+  .pm-spot h3{font-size:22px;}
+  .pm-spot-sub{font-size:12px;margin:10px 0 0;}
   .pm-viewall{font-size:12px;}
   .pm-client{font-size:17px;}
   .pm-client i{margin:0 12px;}
