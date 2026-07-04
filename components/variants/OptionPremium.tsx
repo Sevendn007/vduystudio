@@ -8,7 +8,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PersonAvatar } from "@/components/brand";
-import { VDuyBadge } from "@/components/logo";
+import { VDuyBadge, VDuyWordmark } from "@/components/logo";
 import { useLang, LangToggle } from "@/lib/i18n";
 import { siteText, site } from "@/lib/site";
 import { getProcess } from "@/lib/services";
@@ -200,7 +200,8 @@ export default function OptionPremium() {
       {/* NAV */}
       <nav className="pm-nav">
         <a href="#pm-top" className="pm-brand">
-          <img src="/images/logo.png" alt="VDuyStudio" style={{ height: "46px", width: "auto", objectFit: "contain" }} />
+          <VDuyBadge size={34} intro={false} />
+          <VDuyWordmark fontSize={16} shine />
         </a>
         <div className="pm-menu">
           <a href="#pm-services">{t.menu[0]}</a>
@@ -213,29 +214,36 @@ export default function OptionPremium() {
         </div>
       </nav>
 
-      {/* HERO — nguyên artwork logo.png làm nền full-bleed (nền logo = nền hero,
-          không có vết cắt); sao/hành tinh của chính logo được thêm hiệu ứng
-          chớp sáng, glow thở nhịp, vệt sáng quét, sao chổi, lắc 3D nhẹ */}
       <header className="pm-hero">
-        <div className="pm-hero-art" aria-hidden />
-        <div className="pm-hero-veil" aria-hidden />
-        <span className="pm-sheen" aria-hidden />
-        <span className="pm-comet" aria-hidden />
-        <span className="pm-glow g1" aria-hidden />
-        <span className="pm-glow g2" aria-hidden />
-        <span className="pm-glint" aria-hidden>✦</span>
-        {[
-          { c: "s1", ch: "✦" },
-          { c: "s2", ch: "✧" },
-          { c: "s3", ch: "✦" },
-          { c: "s4", ch: "✧" },
-          { c: "s5", ch: "✦" },
-          { c: "s6", ch: "✧" },
-          { c: "s7", ch: "✦" },
-        ].map((s) => (
-          <span key={s.c} className={`pm-star ${s.c}`} aria-hidden>{s.ch}</span>
-        ))}
-        <p className="pm-hero-sub">{t.heroSub}</p>
+        <div className="pm-space-bg" aria-hidden>
+          <span className="pm-nebula" />
+          <span className="pm-sheen" />
+          <span className="pm-comet" />
+          <span className="pm-glow g1" />
+          <span className="pm-glow g2" />
+          <span className="pm-glint">✦</span>
+          {[
+            { c: "s1", ch: "✦" },
+            { c: "s2", ch: "✧" },
+            { c: "s3", ch: "✦" },
+            { c: "s4", ch: "✧" },
+            { c: "s5", ch: "✦" },
+            { c: "s6", ch: "✧" },
+            { c: "s7", ch: "✦" },
+          ].map((s) => (
+            <span key={s.c} className={`pm-star ${s.c}`}>{s.ch}</span>
+          ))}
+        </div>
+        
+        <div className="pm-hero-content">
+          <div className="pm-hero-logo">
+            <VDuyBadge size={220} intro />
+            <div className="pm-hero-wordwrap">
+              <VDuyWordmark fontSize={56} shine />
+            </div>
+          </div>
+          <p className="pm-hero-sub">{t.heroSub}</p>
+        </div>
       </header>
 
       {/* THƯƠNG HIỆU ĐÃ HỢP TÁC */}
@@ -457,14 +465,17 @@ export default function OptionPremium() {
 .pm-nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 
 /* ===== hero ===== */
-.pm-hero{position:relative;width:100%;height:100vh;min-height:600px;background:var(--bg);overflow:hidden;
- display:flex;flex-direction:column;align-items:center;justify-content:center; perspective: 1400px;}
-.pm-hero-art{position:absolute;inset:0;background:url('/images/logo.png') center/cover no-repeat;
- animation:pmSpinY 8s linear infinite;will-change:transform; transform-style: preserve-3d;}
+.pm-hero{position:relative;width:100%;height:100vh;min-height:600px;background:#03050c;overflow:hidden;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.pm-space-bg{position:absolute;inset:0;pointer-events:none;}
+.pm-nebula{position:absolute;inset:0;background:
+ radial-gradient(circle at 50% 40%, rgba(24,119,242,0.15) 0%, transparent 60%),
+ radial-gradient(circle at 20% 80%, rgba(139,92,246,0.1) 0%, transparent 50%),
+ radial-gradient(circle at 80% 30%, rgba(232,121,249,0.08) 0%, transparent 45%);}
+.pm-hero-content{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;gap:36px;margin-top:-60px;}
+.pm-hero-logo{display:flex;flex-direction:column;align-items:center;gap:32px;
+ animation:pmSpinY 8s linear infinite;transform-style:preserve-3d;}
 @keyframes pmSpinY{0%{transform:rotateY(0deg)}100%{transform:rotateY(360deg)}}
-.pm-hero-veil{position:absolute;inset:0;pointer-events:none;background:
- linear-gradient(0deg, var(--bg) 0%, var(--bg) 12%, transparent 24%),
- radial-gradient(145% 125% at 50% 42%,transparent 55%,rgba(3,5,16,.88) 98%);}
 .pm-sheen{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
  background:linear-gradient(115deg,transparent 43%,rgba(150,190,255,.13) 50%,transparent 57%) no-repeat;
  background-size:300% 100%;animation:pmSheen 9s ease-in-out infinite;}
@@ -496,10 +507,10 @@ export default function OptionPremium() {
 .pm-star.s7{top:84%;right:28%;font-size:12px;animation-delay:2.2s;}
 @keyframes pmStar{0%,100%{opacity:0;transform:scale(.5) rotate(0deg)}50%{opacity:.85;transform:scale(1.05) rotate(22deg)}}
 /* chữ đề dẫn nổi trên ảnh hero */
-.pm-hero-sub{position:absolute;left:50%;bottom:5.5%;transform:translateX(-50%);margin:0;width:100%;text-align:center;
- font-family:'Inter',sans-serif;font-weight:600;font-size:clamp(13px,2vw,22px);letter-spacing:4px;text-transform:uppercase;
+.pm-hero-sub{margin:0;width:100%;text-align:center;
+ font-family:'Inter',sans-serif;font-weight:600;font-size:clamp(14px,2vw,24px);letter-spacing:4px;text-transform:uppercase;
  background:linear-gradient(180deg,#ffffff 0%,#8ba6be 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
- filter:drop-shadow(0 2px 14px rgba(0,0,0,1));z-index:10;}
+ filter:drop-shadow(0 2px 14px rgba(0,0,0,1));}
 
 /* wordmark vector (footer) */
 .pm-wordmark{font-family:var(--font-archivo),var(--font-grotesk),sans-serif;font-weight:900;font-stretch:125%;
@@ -676,8 +687,11 @@ export default function OptionPremium() {
 /* ===== phone ===== */
 @media(max-width:560px){
  .pm-nav{padding:10px 14px;}
- .pm-hero{margin:10px;border-radius:20px;aspect-ratio:1.15;max-height:none;}
- .pm-hero-sub{font-size:12.5px;}
+ .pm-hero{height:90vh;min-height:500px;}
+ .pm-hero-logo{gap:24px;}
+ .pm-hero-logo > span:first-child{transform:scale(0.65);}
+ .pm-hero-wordwrap{transform:scale(0.7);}
+ .pm-hero-sub{font-size:12px;letter-spacing:2px;padding:0 20px;}
  .pm-services{grid-template-columns:1fr;}
  .pm-svc:nth-child(odd){padding-left:0;}
  .pm-svc:nth-child(n+2){border-top:1px solid var(--line);border-left:none;}
