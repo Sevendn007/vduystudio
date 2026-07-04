@@ -199,9 +199,8 @@ export default function OptionPremium() {
     <div className="pm-root" id="pm-top">
       {/* NAV */}
       <nav className="pm-nav">
-        <a href="#pm-top" className="pm-brand">
-          <VDuyBadge size={34} intro={false} />
-          <VDuyWordmark fontSize={16} shine />
+        <a href="#pm-top" className="pm-brand" style={{ width: "90px", height: "46px", overflow: "hidden", position: "relative", borderRadius: "8px" }}>
+          <img src="/images/logo.png" alt="VDuyStudio" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -46%)", height: "180px", width: "auto", maxWidth: "none" }} />
         </a>
         <div className="pm-menu">
           <a href="#pm-services">{t.menu[0]}</a>
@@ -215,33 +214,10 @@ export default function OptionPremium() {
       </nav>
 
       <header className="pm-hero">
-        <div className="pm-space-bg" aria-hidden>
-          <span className="pm-nebula" />
-          <span className="pm-sheen" />
-          <span className="pm-comet" />
-          <span className="pm-glow g1" />
-          <span className="pm-glow g2" />
-          <span className="pm-glint">✦</span>
-          {[
-            { c: "s1", ch: "✦" },
-            { c: "s2", ch: "✧" },
-            { c: "s3", ch: "✦" },
-            { c: "s4", ch: "✧" },
-            { c: "s5", ch: "✦" },
-            { c: "s6", ch: "✧" },
-            { c: "s7", ch: "✦" },
-          ].map((s) => (
-            <span key={s.c} className={`pm-star ${s.c}`}>{s.ch}</span>
-          ))}
-        </div>
+        <div className="pm-hero-art" aria-hidden />
+        <div className="pm-hero-veil" aria-hidden />
         
         <div className="pm-hero-content">
-          <div className="pm-hero-logo">
-            <VDuyBadge size={220} intro />
-            <div className="pm-hero-wordwrap">
-              <VDuyWordmark fontSize={56} shine />
-            </div>
-          </div>
           <p className="pm-hero-sub">{t.heroSub}</p>
         </div>
       </header>
@@ -467,24 +443,12 @@ export default function OptionPremium() {
 /* ===== hero ===== */
 .pm-hero{position:relative;width:100%;height:100vh;min-height:600px;background:#03050c;overflow:hidden;
  display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.pm-space-bg{position:absolute;inset:0;pointer-events:none;}
-.pm-nebula{position:absolute;inset:0;background:
- radial-gradient(circle at 50% 40%, rgba(24,119,242,0.15) 0%, transparent 60%),
- radial-gradient(circle at 20% 80%, rgba(139,92,246,0.1) 0%, transparent 50%),
- radial-gradient(circle at 80% 30%, rgba(232,121,249,0.08) 0%, transparent 45%);}
-.pm-hero-content{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;gap:36px;margin-top:-60px;}
-.pm-hero-logo{display:flex;flex-direction:column;align-items:center;gap:32px;
- animation:pmSpinY 8s linear infinite;transform-style:preserve-3d;}
-@keyframes pmSpinY{0%{transform:rotateY(0deg)}100%{transform:rotateY(360deg)}}
-.pm-sheen{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
- background:linear-gradient(115deg,transparent 43%,rgba(150,190,255,.13) 50%,transparent 57%) no-repeat;
- background-size:300% 100%;animation:pmSheen 9s ease-in-out infinite;}
-@keyframes pmSheen{0%,52%{background-position:135% 0}88%,100%{background-position:-115% 0}}
-.pm-comet{position:absolute;top:15%;left:76%;width:120px;height:1.5px;border-radius:2px;pointer-events:none;
- background:linear-gradient(90deg,#fff,transparent);opacity:0;transform:rotate(-32deg);
- animation:pmComet 12s ease-in 3s infinite;}
-@keyframes pmComet{0%{opacity:0;transform:rotate(-32deg) translateX(0)}4%{opacity:.9}
- 13%{opacity:0;transform:rotate(-32deg) translateX(-340px)}100%{opacity:0}}
+.pm-hero-art{position:absolute;inset:0;background:url('/images/logo.png') center/cover no-repeat;
+ animation:pmSway 16s ease-in-out infinite;will-change:transform;}
+@keyframes pmSway{0%,100%{transform:scale(1.02)}50%{transform:scale(1.06)}}
+.pm-hero-veil{position:absolute;inset:0;pointer-events:none;background:
+ linear-gradient(0deg, #020308 0%, #020308 14%, transparent 22%);}
+.pm-hero-content{position:absolute;z-index:10;bottom:6%;left:0;right:0;display:flex;flex-direction:column;align-items:center;}
 .pm-glow{position:absolute;border-radius:50%;pointer-events:none;mix-blend-mode:screen;filter:blur(8px);
  opacity:.15;animation:pmBreath 6.5s ease-in-out infinite;}
 .pm-glow.g1{width:12%;aspect-ratio:1;right:10.5%;top:52%;
@@ -508,9 +472,9 @@ export default function OptionPremium() {
 @keyframes pmStar{0%,100%{opacity:0;transform:scale(.5) rotate(0deg)}50%{opacity:.85;transform:scale(1.05) rotate(22deg)}}
 /* chữ đề dẫn nổi trên ảnh hero */
 .pm-hero-sub{margin:0;width:100%;text-align:center;
- font-family:'Inter',sans-serif;font-weight:600;font-size:clamp(14px,2vw,24px);letter-spacing:4px;text-transform:uppercase;
+ font-family:'Inter',sans-serif;font-weight:600;font-size:clamp(15px,2.2vw,28px);letter-spacing:4px;text-transform:uppercase;
  background:linear-gradient(180deg,#ffffff 0%,#8ba6be 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
- filter:drop-shadow(0 2px 14px rgba(0,0,0,1));}
+ filter:drop-shadow(0 2px 8px rgba(0,0,0,1)) drop-shadow(0 0 20px rgba(56,189,248,0.3));}
 
 /* wordmark vector (footer) */
 .pm-wordmark{font-family:var(--font-archivo),var(--font-grotesk),sans-serif;font-weight:900;font-stretch:125%;
@@ -688,10 +652,7 @@ export default function OptionPremium() {
 @media(max-width:560px){
  .pm-nav{padding:10px 14px;}
  .pm-hero{height:90vh;min-height:500px;}
- .pm-hero-logo{gap:24px;}
- .pm-hero-logo > span:first-child{transform:scale(0.65);}
- .pm-hero-wordwrap{transform:scale(0.7);}
- .pm-hero-sub{font-size:12px;letter-spacing:2px;padding:0 20px;}
+ .pm-hero-sub{font-size:13px;letter-spacing:2px;padding:0 20px;}
  .pm-services{grid-template-columns:1fr;}
  .pm-svc:nth-child(odd){padding-left:0;}
  .pm-svc:nth-child(n+2){border-top:1px solid var(--line);border-left:none;}
