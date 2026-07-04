@@ -14,7 +14,7 @@ export function BrandLogo({
   return showText ? <VDuyMark size={size} intro={false} /> : <VDuyBadge size={size} intro={false} />;
 }
 
-export type Platform = "tiktok" | "facebook" | "instagram" | "threads" | "press";
+export type Platform = "tiktok" | "facebook" | "instagram" | "threads" | "press" | "x" | "youtube";
 
 // Icon nền tảng kiểu app-tile — chuẩn brand, đồng nhất kích thước.
 export function PlatformIcon({ kind, size = 46 }: { kind: Platform; size?: number }) {
@@ -76,6 +76,22 @@ export function PlatformIcon({ kind, size = 46 }: { kind: Platform; size?: numbe
           strokeLinecap="round"
           strokeLinejoin="round"
         />
+      </svg>
+    );
+  }
+  if (kind === "x") {
+    return (
+      <svg {...common} aria-hidden>
+        <rect width="48" height="48" rx={r} fill="#000" />
+        <path d="M12.5 11h5.8l7.7 10.3 8.9-10.3h5.5L28.1 25l12.4 12H34.7l-8.5-11.4-9.9 11.4h-5.5l13.1-15.1L12.5 11zm7.9 2h-3.6l17.7 20h3.6L20.4 13z" fill="#fff" />
+      </svg>
+    );
+  }
+  if (kind === "youtube") {
+    return (
+      <svg {...common} aria-hidden>
+        <rect width="48" height="48" rx={r} fill="#FF0000" />
+        <path d="M36.2 16.1c-.4-1.5-1.6-2.7-3.1-3.1C30.4 12.3 24 12.3 24 12.3s-6.4 0-9.1.7c-1.5.4-2.7 1.6-3.1 3.1-.7 2.7-.7 8.3-.7 8.3s0 5.6.7 8.3c.4 1.5 1.6 2.7 3.1 3.1 2.7.7 9.1.7 9.1.7s6.4 0 9.1-.7c1.5-.4 2.7-1.6 3.1-3.1.7-2.7.7-8.3.7-8.3s0-5.6-.7-8.3zM21 28.5V19.5l8 4.5-8 4.5z" fill="#fff" />
       </svg>
     );
   }

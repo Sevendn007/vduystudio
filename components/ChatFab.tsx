@@ -12,8 +12,7 @@ export default function ChatFab() {
 
   const channels = [
     contact.isSet("zalo") && { key: "zalo", url: contact.zalo, label: "Chat Zalo", cls: "cfab-zalo", icon: <ZaloIcon /> },
-    contact.isSet("telegram") && { key: "telegram", url: contact.telegram, label: "Chat Telegram", cls: "cfab-tele", icon: <TeleIcon /> },
-    contact.isSet("messenger") && { key: "messenger", url: contact.messenger, label: "Chat Messenger", cls: "cfab-mess", icon: <MessIcon /> },
+    contact.isSet("facebook") && { key: "facebook", url: contact.facebook, label: "Chat Facebook", cls: "cfab-mess", icon: <MessIcon /> },
   ].filter(Boolean) as { key: string; url: string; label: string; cls: string; icon: ReactNode }[];
 
   if (channels.length === 0) return null;
@@ -73,15 +72,7 @@ function ZaloIcon() {
     </svg>
   );
 }
-function TeleIcon() {
-  return (
-    <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden>
-      <circle cx="24" cy="24" r="22" fill="#fff" />
-      <path fill="#229ED9" d="M24 3C12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21S35.6 3 24 3z" />
-      <path fill="#fff" d="M34.6 15.2 30.7 33c-.3 1.3-1.1 1.6-2.2.99l-6-4.42-2.9 2.8c-.32.32-.59.59-1.2.59l.43-6.1 11.1-10c.48-.43-.1-.67-.75-.24L15.4 24.2l-5.9-1.85c-1.28-.4-1.3-1.28.27-1.9l23.1-8.9c1.06-.4 1.99.24 1.64 1.65z" />
-    </svg>
-  );
-}
+
 function MessIcon() {
   return (
     <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden>

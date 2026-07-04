@@ -9,10 +9,12 @@ export const site = {
   tagline: "Verified Identity Studio",
   contact: {
     zalo: "https://zalo.me/0000000000",
-    telegram: "https://t.me/vduystudio",
-    messenger: "https://m.me/vduystudio",
-    phone: "0000 000 000",
-    email: "hello@vduystudio.com",
+    facebook: "https://facebook.com/vduystudio",
+    instagram: "https://instagram.com/vduystudio",
+    tiktok: "https://tiktok.com/@vduystudio",
+    threads: "https://threads.net/@vduystudio",
+    x: "https://x.com/vduystudio",
+    youtube: "https://youtube.com/@vduystudio",
   },
 } as const;
 

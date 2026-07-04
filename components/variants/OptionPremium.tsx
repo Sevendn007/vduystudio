@@ -70,7 +70,7 @@ const ICON_OF: Record<string, Platform> = {
 // Chữ theo ngôn ngữ (switch VI/EN trên nav).
 const TX = {
   vi: {
-    menu: ["Dịch vụ", "Quy trình", "Dự án", "Feedback"],
+    menu: ["Dịch vụ", "Quy trình", "Dự án", "Feedback", "Blog"],
     heroTag: "Dịch vụ xác minh & bảo vệ tài khoản mạng xã hội",
     heroA: "Xây dựng",
     heroB: "uy tín số",
@@ -87,7 +87,7 @@ const TX = {
     viewAll: "Xem tất cả dự án →",
   },
   en: {
-    menu: ["Services", "Process", "Projects", "Feedback"],
+    menu: ["Services", "Process", "Projects", "Feedback", "Blog"],
     heroTag: "Social media verification & account protection services",
     heroA: "Building",
     heroB: "digital trust",
@@ -220,6 +220,7 @@ export default function OptionPremium() {
           <a href="#pm-process">{t.menu[1]}</a>
           <Link href="/du-an">{t.menu[2]}</Link>
           <a href="#pm-feedback">{t.menu[3]}</a>
+          <Link href="/blog">{t.menu[4]}</Link>
         </div>
         <div className="pm-nav-right">
           <LangToggle compact />
@@ -458,12 +459,17 @@ export default function OptionPremium() {
           <a href={contact.zalo} target="_blank" rel="noreferrer" className="pm-btn">
             {t.btn}
           </a>
-          {(contact.isSet("email") || contact.isSet("phone") || contact.isSet("telegram") || contact.isSet("messenger")) && (
-            <div className="pm-foot-contact">
-              {contact.isSet("email") && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
-              {contact.isSet("phone") && <a href={`tel:${contact.phone.replace(/[^0-9+]/g, "")}`}>{contact.phone}</a>}
-              {contact.isSet("telegram") && <a href={contact.telegram} target="_blank" rel="noreferrer">Telegram</a>}
-              {contact.isSet("messenger") && <a href={contact.messenger} target="_blank" rel="noreferrer">Messenger</a>}
+          {(contact.isSet("facebook") || contact.isSet("instagram") || contact.isSet("tiktok") || contact.isSet("threads") || contact.isSet("x") || contact.isSet("youtube")) && (
+            <div className="pm-social-block">
+              <p className="pm-social-title">{lang === "en" ? "Connect with us on:" : "Kết nối với chúng tôi qua:"}</p>
+              <div className="pm-foot-contact">
+                {contact.isSet("facebook") && <a href={contact.facebook} target="_blank" rel="noreferrer"><PlatformIcon kind="facebook" size={32} /></a>}
+                {contact.isSet("instagram") && <a href={contact.instagram} target="_blank" rel="noreferrer"><PlatformIcon kind="instagram" size={32} /></a>}
+                {contact.isSet("tiktok") && <a href={contact.tiktok} target="_blank" rel="noreferrer"><PlatformIcon kind="tiktok" size={32} /></a>}
+                {contact.isSet("threads") && <a href={contact.threads} target="_blank" rel="noreferrer"><PlatformIcon kind="threads" size={32} /></a>}
+                {contact.isSet("x") && <a href={contact.x} target="_blank" rel="noreferrer"><PlatformIcon kind="x" size={32} /></a>}
+                {contact.isSet("youtube") && <a href={contact.youtube} target="_blank" rel="noreferrer"><PlatformIcon kind="youtube" size={32} /></a>}
+              </div>
             </div>
           )}
           <div className="pm-footbar">
@@ -712,8 +718,11 @@ export default function OptionPremium() {
 .pm-btn{display:inline-block;background:var(--cyan);color:#03222e;font-weight:800;font-size:17px;text-transform:uppercase;
  letter-spacing:1px;padding:18px 54px;border-radius:100px;transition:.3s;box-shadow:0 0 44px rgba(56,189,248,.4);}
 .pm-btn:hover{transform:scale(1.04);box-shadow:0 0 64px rgba(56,189,248,.6);}
-.pm-foot-contact{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 28px;margin-top:34px;font-size:13.5px;color:var(--muted);}
-.pm-foot-contact a:hover{color:#fff;}
+.pm-social-block{margin-top:34px;}
+.pm-social-title{font-size:14px;color:var(--muted);margin:0 0 16px;}
+.pm-foot-contact{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;}
+.pm-foot-contact a{opacity:0.8;transition:.3s;}
+.pm-foot-contact a:hover{opacity:1;transform:translateY(-2px);}
 .pm-footbar{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:44px;padding:18px 0;
  border-top:1px solid var(--line);color:#51697b;font-size:12.5px;}
 

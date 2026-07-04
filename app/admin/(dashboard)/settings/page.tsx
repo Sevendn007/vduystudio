@@ -9,10 +9,12 @@ import { Loader2 } from "lucide-react";
 
 const FIELDS: { key: string; label: string; placeholder: string }[] = [
   { key: "zalo", label: "Link Zalo", placeholder: "https://zalo.me/0912345678" },
-  { key: "telegram", label: "Link Telegram", placeholder: "https://t.me/vduystudio" },
-  { key: "messenger", label: "Link Messenger", placeholder: "https://m.me/vduystudio" },
-  { key: "phone", label: "Số điện thoại", placeholder: "0912 345 678" },
-  { key: "email", label: "Email", placeholder: "hello@vduystudio.com" },
+  { key: "facebook", label: "Link Facebook", placeholder: "https://facebook.com/vduystudio" },
+  { key: "instagram", label: "Link Instagram", placeholder: "https://instagram.com/vduystudio" },
+  { key: "tiktok", label: "Link Tiktok", placeholder: "https://tiktok.com/@vduystudio" },
+  { key: "threads", label: "Link Threads", placeholder: "https://threads.net/@vduystudio" },
+  { key: "x", label: "Link X (Twitter)", placeholder: "https://x.com/vduystudio" },
+  { key: "youtube", label: "Link Youtube", placeholder: "https://youtube.com/@vduystudio" },
 ];
 
 export default function SettingsPage() {

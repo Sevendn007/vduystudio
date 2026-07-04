@@ -274,8 +274,8 @@ export default function ServiceDetail({ slug }: { slug: string }) {
           <a href={contact.zalo} target="_blank" rel="noreferrer" className="sd-btn light">
             Chat Zalo
           </a>
-          <a href={contact.messenger} target="_blank" rel="noreferrer" className="sd-btn ghost-light">
-            Messenger
+          <a href={contact.facebook} target="_blank" rel="noreferrer" className="sd-btn ghost-light">
+            Facebook
           </a>
         </div>
       </section>

@@ -26,6 +26,16 @@ export type DbProject = {
   date: string | null;
 };
 
+export type DbBlog = {
+  id: string;
+  title: string;
+  slug: string;
+  category: string | null;
+  image_url: string | null;
+  content: string | null;
+  created_at: string;
+};
+
 export type DbPriceRow = {
   id: string;
   platform_slug: string;
@@ -113,6 +123,32 @@ export async function fetchSettings(): Promise<Record<string, string> | null> {
     const { data, error } = await createClient().from("settings").select("key,value");
     if (error || !data || data.length === 0) return null;
     return Object.fromEntries(data.map((r: { key: string; value: string }) => [r.key, r.value]));
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchBlogs(category?: string): Promise<DbBlog[] | null> {
+  if (!hasSupabase()) return null;
+  try {
+    let query = createClient().from("blogs").select("id,title,slug,category,image_url,created_at");
+    if (category) {
+      query = query.eq("category", category);
+    }
+    const { data, error } = await query.order("created_at", { ascending: false });
+    if (error || !data || data.length === 0) return null;
+    return data as DbBlog[];
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchBlogBySlug(slug: string): Promise<DbBlog | null> {
+  if (!hasSupabase()) return null;
+  try {
+    const { data, error } = await createClient().from("blogs").select("*").eq("slug", slug).single();
+    if (error || !data) return null;
+    return data as DbBlog;
   } catch {
     return null;
   }

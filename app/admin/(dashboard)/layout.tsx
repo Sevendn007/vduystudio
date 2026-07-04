@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Settings, DollarSign, MessageSquare, Briefcase, LogOut } from "lucide-react";
+import { LayoutDashboard, Settings, DollarSign, MessageSquare, Briefcase, LogOut, FileText } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
 const navigation = [
   { name: "Tổng quan", href: "/admin", icon: LayoutDashboard },
   { name: "Feedback", href: "/admin/feedbacks", icon: MessageSquare },
   { name: "Dự án", href: "/admin/projects", icon: Briefcase },
+  { name: "Blog", href: "/admin/blog", icon: FileText },
   { name: "Bảng giá", href: "/admin/pricing", icon: DollarSign },
   { name: "Liên hệ", href: "/admin/settings", icon: Settings },
 ];

@@ -8,13 +8,13 @@ import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
 import { fetchSettings } from "@/lib/data";
 
-export type ContactKey = "zalo" | "telegram" | "messenger" | "phone" | "email";
+export type ContactKey = "zalo" | "facebook" | "instagram" | "tiktok" | "threads" | "x" | "youtube";
 
 export type Contact = Record<ContactKey, string> & {
   isSet: (k: ContactKey) => boolean;
 };
 
-const KEYS: ContactKey[] = ["zalo", "telegram", "messenger", "phone", "email"];
+const KEYS: ContactKey[] = ["zalo", "facebook", "instagram", "tiktok", "threads", "x", "youtube"];
 
 export function useContact(): Contact {
   const [values, setValues] = useState<Record<ContactKey, string>>({ ...site.contact });
