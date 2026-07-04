@@ -7,9 +7,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Carousel from "@/components/Carousel";
+import Tilt from "@/components/tilt";
 import { PersonAvatar, PlatformIcon, Platform } from "@/components/brand";
-import { extractMark, extractPlanet } from "@/lib/logoSprites";
+import { SpriteImg, Mark3D, Wordmark, IPhone, DEFAULT_PROJECTS } from "@/components/premiumKit";
 import { useLang, Lang, LangToggle } from "@/lib/i18n";
 import { siteText, site } from "@/lib/site";
 import { getProcess } from "@/lib/services";
@@ -41,42 +41,6 @@ const CLIENTS = [
   "Cú Đấm Thép",
 ];
 
-// Dự án showcase khi DB trống — 4 profile thật trong khung iPhone.
-type ShowProject = DbProject & {
-  big?: string;
-  small?: string;
-  handle?: string;
-  stats?: [string, string][];
-};
-
-const DEFAULT_PROJECTS: ShowProject[] = [
-  {
-    id: "p1", platform: "tiktok", tag: "Verification",
-    title: "Khuyến Dương", handle: "@khuyenduong299",
-    result: "TikTok · 1,7Tr Follower · 62,7Tr Thích",
-    image_url: "/images/d1.png", big: "Verification", small: "TikTok",
-  },
-  {
-    id: "p2", platform: "tiktok", tag: "Verification",
-    title: "Chí Khang", handle: "@chikhang0311",
-    result: "TikTok · 2,7Tr Follower · 239,3Tr Thích",
-    image_url: "/images/d2.png", big: "2,7Tr", small: "Follower",
-  },
-  {
-    id: "p3", platform: "tiktok", tag: "Verification",
-    title: "Chuyện Ma Chú 3 Duy", handle: "@chu3duy0305",
-    result: "TikTok · 3,2Tr Follower · 148,5Tr Thích",
-    image_url: "/images/d3.png", big: "3,2Tr", small: "Follower",
-  },
-  {
-    id: "p4", platform: "tiktok", tag: "Verification",
-    title: "Mai Trí Thức", handle: "@maitrithuc2020",
-    result: "TikTok · 2,2Tr Follower · 178,1Tr Thích",
-    image_url: "/images/d4.png", big: "TikTok", small: "Creator",
-    stats: [["2,2Tr", "Follower"], ["178,1Tr", "Lượt thích"], ["34,9Tr", "Top video"]],
-  },
-];
-
 // Dịch vụ: nội dung chuẩn 4 nền tảng như bản Galaxy.
 const SERVICES = (lang: Lang): { slug: string; icon: Platform; name: string; desc: string }[] => [
   { slug: "tiktok", icon: "tiktok", name: "TikTok", desc: lang === "en" ? "Verification badge · account recovery · livestream & shop cart unlocks" : "Tích xanh chính thống · mở khóa tài khoản · livestream & giỏ hàng" },
@@ -85,13 +49,21 @@ const SERVICES = (lang: Lang): { slug: string; icon: Platform; name: string; des
   { slug: "bao-chi", icon: "press", name: lang === "en" ? "Press & PR" : "Báo chí", desc: lang === "en" ? "Press booking · SEO-standard PR writing on major outlets" : "Booking báo chí · viết bài PR chuẩn SEO trên đầu báo lớn" },
 ];
 
-// Tên hiển thị của platform slug (dùng cho overlay khi dữ liệu lấy từ DB).
+// Tên hiển thị + icon của platform slug (mọi thẻ dự án render từ dữ liệu
+// admin: title / tag / platform / result / image_url — không hard-code).
 const PLATFORM_NAME: Record<string, string> = {
   tiktok: "TikTok",
   facebook: "Facebook",
   instagram: "Instagram",
   "instagram-threads": "Instagram",
   "bao-chi": "Báo chí",
+};
+const ICON_OF: Record<string, Platform> = {
+  tiktok: "tiktok",
+  facebook: "facebook",
+  instagram: "instagram",
+  "instagram-threads": "instagram",
+  "bao-chi": "press",
 };
 
 // Chữ theo ngôn ngữ (switch VI/EN trên nav).
@@ -111,6 +83,7 @@ const TX = {
     feedback: "Feedback",
     cta: "Sẵn sàng bứt phá?",
     btn: "Liên hệ ngay",
+    viewAll: "Xem tất cả dự án →",
   },
   en: {
     menu: ["Services", "Process", "Projects", "Feedback"],
@@ -127,79 +100,9 @@ const TX = {
     feedback: "Feedback",
     cta: "Ready to scale?",
     btn: "Let's Talk",
+    viewAll: "View all projects →",
   },
 };
-
-/* ================= components ================= */
-
-// Khung iPhone: viền titan, Dynamic Island, phản chiếu mặt kính.
-// Ảnh DB lỗi/thiếu thì tự rơi về ảnh fallback cục bộ (d1–d4) để khung
-// không bao giờ trống.
-function IPhone({ src, fallback, alt, size = "md", tilt }: { src: string | null; fallback?: string | null; alt: string; size?: "lg" | "md" | "sm"; tilt?: "l" | "r" }) {
-  const chain = [src, fallback].filter(Boolean) as string[];
-  const [idx, setIdx] = useState(0);
-  const cur = chain[idx];
-  return (
-    <div className={`pm-phone ${size} ${tilt === "l" ? "tilt-l" : tilt === "r" ? "tilt-r" : ""}`}>
-      <div className="pm-phone-screen">
-        {cur ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={cur} alt={alt} loading="lazy" onError={() => setIdx((i) => i + 1)} />
-        ) : (
-          <div className="pm-phone-empty">{alt}</div>
-        )}
-        <span className="pm-island" />
-      </div>
-    </div>
-  );
-}
-
-// Ảnh sprite tách từ logo.png (mark trong suốt / hành tinh) — xử lý bằng
-// canvas phía client, cache theo module nên chỉ chạy một lần.
-function SpriteImg({ kind, alt = "", className }: { kind: "mark" | "p1" | "p2"; alt?: string; className?: string }) {
-  const [url, setUrl] = useState<string | null>(null);
-  useEffect(() => {
-    let mounted = true;
-    const p = kind === "mark" ? extractMark() : extractPlanet(kind);
-    p.then((u) => mounted && setUrl(u)).catch(() => {});
-    return () => { mounted = false; };
-  }, [kind]);
-  if (!url) return <span className={className} aria-hidden />;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={url} alt={alt} className={className} draggable={false} />;
-}
-
-// Mark 3D có ĐỘ DÀY thật: xếp nhiều lớp ảnh dọc trục Z rồi quay cả khối
-// quanh trục dọc. Bước lớp 0.6px (< 1px) nên khi quay nghiêng các lớp hoà
-// thành cạnh liền khối, không lộ sọc.
-function Mark3D({ layers = 32, className, alt = "" }: { layers?: number; className?: string; alt?: string }) {
-  const [url, setUrl] = useState<string | null>(null);
-  useEffect(() => {
-    let mounted = true;
-    extractMark().then((u) => mounted && setUrl(u)).catch(() => {});
-    return () => { mounted = false; };
-  }, []);
-  return (
-    <div className={`pm-mark-stack ${className ?? ""}`}>
-      {url &&
-        Array.from({ length: layers }, (_, i) => {
-          const isFront = i === layers - 1;
-          const isBack = i === 0;
-          return (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={i}
-            src={url}
-            alt={isFront ? alt : ""}
-            aria-hidden={!isFront}
-            draggable={false}
-            className={isFront ? "front" : isBack ? "back" : "side"}
-            style={{ transform: `translateZ(${(i - (layers - 1) / 2) * 0.6}px)` }}
-          />
-        )})}
-    </div>
-  );
-}
 
 export default function OptionPremium() {
   const { lang } = useLang();
@@ -220,7 +123,7 @@ export default function OptionPremium() {
     dbFeedbacks ??
     st.testimonials.map((c, i) => ({ id: `t${i}`, name: c.name, company: c.company, quote: c.quote, rating: 5, image_url: null }));
   const hueOf = (i: number) => [330, 210, 160, 40, 280, 120][i % 6];
-  const projects: ShowProject[] = dbProjects && dbProjects.length > 0 ? dbProjects : DEFAULT_PROJECTS;
+  const projects: DbProject[] = dbProjects && dbProjects.length > 0 ? dbProjects : DEFAULT_PROJECTS;
   const t = TX[lang];
 
   return (
@@ -231,7 +134,7 @@ export default function OptionPremium() {
           <span className="pm-brand-spin">
             <Mark3D layers={8} className="nav" alt="VDuyStudio" />
           </span>
-          <span className="pm-brandname">VDUYSTUDIO</span>
+          <Wordmark className="nav" />
         </a>
         <div className="pm-menu">
           <a href="#pm-services">{t.menu[0]}</a>
@@ -267,14 +170,18 @@ export default function OptionPremium() {
         </div>
         <div className="pm-hero-inner">
           <div className="pm-hero-logo-row">
-            <div className="pm-word3d left">VDUY</div>
-            
+            <div className="pm-word3d left">
+              <Wordmark part="vduy" className="hero" />
+            </div>
+
             <div className="pm-mark3d">
               <Mark3D alt="VDuyStudio" />
               <span className="pm-mark-glow" aria-hidden />
             </div>
 
-            <div className="pm-word3d right">STUDIO</div>
+            <div className="pm-word3d right">
+              <Wordmark part="studio" className="hero" />
+            </div>
           </div>
 
           <div className="pm-hero-tag">✦ {t.heroTag}</div>
@@ -311,13 +218,17 @@ export default function OptionPremium() {
           <h2 className="pm-label">{t.services}</h2>
           <div className="pm-services">
             {SERVICES(lang).map((s) => (
-              <Link href={`/dich-vu/${s.slug}`} className="pm-svc" key={s.slug}>
-                <span className="pm-svc-halo" aria-hidden />
-                <PlatformIcon kind={s.icon} size={44} />
-                <h3>{s.name}</h3>
-                <p>{s.desc}</p>
-                <span className="pm-svc-go">{lang === "en" ? "View details →" : "Xem chi tiết →"}</span>
-              </Link>
+              <Tilt className="pm-svcwrap" max={10} glare key={s.slug}>
+                <Link href={`/dich-vu/${s.slug}`} className="pm-svc">
+                  <span className="pm-svc-halo" aria-hidden />
+                  <span className="pm-svc-ic">
+                    <PlatformIcon kind={s.icon} size={46} />
+                  </span>
+                  <h3>{s.name}</h3>
+                  <p>{s.desc}</p>
+                  <span className="pm-svc-go">{lang === "en" ? "View details →" : "Xem chi tiết →"}</span>
+                </Link>
+              </Tilt>
             ))}
           </div>
         </div>
@@ -327,37 +238,46 @@ export default function OptionPremium() {
       <section className="pm-section" id="pm-projects">
         <div className="pm-container">
           <div className="pm-label-row">
-            <h2 className="pm-label">{t.portfolio}</h2>
-            <span className="pm-arrows" aria-hidden>← →</span>
+            <Link href="/du-an" className="pm-label-link">
+              <h2 className="pm-label">{t.portfolio}</h2>
+            </Link>
+            <Link href="/du-an" className="pm-viewall">{t.viewAll}</Link>
           </div>
+          {/* Chỉ 4 dự án mới nhất; mọi chữ/icon lấy từ dữ liệu admin:
+              title · tag · platform (icon + tên) · result · image_url */}
           <div className="pm-bento">
             {projects.slice(0, 4).map((p, i) => {
-              const sp = p as ShowProject;
               // Ảnh dự phòng theo vị trí (d1–d4) khi ảnh DB lỗi/thiếu.
               const fb = DEFAULT_PROJECTS[i]?.image_url ?? null;
               const platformName = PLATFORM_NAME[p.platform ?? ""] ?? "TikTok";
+              const icon = ICON_OF[p.platform ?? ""] ?? "tiktok";
               return (
                 <article className="pm-card" key={p.id}>
                   <div className="pm-card-bgword" aria-hidden>
-                    {(sp.big ?? platformName).toUpperCase()}
+                    {platformName.toUpperCase()}
                   </div>
 
                   {i === 0 && (
                     <div className="pm-stage hero-stage">
                       <div className="pm-ovl">
-                        <b>{sp.big ?? "Verification"}</b>
-                        <span>{sp.small ?? platformName}</span>
+                        <b>{p.tag ?? "Verified"}</b>
+                        <span>{platformName}</span>
                       </div>
                       <IPhone src={p.image_url} fallback={fb} alt={p.title} size="lg" tilt="r" />
-                      <div className="pm-year" aria-hidden>2024</div>
+                      <span className="pm-card-icon big" aria-hidden>
+                        <PlatformIcon kind={icon} size={96} />
+                      </span>
                     </div>
                   )}
 
                   {(i === 1 || i === 2) && (
                     <div className="pm-stage side-stage">
                       <div className="pm-ovl num">
-                        <b>{sp.big ?? platformName}</b>
-                        <span>{sp.small ?? p.tag ?? "Verified"}</span>
+                        <span className="pm-ovl-ic" aria-hidden>
+                          <PlatformIcon kind={icon} size={34} />
+                        </span>
+                        <b>{p.tag ?? platformName}</b>
+                        <span>{platformName}</span>
                       </div>
                       <IPhone src={p.image_url} fallback={fb} alt={p.title} size="md" tilt={i === 1 ? "l" : "r"} />
                     </div>
@@ -367,25 +287,15 @@ export default function OptionPremium() {
                     <div className="pm-stage wide-stage">
                       <IPhone src={p.image_url} fallback={fb} alt={p.title} size="lg" />
                       <div className="pm-spot">
+                        <span className="pm-card-icon" aria-hidden>
+                          <PlatformIcon kind={icon} size={54} />
+                        </span>
                         <h3>{p.title}</h3>
-                        {sp.handle && <span className="pm-handle">{sp.handle}</span>}
-                        {sp.stats ? (
-                          <div className="pm-stats">
-                            {sp.stats.map(([v, l]) => (
-                              <div key={l}>
-                                <b>{v}</b>
-                                <span>{l}</span>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          p.result && <p className="pm-spot-sub">{p.result}</p>
-                        )}
+                        {p.result && <p className="pm-spot-sub">{p.result}</p>}
+                        {p.tag && <span className="pm-mini-tag">{p.tag}</span>}
                       </div>
                     </div>
                   )}
-
-
 
                   {i !== 3 && (
                     <div className="pm-card-info">
@@ -397,24 +307,6 @@ export default function OptionPremium() {
               );
             })}
           </div>
-
-          {/* Từ dự án thứ 5 trở đi: trượt ngang 3 thẻ/khung (tự chạy + mũi tên + chấm) */}
-          {projects.length > 4 && (
-            <div className="pm-more">
-              <Carousel per={3} ariaLabel={t.portfolio}>
-                {projects.slice(4).map((p) => (
-                  <div className="pm-mini" key={p.id}>
-                    <IPhone src={p.image_url} alt={p.title} size="sm" />
-                    <div className="pm-mini-info">
-                      <h3>{p.title}</h3>
-                      {p.result && <p>{p.result}</p>}
-                      {p.tag && <span className="pm-mini-tag">{p.tag}</span>}
-                    </div>
-                  </div>
-                ))}
-              </Carousel>
-            </div>
-          )}
         </div>
       </section>
 
@@ -474,9 +366,8 @@ export default function OptionPremium() {
       {/* CTA / FOOTER */}
       <footer className="pm-footer">
         <div className="pm-container">
-          <div className="pm-wordmark small">
-            <span className="pm-w1">VDUY</span>
-            <span className="pm-w2">STUDIO</span>
+          <div className="pm-foot-wm">
+            <Wordmark className="foot" />
           </div>
           <h2 className="pm-foot-title">{t.cta}</h2>
           <a href={contact.zalo} target="_blank" rel="noreferrer" className="pm-btn">
@@ -518,8 +409,6 @@ export default function OptionPremium() {
 .pm-brand-spin{display:block;width:46px;height:38px;perspective:420px;flex-shrink:0;}
 .pm-brand-spin img,.pm-brand-spin span{display:block;width:100%;height:100%;object-fit:contain;
  filter:drop-shadow(0 0 12px rgba(45,212,191,.55));}
-.pm-brandname{font-family:'Anton',sans-serif;font-size:15px;letter-spacing:2px;color:var(--cyan);
- text-shadow:0 0 20px rgba(45,212,191,.65);}
 .pm-menu{display:flex;gap:30px;font-size:13.5px;font-weight:600;color:var(--muted);}
 .pm-menu a{padding:8px 0;transition:.2s;}
 .pm-menu a:hover{color:#fff;}
@@ -576,20 +465,12 @@ export default function OptionPremium() {
 .pm-hero-inner{position:relative;display:flex;flex-direction:column;align-items:center;max-width:1400px;width:100%;}
 .pm-hero-logo-row{display:flex;align-items:center;justify-content:center;width:100%;margin-bottom:12px;gap:0;max-width:98vw;}
 .pm-mark3d{position:relative;width:clamp(220px,36vw,480px);perspective:1300px;z-index:10;flex-shrink:0;}
-/* mark 3D nhiều lớp — có độ dày, nhìn nghiêng thấy cạnh khi xoay */
-.pm-mark-stack{position:relative;width:100%;aspect-ratio:1.32;transform-style:preserve-3d;
- animation:pmSpinY 20s linear infinite;will-change:transform;}
-.pm-mark-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;image-rendering:auto;will-change:transform;}
-/* Loại bỏ drop-shadow nặng trên lớp hông, dùng opacity + brightness nhẹ để tăng FPS, hết giật lag */
-.pm-mark-stack img.side{filter:brightness(1.5);opacity:0.18;}
-.pm-mark-stack img.front,.pm-mark-stack img.back{filter:drop-shadow(0 22px 50px rgba(20,184,166,.35)) drop-shadow(0 0 40px rgba(45,212,191,.2));}
-.pm-mark-stack.nav{animation-duration:14s;}
-@keyframes pmSpinY{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
+/* mark 3D nhiều lớp: style nằm trong premiumKit */
 .pm-mark-glow{position:absolute;left:50%;bottom:-6%;transform:translateX(-50%);width:72%;height:36px;border-radius:50%;
  background:radial-gradient(ellipse,rgba(20,184,166,.45),transparent 70%);filter:blur(9px);}
 .pm-word3d{position:relative;display:inline-block;z-index:1;
  font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(40px,9vw,140px);line-height:1.2;transform:scaleY(1.7);
- color:#f0f9ff;-webkit-text-stroke:0.025em #f0f9ff;text-transform:uppercase;}
+ text-transform:uppercase;}
 .pm-word3d.left {flex:1;text-align:right;letter-spacing:0.12em;margin-right:-4.5vw;}
 .pm-word3d.right {flex:1;text-align:left;letter-spacing:-0.02em;margin-left:-2vw;}
 .pm-hero-tag{margin-top:clamp(-20px,1vh,10px);display:inline-block;font-size:11.5px;letter-spacing:2px;
@@ -604,14 +485,12 @@ export default function OptionPremium() {
  font-size:13.5px;color:var(--muted);}
 .pm-statline b{color:#5eead4;font-size:16px;margin-right:5px;}
 
-/* wordmark vector (footer) */
-.pm-wordmark{font-family:var(--font-archivo),var(--font-grotesk),sans-serif;font-weight:900;font-stretch:125%;
- font-size:clamp(36px,6.6vw,72px);line-height:1.05;letter-spacing:.01em;text-transform:uppercase;
- filter:drop-shadow(0 10px 30px rgba(0,0,0,.5));}
-.pm-w1{background:linear-gradient(180deg,#a7f3d0 0%,#2dd4bf 48%,#0e7490 100%);
- -webkit-background-clip:text;background-clip:text;color:transparent;}
-.pm-w2{background:linear-gradient(180deg,#ffffff 12%,#ccd9e4 42%,#8fa3b8 58%,#e9f1f8 100%);
- -webkit-background-clip:text;background-clip:text;color:transparent;}
+/* wordmark footer + link "xem tất cả" */
+.pm-foot-wm{margin-bottom:10px;}
+.pm-label-link{display:block;}
+.pm-label-link:hover .pm-label{color:var(--cyan);}
+.pm-viewall{margin-bottom:26px;font-size:13.5px;font-weight:700;color:var(--cyan);letter-spacing:.5px;transition:.2s;}
+.pm-viewall:hover{text-shadow:0 0 18px rgba(45,212,191,.7);}
 
 /* ===== marquee thương hiệu ===== */
 .pm-marquee-wrap{display:flex;align-items:center;margin:26px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
@@ -632,10 +511,14 @@ export default function OptionPremium() {
  color:#93aabb;margin:0 0 26px;}
 .pm-label.center{text-align:center;}
 .pm-label-row{display:flex;justify-content:space-between;align-items:center;}
-.pm-arrows{color:#4a6274;font-size:19px;letter-spacing:8px;margin-bottom:26px;}
 
-/* ===== services ===== */
+/* ===== services (card 3D nghiêng theo chuột + glare) ===== */
 .pm-services{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+.pm-svcwrap{border-radius:18px;}
+.pm-svc-ic{display:inline-flex;width:64px;height:64px;align-items:center;justify-content:center;border-radius:16px;
+ background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.25);
+ animation:pmFloat 5.5s ease-in-out infinite;
+ filter:drop-shadow(0 10px 26px rgba(45,212,191,.3));}
 .pm-svc{position:relative;display:flex;flex-direction:column;gap:10px;padding:26px 22px;min-height:216px;
  background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.25s;}
 .pm-svc-halo{position:absolute;top:-46px;right:-46px;width:120px;height:120px;border-radius:50%;
@@ -658,13 +541,6 @@ export default function OptionPremium() {
 .pm-card:nth-child(2),.pm-card:nth-child(3){grid-column:span 6;}
 
 /* slider dự án 5+ */
-.pm-more{margin-top:22px;}
-.pm-mini{display:flex;flex-direction:column;align-items:center;gap:16px;padding:26px 18px 22px;
- background:var(--card);border:1px solid var(--line);border-radius:20px;transition:.25s;}
-.pm-mini:hover{border-color:rgba(45,212,191,.5);transform:translateY(-4px);}
-.pm-mini-info{text-align:center;}
-.pm-mini-info h3{font-family:'Oswald',sans-serif;font-weight:700;font-size:18px;margin:0 0 5px;}
-.pm-mini-info p{margin:0;color:var(--muted);font-size:12.5px;}
 .pm-mini-tag{display:inline-block;margin-top:10px;font-size:10.5px;font-weight:800;letter-spacing:1px;
  text-transform:uppercase;color:#03222e;background:linear-gradient(90deg,#5eead4,#22d3ee);
  padding:4px 12px;border-radius:100px;}
@@ -682,48 +558,26 @@ export default function OptionPremium() {
  background:linear-gradient(180deg,#bae6fd 0%,#38bdf8 48%,#0369a1 100%);
  -webkit-background-clip:text;background-clip:text;color:transparent;
  filter:drop-shadow(0 8px 30px rgba(2,60,90,.6));}
-.pm-year{font-family:'Anton',sans-serif;font-size:clamp(58px,8.5vw,128px);letter-spacing:2px;line-height:1;
- background:linear-gradient(180deg,#7dd3fc 0%,#0ea5e9 52%,#075985 100%);
- -webkit-background-clip:text;background-clip:text;color:transparent;
- filter:drop-shadow(0 10px 34px rgba(2,60,90,.65));}
+/* icon nền tảng trên thẻ dự án — trôi bồng bềnh + glow */
+.pm-card-icon{display:inline-flex;animation:pmFloat 6s ease-in-out infinite;
+ filter:drop-shadow(0 14px 34px rgba(45,212,191,.35)) drop-shadow(0 0 18px rgba(45,212,191,.2));}
+.pm-ovl-ic{display:inline-flex;margin-bottom:12px;animation:pmFloat 5s ease-in-out infinite;
+ filter:drop-shadow(0 10px 24px rgba(45,212,191,.4));}
+.pm-spot .pm-card-icon{margin-bottom:16px;}
 
 /* card 3: đảo chiều để nhịp bento so le */
 .pm-card:nth-child(3) .pm-stage{flex-direction:row-reverse;}
 
-/* card 4: spotlight — phone trái, thông tin + stats phải */
+/* card 4: spotlight — phone trái, thông tin phải */
 .pm-spot{max-width:460px;}
 .pm-spot h3{font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(28px,3.4vw,44px);margin:0;letter-spacing:.5px;}
-.pm-handle{display:block;margin-top:8px;color:var(--cyan);font-size:14px;font-weight:600;letter-spacing:.5px;}
 .pm-spot-sub{color:var(--muted);font-size:14px;margin:18px 0 0;}
-.pm-stats{display:flex;margin-top:28px;border-top:1px solid var(--line);}
-.pm-stats>div{padding:16px 26px 2px 0;margin-right:26px;border-right:1px solid var(--line);}
-.pm-stats>div:last-child{border-right:none;margin-right:0;padding-right:0;}
-.pm-stats b{display:block;font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(20px,2.2vw,27px);color:#fff;}
-.pm-stats span{font-size:12px;color:var(--muted);letter-spacing:.5px;}
 
 .pm-card-info{position:relative;z-index:2;padding:0 clamp(20px,3vw,30px) clamp(20px,3vw,26px);}
 .pm-card-info h3{font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(19px,2.2vw,25px);margin:0 0 6px;letter-spacing:.5px;}
 .pm-card-info p{margin:0;color:var(--muted);font-size:13px;}
 
-/* ===== iPhone mockup ===== */
-.pm-phone{position:relative;flex-shrink:0;border-radius:46px;padding:7px;
- background:linear-gradient(160deg,#57616e 0%,#181e28 26%,#0a0f16 72%,#3b4450 100%);
- box-shadow:0 34px 74px rgba(0,0,0,.62),0 0 56px rgba(56,189,248,.13),inset 0 0 2px rgba(255,255,255,.4);}
-.pm-phone::before{content:"";position:absolute;right:-2.5px;top:118px;width:3px;height:62px;border-radius:2px;background:#3b4450;}
-.pm-phone::after{content:"";position:absolute;left:-2.5px;top:96px;width:3px;height:30px;border-radius:2px;background:#3b4450;box-shadow:0 44px 0 #3b4450;}
-.pm-phone.lg{width:clamp(210px,22vw,252px);}
-.pm-phone.md{width:clamp(190px,20vw,218px);}
-.pm-phone.sm{width:180px;}
-.pm-phone.tilt-l{transform:rotate(-6deg);}
-.pm-phone.tilt-r{transform:rotate(6deg);}
-.pm-phone-screen{position:relative;border-radius:39px;overflow:hidden;aspect-ratio:1320/2868;background:#000;}
-.pm-phone-screen img{width:100%;height:100%;object-fit:cover;display:block;}
-.pm-phone-screen::after{content:"";position:absolute;inset:0;pointer-events:none;
- background:linear-gradient(115deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.03) 26%,transparent 44%);}
-.pm-island{position:absolute;top:13px;left:50%;transform:translateX(-50%);width:27%;height:21px;background:#000;
- border-radius:20px;z-index:5;box-shadow:inset 0 0 3px rgba(255,255,255,.18);}
-.pm-phone-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#3d5364;
- font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:1px;text-transform:uppercase;}
+/* ===== iPhone mockup: style nằm trong premiumKit ===== */
 
 /* ===== clients ===== */
 .pm-clients{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:12px 0;max-width:1020px;
@@ -776,37 +630,49 @@ export default function OptionPremium() {
  .pm-card:nth-child(n){grid-column:span 12;}
  .pm-stage,.pm-card:nth-child(3) .pm-stage{flex-direction:column;text-align:center;}
  .pm-ovl{align-items:center;}
- .pm-year{order:-1;}
  .pm-spot{max-width:none;text-align:center;}
- .pm-stats{justify-content:center;}
  .pm-card-info{text-align:center;}
  .pm-process{grid-template-columns:1fr 1fr;}
  .pm-step:nth-child(3){border-left:none;}
  .pm-step:nth-child(n+3){border-top:1px solid var(--line);}
  .pm-fb-grid{grid-template-columns:1fr;}
 }
+ /* ===== điện thoại (iPhone 13/14/15: 390–430px) ===== */
  @media(max-width:560px){
   .pm-nav{padding:10px 14px;}
-  .pm-hero{padding:40px 16px 52px;}
+  .pm-hero{padding:36px 16px 48px;}
   .pm-hero-logo-row{flex-direction:column;align-items:center;gap:16px;}
   .pm-mark3d{width:min(240px,64vw);}
   .pm-word3d{font-size:20vw;line-height:1;}
   .pm-word3d.left {text-align:center;margin:0;}
   .pm-word3d.right {text-align:center;margin:0;}
-  .pm-hero-h1{font-size:24px;}
- .pm-planet.pl1{left:8%;top:16%;}
- .pm-planet.pl2{right:-4%;top:60%;}
- .pm-services{grid-template-columns:1fr;}
- .pm-svc{padding:22px 18px;}
- .pm-phone.lg,.pm-phone.md,.pm-phone.sm{width:min(210px,58vw);}
- .pm-phone.tilt-l,.pm-phone.tilt-r{transform:none;}
- .pm-stats{flex-wrap:wrap;gap:14px 0;}
- .pm-process{grid-template-columns:1fr;}
- .pm-step{border-left:none;}
- .pm-step:nth-child(n+2){border-top:1px solid var(--line);}
- .pm-client i{margin:0 12px;}
- .pm-footbar{justify-content:center;}
-}
+  .pm-hero-tag{font-size:10px;letter-spacing:1.2px;padding:6px 12px;margin-top:8px;}
+  .pm-hero-h1{font-size:24px;letter-spacing:-.5px;padding:0 4px;}
+  .pm-statline{gap:8px 18px;font-size:12.5px;}
+  .pm-statline b{font-size:14.5px;}
+  .pm-planet.pl1{left:8%;top:16%;}
+  .pm-planet.pl2{right:-4%;top:60%;}
+  .pm-marquee-label{padding:13px 14px;font-size:10px;}
+  .pm-marquee-item{font-size:14px;padding:12px 0 12px 22px;}
+  .pm-marquee-item i{margin-left:22px;}
+  .pm-services{grid-template-columns:1fr;}
+  .pm-svc{padding:22px 18px;}
+  .pm-stage{gap:22px;padding:28px 16px 20px;}
+  .pm-ovl b{font-size:30px;}
+  .pm-ovl span{font-size:15px;}
+  .pm-card-icon.big svg{width:56px;height:56px;}
+  .pm-spot h3{font-size:24px;}
+  .pm-card-bgword{font-size:78px;}
+  .pm-viewall{font-size:12px;}
+  .pm-client{font-size:17px;}
+  .pm-client i{margin:0 12px;}
+  .pm-process{grid-template-columns:1fr;}
+  .pm-step{border-left:none;}
+  .pm-step:nth-child(n+2){border-top:1px solid var(--line);}
+  .pm-foot-title{font-size:30px;}
+  .pm-btn{padding:16px 40px;font-size:15px;}
+  .pm-footbar{justify-content:center;}
+ }
       `}</style>
     </div>
   );

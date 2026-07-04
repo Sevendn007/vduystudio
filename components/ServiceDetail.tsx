@@ -4,10 +4,17 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getPlatform, getPlatforms, PriceRow } from "@/lib/services";
 import { site } from "@/lib/site";
-import { BrandMark, ProjectCover } from "@/components/art";
+import { Mark3D, Wordmark, IPhone, DEFAULT_PROJECTS } from "@/components/premiumKit";
 import { useLang, LangToggle } from "@/lib/i18n";
-import { fetchPricing } from "@/lib/data";
+import { fetchPricing, fetchProjects, DbProject } from "@/lib/data";
 import { useContact } from "@/lib/useContact";
+
+// Dự án cùng nền tảng (instagram-threads ~ instagram).
+function matchPlatform(p: DbProject, slug: string): boolean {
+  if (!p.platform) return false;
+  if (p.platform === slug) return true;
+  return slug === "instagram-threads" && p.platform === "instagram";
+}
 
 const TX = {
   vi: {
@@ -73,6 +80,16 @@ export default function ServiceDetail({ slug }: { slug: string }) {
   const platform = getPlatform(slug, lang) ?? getPlatform(slug, "vi")!;
   const others = getPlatforms(lang).filter((p) => p.slug !== platform.slug);
 
+  // Dự án thật từ DB theo nền tảng — không có thì fallback showcase.
+  const [dbProjects, setDbProjects] = useState<DbProject[] | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    fetchProjects().then((d) => mounted && setDbProjects(d));
+    return () => { mounted = false; };
+  }, []);
+  const related = (dbProjects ?? []).filter((p) => matchPlatform(p, platform.slug));
+  const projects: DbProject[] = related.length > 0 ? related.slice(0, 3) : DEFAULT_PROJECTS.slice(0, 3);
+
   // Bảng giá: admin nhập trong DB thì ưu tiên, chưa có thì dùng mặc định.
   const [pricing, setPricing] = useState<PriceRow[]>(platform.pricing);
   useEffect(() => {
@@ -103,8 +120,11 @@ export default function ServiceDetail({ slug }: { slug: string }) {
         <div className="sd-nebula" />
       </div>
       <nav className="sd-nav">
-        <Link href="/" className="sd-back">
-          <BrandMark height={22} />
+        <Link href="/" className="sd-back" style={{ display: "flex", alignItems: "center", gap: 11 }}>
+          <span style={{ display: "block", width: 42, height: 35, perspective: 420 }}>
+            <Mark3D layers={8} className="nav" alt="VDuyStudio" />
+          </span>
+          <Wordmark className="nav" />
         </Link>
         <div className="sd-nav-links">
           <Link href="/">{t.home}</Link>
@@ -201,14 +221,13 @@ export default function ServiceDetail({ slug }: { slug: string }) {
         <div className="sd-tag">{t.projectsTag}</div>
         <h2>{t.projectsTitle}</h2>
         <div className="sd-projects">
-          {platform.projects.map((pj, i) => (
-            <div className="sd-project" key={i}>
-              <div className="sd-project-cover">
-                <ProjectCover platform={platform.slug} handle={pj.title} tag={pj.tag} />
-              </div>
+          {projects.map((pj, i) => (
+            <div className="sd-project" key={pj.id ?? i}>
+              <IPhone src={pj.image_url} fallback={DEFAULT_PROJECTS[i]?.image_url} alt={pj.title} size="sm" />
               <div className="sd-project-body">
                 <h4>{pj.title}</h4>
-                <p>{pj.result}</p>
+                {pj.result && <p>{pj.result}</p>}
+                {pj.tag && <span className="sd-project-tag">{pj.tag}</span>}
               </div>
             </div>
           ))}
@@ -262,12 +281,12 @@ export default function ServiceDetail({ slug }: { slug: string }) {
       </section>
 
       <footer className="sd-footer">
-        <BrandMark height={20} />
+        <Wordmark className="nav" />
         <span>© 2026 {site.name} · {site.domain}</span>
       </footer>
 
       <style>{`
-.sd-root{--fg:#e8ecff;--muted:#8b93b8;--line:rgba(139,147,184,.2);--panel:rgba(139,147,184,.06);--cyan:#67e8f9;--bg:#03040c;font-family:var(--font-grotesk),var(--font-inter),system-ui,sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;position:relative;overflow-x:hidden;padding-bottom:calc(24px + env(safe-area-inset-bottom));}
+.sd-root{--fg:#e6f0f2;--muted:#8fadb5;--line:rgba(94,209,214,.16);--panel:rgba(45,212,191,.05);--cyan:#2dd4bf;--bg:#02090c;font-family:var(--font-grotesk),var(--font-inter),system-ui,sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;position:relative;overflow-x:hidden;padding-bottom:calc(24px + env(safe-area-inset-bottom));}
 .sd-root *{box-sizing:border-box;}
 .sd-space{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
 .sd-stars{position:absolute;inset:-100px;background-image:
@@ -278,11 +297,11 @@ export default function ServiceDetail({ slug }: { slug: string }) {
  radial-gradient(1.1px 1.1px at 80px 220px,#fff,transparent);
  background-size:360px 320px;opacity:.6;}
 .sd-nebula{position:absolute;inset:0;background:
- radial-gradient(700px 500px at 82% 4%,rgba(103,232,249,.1),transparent 65%),
- radial-gradient(640px 520px at 8% 30%,rgba(167,139,250,.1),transparent 65%);}
+ radial-gradient(700px 500px at 82% 4%,rgba(45,212,191,.1),transparent 65%),
+ radial-gradient(640px 520px at 8% 30%,rgba(8,145,178,.12),transparent 65%);}
 .sd-root>*:not(.sd-space){position:relative;z-index:1;}
 
-.sd-nav{display:flex;justify-content:space-between;align-items:center;padding:14px clamp(16px,4vw,40px);position:sticky;top:0;z-index:20;background:rgba(3,4,12,.72);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+.sd-nav{display:flex;justify-content:space-between;align-items:center;padding:12px clamp(16px,4vw,40px);position:sticky;top:0;z-index:20;background:rgba(2,9,12,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
 .sd-nav-links{display:flex;align-items:center;gap:18px;font-size:14px;font-weight:500;color:var(--muted);}
 .sd-nav-cta{border:1px solid var(--accent);color:var(--fg);background:color-mix(in srgb,var(--accent) 14%,transparent);padding:9px 18px;border-radius:100px;font-weight:600;}
 .sd-nav-cta:hover{background:var(--accent);color:#04101a;}
@@ -324,12 +343,15 @@ export default function ServiceDetail({ slug }: { slug: string }) {
 .sd-step p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.55;}
 
 .sd-projects{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
-.sd-project{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;}
-.sd-project-cover{aspect-ratio:16/10;background:#0a0f1e;line-height:0;}
-.sd-project-cover img{width:100%;height:100%;object-fit:cover;display:block;}
-.sd-project-body{padding:18px;}
+.sd-project{display:flex;flex-direction:column;align-items:center;gap:16px;background:var(--panel);
+ border:1px solid var(--line);border-radius:20px;padding:26px 16px 22px;transition:.25s;}
+.sd-project:hover{border-color:rgba(45,212,191,.5);transform:translateY(-4px);}
+.sd-project-body{text-align:center;padding:0;}
 .sd-project-body h4{margin:0 0 6px;font-size:16px;font-weight:700;}
 .sd-project-body p{margin:0;color:var(--muted);font-size:13.5px;}
+.sd-project-tag{display:inline-block;margin-top:10px;font-size:10.5px;font-weight:800;letter-spacing:1px;
+ text-transform:uppercase;color:#03222e;background:linear-gradient(90deg,#5eead4,#22d3ee);
+ padding:4px 12px;border-radius:100px;}
 
 .sd-faq{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .sd-faq-item{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 24px;}

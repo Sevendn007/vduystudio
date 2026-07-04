@@ -68,6 +68,22 @@ export async function fetchProjects(): Promise<DbProject[] | null> {
   }
 }
 
+// Toàn bộ dự án (trang /du-an) — mới nhất trước.
+export async function fetchAllProjects(): Promise<DbProject[] | null> {
+  if (!hasSupabase()) return null;
+  try {
+    const { data, error } = await createClient()
+      .from("projects")
+      .select("id,title,tag,result,platform,image_url")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error || !data || data.length === 0) return null;
+    return data as DbProject[];
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchPricing(platformSlug: string): Promise<DbPriceRow[] | null> {
   if (!hasSupabase()) return null;
   try {
