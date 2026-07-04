@@ -172,7 +172,7 @@ function SpriteImg({ kind, alt = "", className }: { kind: "mark" | "p1" | "p2"; 
 // Mark 3D có ĐỘ DÀY thật: xếp nhiều lớp ảnh dọc trục Z rồi quay cả khối
 // quanh trục dọc. Bước lớp 0.6px (< 1px) nên khi quay nghiêng các lớp hoà
 // thành cạnh liền khối, không lộ sọc.
-function Mark3D({ layers = 80, className, alt = "" }: { layers?: number; className?: string; alt?: string }) {
+function Mark3D({ layers = 32, className, alt = "" }: { layers?: number; className?: string; alt?: string }) {
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {
     let mounted = true;
@@ -194,7 +194,7 @@ function Mark3D({ layers = 80, className, alt = "" }: { layers?: number; classNa
             aria-hidden={!isFront}
             draggable={false}
             className={isFront ? "front" : isBack ? "back" : "side"}
-            style={{ transform: `translateZ(${(i - (layers - 1) / 2) * 0.25}px)` }}
+            style={{ transform: `translateZ(${(i - (layers - 1) / 2) * 0.6}px)` }}
           />
         )})}
     </div>
@@ -588,10 +588,10 @@ export default function OptionPremium() {
 .pm-mark3d{position:relative;width:clamp(220px,36vw,510px);perspective:1300px;z-index:10;flex-shrink:0;}
 /* mark 3D nhiều lớp — có độ dày, nhìn nghiêng thấy cạnh khi xoay */
 .pm-mark-stack{position:relative;width:100%;aspect-ratio:1.32;transform-style:preserve-3d;
- animation:pmSpinY 20s linear infinite;}
-.pm-mark-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;image-rendering:auto;}
-/* Dùng drop-shadow nhẹ trên side layers để "hàn" kín các khe hở 0.25px, triệt tiêu sọc */
-.pm-mark-stack img.side{filter:brightness(1.2) drop-shadow(0 0 1px rgba(20,184,166,0.1));opacity:0.08;}
+ animation:pmSpinY 20s linear infinite;will-change:transform;}
+.pm-mark-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;image-rendering:auto;will-change:transform;}
+/* Loại bỏ drop-shadow nặng trên lớp hông, dùng opacity + brightness nhẹ để tăng FPS, hết giật lag */
+.pm-mark-stack img.side{filter:brightness(1.5);opacity:0.18;}
 .pm-mark-stack img.front,.pm-mark-stack img.back{filter:drop-shadow(0 22px 50px rgba(20,184,166,.35)) drop-shadow(0 0 40px rgba(45,212,191,.2));}
 .pm-mark-stack.nav{animation-duration:14s;}
 @keyframes pmSpinY{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
