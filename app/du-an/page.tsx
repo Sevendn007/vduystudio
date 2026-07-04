@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PlatformIcon, Platform } from "@/components/brand";
 import { Mark3D, Wordmark, IPhone, DEFAULT_PROJECTS } from "@/components/premiumKit";
+import { PremiumFooter } from "@/components/PremiumFooter";
 import { useLang, LangToggle } from "@/lib/i18n";
 import { fetchAllProjects, DbProject } from "@/lib/data";
 import { useContact } from "@/lib/useContact";
@@ -87,9 +88,7 @@ export default function AllProjectsPage() {
         })}
       </main>
 
-      <footer className="pj-foot">
-        <a href={contact.zalo} target="_blank" rel="noreferrer" className="pj-btn">{t.cta}</a>
-      </footer>
+      <PremiumFooter />
 
       <style>{`
 .pj-root{--bg:#02090c;--muted:#8fadb5;--cyan:#2dd4bf;--line:rgba(94,209,214,.16);--card:#05141a;
@@ -128,10 +127,7 @@ export default function AllProjectsPage() {
 .pj-tag{display:inline-block;margin-top:10px;font-size:10.5px;font-weight:800;letter-spacing:1px;
  text-transform:uppercase;color:#03222e;background:linear-gradient(90deg,#5eead4,#22d3ee);
  padding:4px 12px;border-radius:100px;}
-.pj-foot{text-align:center;padding:44px 20px 24px;}
-.pj-btn{display:inline-block;background:var(--cyan);color:#03222e;font-weight:800;font-size:15px;text-transform:uppercase;
- letter-spacing:1px;padding:15px 44px;border-radius:100px;transition:.3s;box-shadow:0 0 38px rgba(45,212,191,.35);}
-.pj-btn:hover{transform:scale(1.04);}
+
 @media(max-width:980px){.pj-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:560px){.pj-grid{grid-template-columns:1fr;}.pj-back{display:none;}}
       `}</style>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Mark3D, Wordmark } from "@/components/premiumKit";
+import { PremiumFooter } from "@/components/PremiumFooter";
 import { useLang, LangToggle } from "@/lib/i18n";
 import { fetchBlogBySlug, DbBlog } from "@/lib/data";
 import { useContact } from "@/lib/useContact";
@@ -82,11 +83,18 @@ export default function BlogDetailPage() {
           className="blog-content"
           dangerouslySetInnerHTML={{ __html: blog.content?.replace(/\n/g, "<br/>") || "" }}
         />
+
+        {blog.images && blog.images.length > 0 && (
+          <div className="blog-gallery">
+            {blog.images.map((img, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={i} src={img} alt={`${blog.title} - hình ${i + 1}`} loading="lazy" />
+            ))}
+          </div>
+        )}
       </article>
 
-      <footer className="pj-foot">
-        <a href={contact.zalo} target="_blank" rel="noreferrer" className="pj-btn">{t.cta}</a>
-      </footer>
+      <PremiumFooter />
 
       <style>{`
 .pj-root{--bg:#02090c;--muted:#8fadb5;--cyan:#2dd4bf;--line:rgba(94,209,214,.16);--card:#05141a;
@@ -104,10 +112,7 @@ export default function BlogDetailPage() {
 .pj-tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:1px;
  text-transform:uppercase;color:#03222e;background:linear-gradient(90deg,#5eead4,#22d3ee);
  padding:4px 12px;border-radius:100px;}
-.pj-foot{text-align:center;padding:60px 20px 40px;}
-.pj-btn{display:inline-block;background:var(--cyan);color:#03222e;font-weight:800;font-size:15px;text-transform:uppercase;
- letter-spacing:1px;padding:15px 44px;border-radius:100px;transition:.3s;box-shadow:0 0 38px rgba(45,212,191,.35);}
-.pj-btn:hover{transform:scale(1.04);}
+
 
 .blog-detail{max-width:800px;margin:0 auto;padding:60px 20px 0;}
 .blog-head{text-align:center;margin-bottom:40px;}
@@ -120,6 +125,9 @@ export default function BlogDetailPage() {
 .blog-content p{margin-bottom:1.5em;}
 .blog-content a{color:var(--cyan);text-decoration:underline;text-underline-offset:4px;}
 .blog-content img{max-width:100%;border-radius:12px;}
+
+.blog-gallery{margin-top:40px;display:flex;flex-direction:column;gap:20px;}
+.blog-gallery img{width:100%;border-radius:16px;border:1px solid var(--line);}
 
 @media(max-width:560px){.pj-back{display:none;}}
       `}</style>

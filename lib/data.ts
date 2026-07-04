@@ -31,7 +31,8 @@ export type DbBlog = {
   title: string;
   slug: string;
   category: string | null;
-  image_url: string | null;
+  image_url: string | null; // Used as thumbnail
+  images: string[] | null;  // Array of images for the post body/gallery
   content: string | null;
   created_at: string;
 };

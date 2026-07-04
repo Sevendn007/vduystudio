@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { uploadImage } from "@/lib/upload";
-import { Trash2, ImagePlus, Loader2, Pencil, X } from "lucide-react";
+import { Trash2, ImagePlus, Loader2, Pencil, X, ArrowUp, ArrowDown } from "lucide-react";
 
 type Blog = {
   id: string;
@@ -12,6 +12,7 @@ type Blog = {
   slug: string;
   category: string | null;
   image_url: string | null;
+  images: string[] | null;
   content: string | null;
   created_at: string;
 };
@@ -27,6 +28,8 @@ const CATEGORIES = [
 const inputCls =
   "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none";
 
+type GalleryItem = { url: string; file?: File; id: string };
+
 export default function BlogAdminPage() {
   const supabase = createClient();
   const [items, setItems] = useState<Blog[]>([]);
@@ -41,7 +44,9 @@ export default function BlogAdminPage() {
   const [content, setContent] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
+  const galleryRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -57,20 +62,46 @@ export default function BlogAdminPage() {
 
   const resetForm = () => {
     setEditingId(null); setTitle(""); setSlug(""); setCategory("Kiến thức");
-    setContent(""); setFile(null); setPreview(null);
+    setContent(""); setFile(null); setPreview(null); setGallery([]);
     if (fileRef.current) fileRef.current.value = "";
+    if (galleryRef.current) galleryRef.current.value = "";
   };
 
   const startEdit = (p: Blog) => {
     setEditingId(p.id); setTitle(p.title); setSlug(p.slug); setCategory(p.category ?? "Kiến thức");
     setContent(p.content ?? ""); setFile(null); setPreview(p.image_url);
+    setGallery((p.images || []).map(url => ({ url, id: Math.random().toString(36) })));
     if (fileRef.current) fileRef.current.value = "";
+    if (galleryRef.current) galleryRef.current.value = "";
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const pickFile = (f: File | null) => {
     setFile(f);
     if (f) setPreview(URL.createObjectURL(f));
+  };
+
+  const pickGalleryFiles = (files: FileList | null) => {
+    if (!files) return;
+    const newItems: GalleryItem[] = Array.from(files).map(f => ({
+      url: URL.createObjectURL(f),
+      file: f,
+      id: Math.random().toString(36)
+    }));
+    setGallery(prev => [...prev, ...newItems]);
+  };
+
+  const moveGalleryItem = (index: number, dir: -1 | 1) => {
+    if (index + dir < 0 || index + dir >= gallery.length) return;
+    const newGallery = [...gallery];
+    const temp = newGallery[index];
+    newGallery[index] = newGallery[index + dir];
+    newGallery[index + dir] = temp;
+    setGallery(newGallery);
+  };
+
+  const removeGalleryItem = (index: number) => {
+    setGallery(gallery.filter((_, i) => i !== index));
   };
 
   const generateSlug = (text: string) => {
@@ -89,7 +120,22 @@ export default function BlogAdminPage() {
     try {
       let image_url: string | null = preview && preview.startsWith("http") ? preview : null;
       if (file) image_url = await uploadImage(file);
-      const payload = { title, slug, category: category || null, content: content || null, image_url };
+
+      const uploadedGalleryUrls = await Promise.all(
+        gallery.map(async (g) => {
+          if (g.file) return await uploadImage(g.file);
+          return g.url;
+        })
+      );
+
+      const payload = { 
+        title, 
+        slug, 
+        category: category || null, 
+        content: content || null, 
+        image_url,
+        images: uploadedGalleryUrls.length > 0 ? uploadedGalleryUrls : null
+      };
 
       if (editingId) {
         const { data, error: err } = await supabase.from("blogs").update(payload).eq("id", editingId).select("*");
@@ -148,7 +194,7 @@ export default function BlogAdminPage() {
             </datalist>
           </div>
           <div>
-            <label className="text-sm font-medium text-gray-700">Ảnh bìa</label>
+            <label className="text-sm font-medium text-gray-700">Ảnh bìa (Thumbnail)</label>
             <div className="mt-1 flex items-center gap-4">
               {preview ? (
                 <div className="relative w-20 h-20 rounded border bg-gray-50 overflow-hidden flex-shrink-0">
@@ -166,6 +212,29 @@ export default function BlogAdminPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium text-gray-700">Hình ảnh đính kèm (Nhiều hình, tuỳ chỉnh thứ tự)</label>
+          <input ref={galleryRef} type="file" multiple accept="image/*" onChange={(e) => pickGalleryFiles(e.target.files)} className="mt-1 block text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+          
+          {gallery.length > 0 && (
+            <div className="mt-3 flex gap-3 overflow-x-auto pb-2">
+              {gallery.map((g, index) => (
+                <div key={g.id} className="relative w-24 h-24 rounded border bg-gray-50 overflow-hidden flex-shrink-0 group">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={g.url} alt="gallery" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1">
+                    <div className="flex gap-1">
+                      {index > 0 && <button type="button" onClick={() => moveGalleryItem(index, -1)} className="p-1 bg-white rounded shadow text-gray-800 hover:bg-gray-100" title="Di chuyển sang trái"><ArrowUp className="w-3 h-3 -rotate-90" /></button>}
+                      {index < gallery.length - 1 && <button type="button" onClick={() => moveGalleryItem(index, 1)} className="p-1 bg-white rounded shadow text-gray-800 hover:bg-gray-100" title="Di chuyển sang phải"><ArrowDown className="w-3 h-3 -rotate-90" /></button>}
+                    </div>
+                    <button type="button" onClick={() => removeGalleryItem(index)} className="p-1 bg-red-100 text-red-600 rounded shadow hover:bg-red-200 mt-1"><Trash2 className="w-3 h-3" /></button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div>

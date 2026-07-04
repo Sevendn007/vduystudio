@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Mark3D, Wordmark } from "@/components/premiumKit";
+import { PremiumFooter } from "@/components/PremiumFooter";
 import { useLang, LangToggle } from "@/lib/i18n";
 import { fetchBlogs, DbBlog } from "@/lib/data";
 import { useContact } from "@/lib/useContact";
@@ -85,9 +86,7 @@ function BlogListContent() {
         )}
       </main>
 
-      <footer className="pj-foot">
-        <a href={contact.zalo} target="_blank" rel="noreferrer" className="pj-btn">{t.cta}</a>
-      </footer>
+      <PremiumFooter />
 
       <style>{`
 .pj-root{--bg:#02090c;--muted:#8fadb5;--cyan:#2dd4bf;--line:rgba(94,209,214,.16);--card:#05141a;
@@ -119,10 +118,7 @@ function BlogListContent() {
 .pj-tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:1px;
  text-transform:uppercase;color:#03222e;background:linear-gradient(90deg,#5eead4,#22d3ee);
  padding:4px 12px;border-radius:100px;}
-.pj-foot{text-align:center;padding:44px 20px 24px;}
-.pj-btn{display:inline-block;background:var(--cyan);color:#03222e;font-weight:800;font-size:15px;text-transform:uppercase;
- letter-spacing:1px;padding:15px 44px;border-radius:100px;transition:.3s;box-shadow:0 0 38px rgba(45,212,191,.35);}
-.pj-btn:hover{transform:scale(1.04);}
+
 
 .blog-cats{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:20px;padding:0 20px;}
 .blog-cat{padding:8px 18px;border-radius:100px;border:1px solid var(--line);font-size:13.5px;color:var(--muted);transition:.2s;}

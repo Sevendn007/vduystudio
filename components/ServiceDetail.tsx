@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getPlatform, getPlatforms, PriceRow } from "@/lib/services";
 import { site } from "@/lib/site";
 import { Mark3D, Wordmark, IPhone, DEFAULT_PROJECTS } from "@/components/premiumKit";
+import { PremiumFooter } from "@/components/PremiumFooter";
 import { useLang, LangToggle } from "@/lib/i18n";
 import { fetchPricing, fetchProjects, DbProject } from "@/lib/data";
 import { useContact } from "@/lib/useContact";
@@ -266,24 +267,7 @@ export default function ServiceDetail({ slug }: { slug: string }) {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="sd-cta">
-        <h2>{t.ctaTitle(platform.name)}</h2>
-        <p>{t.ctaSub}</p>
-        <div className="sd-cta-btns">
-          <a href={contact.zalo} target="_blank" rel="noreferrer" className="sd-btn light">
-            Chat Zalo
-          </a>
-          <a href={contact.facebook} target="_blank" rel="noreferrer" className="sd-btn ghost-light">
-            Facebook
-          </a>
-        </div>
-      </section>
-
-      <footer className="sd-footer">
-        <Wordmark className="nav" />
-        <span>© 2026 {site.name} · {site.domain}</span>
-      </footer>
+      <PremiumFooter />
 
       <style>{`
 .sd-root{--fg:#e6f0f2;--muted:#8fadb5;--line:rgba(94,209,214,.16);--panel:rgba(45,212,191,.05);--cyan:#2dd4bf;--bg:#02090c;font-family:var(--font-grotesk),var(--font-inter),system-ui,sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;position:relative;overflow-x:hidden;padding-bottom:calc(24px + env(safe-area-inset-bottom));}
@@ -367,17 +351,11 @@ export default function ServiceDetail({ slug }: { slug: string }) {
 .sd-other span{font-size:12.5px;color:var(--muted);}
 .sd-other-arrow{margin-left:auto;color:var(--muted);font-size:18px;}
 
-.sd-cta{max-width:1080px;margin:40px auto;border:1px solid var(--line);border-radius:24px;padding:60px 40px;text-align:center;color:#fff;background:radial-gradient(560px 280px at 50% 0%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%),var(--panel);}
-.sd-cta h2{font-size:clamp(26px,4vw,40px);font-weight:800;margin:0 0 14px;letter-spacing:-1px;}
-.sd-cta p{color:var(--muted);margin:0 0 28px;}
-.sd-cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-.sd-footer{max-width:1080px;margin:0 auto;padding:26px clamp(16px,4vw,40px) 40px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px;border-top:1px solid var(--line);flex-wrap:wrap;gap:12px;}
 
 @media(max-width:820px){
   .sd-hero{padding-top:46px;}
   .sd-services,.sd-steps,.sd-projects,.sd-others{grid-template-columns:1fr;}
   .sd-steps{grid-template-columns:1fr 1fr;}
-  .sd-cta{margin:30px 16px;padding:48px 24px;}
 }
 @media(max-width:520px){.sd-steps{grid-template-columns:1fr;}.sd-nav-links a:not(.sd-nav-cta):not(.sd-lng){display:none;}}
       `}</style>

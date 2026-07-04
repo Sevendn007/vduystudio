@@ -10,6 +10,7 @@ import Link from "next/link";
 import Tilt from "@/components/tilt";
 import { PersonAvatar, PlatformIcon, Platform } from "@/components/brand";
 import { VDuyBadge } from "@/components/logo";
+import { PremiumFooter } from "@/components/PremiumFooter";
 import { SpriteImg, Mark3D, Wordmark, IPhone, DEFAULT_PROJECTS } from "@/components/premiumKit";
 import { useLang, Lang, LangToggle } from "@/lib/i18n";
 import { siteText, site } from "@/lib/site";
@@ -449,35 +450,7 @@ export default function OptionPremium() {
         </div>
       </section>
 
-      {/* CTA / FOOTER */}
-      <footer className="pm-footer">
-        <div className="pm-container">
-          <div className="pm-foot-wm">
-            <Wordmark className="foot" />
-          </div>
-          <h2 className="pm-foot-title">{t.cta}</h2>
-          <a href={contact.zalo} target="_blank" rel="noreferrer" className="pm-btn">
-            {t.btn}
-          </a>
-          {(contact.isSet("facebook") || contact.isSet("instagram") || contact.isSet("tiktok") || contact.isSet("threads") || contact.isSet("x") || contact.isSet("youtube")) && (
-            <div className="pm-social-block">
-              <p className="pm-social-title">{lang === "en" ? "Connect with us on:" : "Kết nối với chúng tôi qua:"}</p>
-              <div className="pm-foot-contact">
-                {contact.isSet("facebook") && <a href={contact.facebook} target="_blank" rel="noreferrer"><PlatformIcon kind="facebook" size={32} /></a>}
-                {contact.isSet("instagram") && <a href={contact.instagram} target="_blank" rel="noreferrer"><PlatformIcon kind="instagram" size={32} /></a>}
-                {contact.isSet("tiktok") && <a href={contact.tiktok} target="_blank" rel="noreferrer"><PlatformIcon kind="tiktok" size={32} /></a>}
-                {contact.isSet("threads") && <a href={contact.threads} target="_blank" rel="noreferrer"><PlatformIcon kind="threads" size={32} /></a>}
-                {contact.isSet("x") && <a href={contact.x} target="_blank" rel="noreferrer"><PlatformIcon kind="x" size={32} /></a>}
-                {contact.isSet("youtube") && <a href={contact.youtube} target="_blank" rel="noreferrer"><PlatformIcon kind="youtube" size={32} /></a>}
-              </div>
-            </div>
-          )}
-          <div className="pm-footbar">
-            <span>© 2026 VDuyStudio</span>
-            <span>{site.domain}</span>
-          </div>
-        </div>
-      </footer>
+      <PremiumFooter />
 
       <style>{`
 /* --- (base/nav/hero CSS moved to globals.css for instant rendering) --- */
@@ -709,22 +682,7 @@ export default function OptionPremium() {
 .pm-fb-person b{display:block;font-size:13.5px;}
 .pm-fb-person span{font-size:11.5px;color:var(--muted);}
 
-/* ===== footer ===== */
-.pm-footer{padding:clamp(56px,8vw,96px) 0 0;text-align:center;}
-.pm-wordmark.small{font-size:clamp(26px,4vw,42px);margin-bottom:10px;}
-.pm-foot-title{font-family:var(--pm-font-display);font-weight:400;font-size:clamp(34px,6vw,64px);text-transform:uppercase;
- letter-spacing:1px;margin:6px 0 30px;
- background:linear-gradient(180deg,#fff 20%,#9db3c5 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
-.pm-btn{display:inline-block;background:var(--cyan);color:#03222e;font-weight:800;font-size:17px;text-transform:uppercase;
- letter-spacing:1px;padding:18px 54px;border-radius:100px;transition:.3s;box-shadow:0 0 44px rgba(56,189,248,.4);}
-.pm-btn:hover{transform:scale(1.04);box-shadow:0 0 64px rgba(56,189,248,.6);}
-.pm-social-block{margin-top:34px;}
-.pm-social-title{font-size:14px;color:var(--muted);margin:0 0 16px;}
-.pm-foot-contact{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;}
-.pm-foot-contact a{opacity:0.8;transition:.3s;}
-.pm-foot-contact a:hover{opacity:1;transform:translateY(-2px);}
-.pm-footbar{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:44px;padding:18px 0;
- border-top:1px solid var(--line);color:#51697b;font-size:12.5px;}
+.pm-fb-person span{font-size:11.5px;color:var(--muted);}
 
 @media(prefers-reduced-motion:reduce){.pm-root *{animation:none!important}}
 
