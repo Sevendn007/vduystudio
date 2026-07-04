@@ -100,24 +100,41 @@ export function PlatformIcon({ kind, size = 46 }: { kind: Platform; size?: numbe
       <svg {...common} aria-hidden>
         <defs>
           <linearGradient id={uid} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#8b5cf6" />
-            <stop offset="1" stopColor="#6d28d9" />
+            <stop offset="0" stopColor="#a855f7" />
+            <stop offset="1" stopColor="#6366f1" />
+          </linearGradient>
+          <linearGradient id={`${uid}-g`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#ffffff" />
+            <stop offset="1" stopColor="rgba(255,255,255,0.3)" />
           </linearGradient>
         </defs>
         <rect width="48" height="48" rx={r} fill={`url(#${uid})`} />
-        <path d="M14 18h20v14H14z" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M14 23h20M20 18v14" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="10" y="14" width="28" height="20" rx="3" fill="none" stroke={`url(#${uid}-g)`} strokeWidth="2.5" />
+        <path d="M10 21h28" stroke={`url(#${uid}-g)`} strokeWidth="2.5" />
+        <circle cx="15" cy="17.5" r="1.5" fill="#fff" />
+        <circle cx="19" cy="17.5" r="1.5" fill="#fff" />
+        <path d="M16 26h12 M16 30h8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" />
       </svg>
     );
   }
   // press / báo chí
   return (
     <svg {...common} aria-hidden>
-      <rect width="48" height="48" rx={r} fill="#0f172a" />
-      <path d="M32 18 h5 v14.5 a2.5 2.5 0 0 1-2.5 2.5 H15 a2 2 0 0 1-2-2 V13 h19 Z" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinejoin="round" />
-      <path d="M32 20 v12.5 a2.5 2.5 0 0 0 2.5 2.5" fill="none" stroke="#fff" strokeWidth="2.4" />
-      <rect x="16.5" y="16.5" width="8.5" height="7" rx="1" fill="#fff" />
-      <path d="M27 17 h2.5 M27 20.5 h2.5 M16.5 27 h13 M16.5 30.5 h13" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+      <defs>
+        <linearGradient id={uid} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#f59e0b" />
+          <stop offset="1" stopColor="#ea580c" />
+        </linearGradient>
+        <linearGradient id={`${uid}-g`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset="1" stopColor="rgba(255,255,255,0.4)" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx={r} fill={`url(#${uid})`} />
+      <rect x="12" y="14" width="24" height="22" rx="3" fill="none" stroke={`url(#${uid}-g)`} strokeWidth="2.5" />
+      <path d="M12 18h24" stroke={`url(#${uid}-g)`} strokeWidth="2.5" />
+      <path d="M21 24l1.5-2 1.5 2 2-1-1 3-3 1-2-2z" fill="#fff" />
+      <path d="M17 31h14" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" />
     </svg>
   );
 }

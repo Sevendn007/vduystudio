@@ -44,12 +44,12 @@ const CLIENTS = [
 ];
 
 // Dịch vụ: nội dung chuẩn 4 nền tảng như bản Galaxy.
-const SERVICES = (lang: Lang): { slug: string; icon: Platform; name: string; desc: string }[] => [
-  { slug: "tiktok", icon: "tiktok", name: "TikTok", desc: lang === "en" ? "Verification badge · account recovery · livestream & shop cart unlocks" : "Tích xanh chính thống · mở khóa tài khoản · livestream & giỏ hàng" },
-  { slug: "facebook", icon: "facebook", name: "Facebook", desc: lang === "en" ? "Verification badge · personal account & fanpage recovery" : "Tích xanh · mở khóa tài khoản cá nhân & Fanpage" },
-  { slug: "instagram-threads", icon: "instagram", name: "Instagram / Threads", desc: lang === "en" ? "Official badge & account recovery per Meta policy" : "Tích xanh & mở khóa tài khoản theo chính sách Meta" },
-  { slug: "bao-chi", icon: "press", name: lang === "en" ? "Press & PR" : "Báo chí", desc: lang === "en" ? "Press booking · SEO-standard PR writing on major outlets" : "Booking báo chí · viết bài PR chuẩn SEO trên đầu báo lớn" },
-  { slug: "website", icon: "website", name: "Website & Tools", desc: lang === "en" ? "Landing pages · E-commerce · Custom software for SMBs" : "Thiết kế Landing page, Portfolio, Web bán hàng & Tool phần mềm" },
+const SERVICES = (lang: Lang): { slug: string; icon: Platform; name: string; desc: string; clients: number }[] => [
+  { slug: "tiktok", icon: "tiktok", name: "TikTok", desc: lang === "en" ? "Verification badge · account recovery · livestream & shop cart unlocks" : "Tích xanh chính thống · mở khóa tài khoản · livestream & giỏ hàng", clients: 3450 },
+  { slug: "facebook", icon: "facebook", name: "Facebook", desc: lang === "en" ? "Verification badge · personal account & fanpage recovery" : "Tích xanh · mở khóa tài khoản cá nhân & Fanpage", clients: 2890 },
+  { slug: "instagram-threads", icon: "instagram", name: "Instagram / Threads", desc: lang === "en" ? "Official badge & account recovery per Meta policy" : "Tích xanh & mở khóa tài khoản theo chính sách Meta", clients: 1250 },
+  { slug: "bao-chi", icon: "press", name: lang === "en" ? "Press & PR" : "Báo chí", desc: lang === "en" ? "Press booking · SEO-standard PR writing on major outlets" : "Booking báo chí · viết bài PR chuẩn SEO trên đầu báo lớn", clients: 850 },
+  { slug: "website", icon: "website", name: "Website & Tools", desc: lang === "en" ? "Landing pages · E-commerce · Custom software for SMBs" : "Thiết kế Landing page, Portfolio, Web bán hàng & Tool phần mềm", clients: 540 },
 ];
 
 // Tên hiển thị + icon của platform slug (mọi thẻ dự án render từ dữ liệu
@@ -309,6 +309,10 @@ export default function OptionPremium() {
                     <PlatformIcon kind={s.icon} size={46} />
                   </span>
                   <h3>{s.name}</h3>
+                  <div className="pm-svc-stats">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <span><b>{s.clients.toLocaleString()}</b> {lang === "en" ? "customers" : "khách hàng"}</span>
+                  </div>
                   <p>{s.desc}</p>
                   <span className="pm-svc-go">{lang === "en" ? "View details →" : "Xem chi tiết →"}</span>
                 </Link>
@@ -570,6 +574,8 @@ export default function OptionPremium() {
 .pm-svc-halo{position:absolute;top:-46px;right:-46px;width:120px;height:120px;border-radius:50%;
  background:radial-gradient(circle,rgba(45,212,191,.22),transparent 70%);}
 .pm-svc h3{font-family:var(--pm-font-heading);font-weight:700;font-size:18px;margin:8px 0 0;color:#fff;}
+.pm-svc-stats{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin:6px 0 10px;}
+.pm-svc-stats b{color:#fff;font-weight:700;}
 .pm-svc p{margin:0;color:var(--muted);font-size:13px;line-height:1.55;flex:1;}
 .pm-svc-go{color:var(--cyan);font-size:12.5px;font-weight:700;}
 .pm-svc:hover{border-color:rgba(45,212,191,.5);background:rgba(45,212,191,.05);transform:translateY(-4px);}
