@@ -238,7 +238,12 @@ export default function BlogAdminPage() {
         </div>
 
         <div>
-          <label className="text-sm font-medium text-gray-700">Nội dung bài viết (Hỗ trợ HTML/Markdown cơ bản)</label>
+          <label className="text-sm font-medium text-gray-700">
+            Nội dung bài viết (Hỗ trợ HTML/Markdown cơ bản)
+            <span className="block font-normal text-xs text-gray-500 mt-1">
+              Gợi ý: Gõ <b>[IMG:1]</b>, <b>[IMG:2]</b>... vào nội dung để hiển thị Hình ảnh đính kèm tương ứng tại vị trí đó. Hình nào không chèn sẽ tự động nằm ở cuối bài.
+            </span>
+          </label>
           <textarea rows={10} value={content} onChange={(e) => setContent(e.target.value)} className={inputCls} placeholder="Nội dung chi tiết..."></textarea>
         </div>
 

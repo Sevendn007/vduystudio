@@ -14,7 +14,7 @@ export function BrandLogo({
   return showText ? <VDuyMark size={size} intro={false} /> : <VDuyBadge size={size} intro={false} />;
 }
 
-export type Platform = "tiktok" | "facebook" | "instagram" | "threads" | "press" | "x" | "youtube";
+export type Platform = "tiktok" | "facebook" | "instagram" | "threads" | "press" | "x" | "youtube" | "website";
 
 // Icon nền tảng kiểu app-tile — chuẩn brand, đồng nhất kích thước.
 export function PlatformIcon({ kind, size = 46 }: { kind: Platform; size?: number }) {
@@ -92,6 +92,21 @@ export function PlatformIcon({ kind, size = 46 }: { kind: Platform; size?: numbe
       <svg {...common} aria-hidden>
         <rect width="48" height="48" rx={r} fill="#FF0000" />
         <path d="M36.2 16.1c-.4-1.5-1.6-2.7-3.1-3.1C30.4 12.3 24 12.3 24 12.3s-6.4 0-9.1.7c-1.5.4-2.7 1.6-3.1 3.1-.7 2.7-.7 8.3-.7 8.3s0 5.6.7 8.3c.4 1.5 1.6 2.7 3.1 3.1 2.7.7 9.1.7 9.1.7s6.4 0 9.1-.7c1.5-.4 2.7-1.6 3.1-3.1.7-2.7.7-8.3.7-8.3s0-5.6-.7-8.3zM21 28.5V19.5l8 4.5-8 4.5z" fill="#fff" />
+      </svg>
+    );
+  }
+  if (kind === "website") {
+    return (
+      <svg {...common} aria-hidden>
+        <defs>
+          <linearGradient id={uid} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#8b5cf6" />
+            <stop offset="1" stopColor="#6d28d9" />
+          </linearGradient>
+        </defs>
+        <rect width="48" height="48" rx={r} fill={`url(#${uid})`} />
+        <path d="M14 18h20v14H14z" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M14 23h20M20 18v14" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     );
   }

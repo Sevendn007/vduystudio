@@ -151,6 +151,32 @@ const platformsVi: Platform[] = [
       { title: "Sự kiện khai trương", result: "12 bài PR chuẩn SEO", tag: "Content" },
     ],
   },
+  {
+    slug: "website",
+    name: "Website & Công cụ",
+    short: "Website",
+    tagline: "Chuyên thiết kế landing page, portfolio, web bán hàng và công cụ phần mềm.",
+    accent: "#8b5cf6",
+    services: [
+      { title: "Landing Page & Portfolio", desc: "Thiết kế trang đích chuẩn SEO, giao diện đẹp mắt, tối ưu chuyển đổi và hiển thị tốt trên mọi thiết bị." },
+      { title: "Web Bán Hàng", desc: "Xây dựng hệ thống web bán hàng chuyên nghiệp, tích hợp giỏ hàng và thanh toán trực tuyến." },
+      { title: "Công cụ phần mềm", desc: "Lập trình công cụ, phần mềm quản lý theo yêu cầu cho cá nhân và doanh nghiệp vừa và nhỏ." },
+    ],
+    pricing: [
+      { service: "Landing Page / Portfolio", duration: "3–5 ngày", warranty: "12 tháng", price: contactPriceVi },
+      { service: "Web bán hàng", duration: "7–15 ngày", warranty: "12 tháng", price: contactPriceVi },
+      { service: "Công cụ phần mềm", duration: "Theo tính năng", warranty: "12 tháng", price: contactPriceVi },
+    ],
+    process: processVi,
+    faq: [
+      { q: "Website có được tối ưu SEO không?", a: "Có, toàn bộ mã nguồn và cấu trúc nội dung đều được chúng tôi tối ưu chuẩn SEO từ ban đầu." },
+      { q: "Có hỗ trợ nâng cấp tính năng về sau không?", a: "Chúng tôi thiết kế với kiến trúc mở, dễ dàng mở rộng và thêm tính năng bất cứ lúc nào khi doanh nghiệp cần." },
+    ],
+    projects: [
+      { title: "Hệ thống Booking Spa", result: "Hoàn thiện trong 10 ngày", tag: "Web app" },
+      { title: "Landing Page Bất Động Sản", result: "Tối ưu chuyển đổi Ads", tag: "Landing Page" },
+    ],
+  },
 ];
 
 const platformsEn: Platform[] = [
@@ -257,6 +283,32 @@ const platformsEn: Platform[] = [
     projects: [
       { title: "Cosmetics launch campaign", result: "Booked 6 major outlets", tag: "PR" },
       { title: "Grand opening event", result: "12 SEO-standard PR articles", tag: "Content" },
+    ],
+  },
+  {
+    slug: "website",
+    name: "Website & Tools",
+    short: "Website",
+    tagline: "Specialized in landing pages, portfolios, e-commerce, and custom tools.",
+    accent: "#8b5cf6",
+    services: [
+      { title: "Landing Page & Portfolio", desc: "SEO-standard landing pages with stunning, high-conversion, responsive designs." },
+      { title: "E-commerce Website", desc: "Build professional e-commerce systems with integrated shopping carts and online payments." },
+      { title: "Custom Tools & Software", desc: "Develop custom management tools and software for individuals and SMBs." },
+    ],
+    pricing: [
+      { service: "Landing Page / Portfolio", duration: "3–5 days", warranty: "12 months", price: contactPriceEn },
+      { service: "E-commerce Website", duration: "7–15 days", warranty: "12 months", price: contactPriceEn },
+      { service: "Custom Software", duration: "Per feature", warranty: "12 months", price: contactPriceEn },
+    ],
+    process: processEn,
+    faq: [
+      { q: "Is the website SEO optimized?", a: "Yes, the source code and content structure are highly optimized for SEO from the ground up." },
+      { q: "Can I upgrade features later?", a: "Our architecture is scalable, allowing easy feature expansions whenever your business needs it." },
+    ],
+    projects: [
+      { title: "Spa Booking System", result: "Delivered in 10 days", tag: "Web app" },
+      { title: "Real Estate Landing Page", result: "Optimized for Ads conversion", tag: "Landing Page" },
     ],
   },
 ];

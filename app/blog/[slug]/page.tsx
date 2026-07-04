@@ -52,6 +52,21 @@ export default function BlogDetailPage() {
     );
   }
 
+  let renderedContent = blog.content?.replace(/\n/g, "<br/>") || "";
+  let unusedImages = [...(blog.images || [])];
+
+  if (blog.images && blog.images.length > 0) {
+    renderedContent = renderedContent.replace(/\[IMG:(\d+)\]/gi, (match, p1) => {
+      const idx = parseInt(p1, 10) - 1;
+      if (idx >= 0 && idx < blog.images!.length) {
+        unusedImages[idx] = "";
+        return `<img src="${blog.images![idx]}" alt="Image ${idx + 1}" loading="lazy" class="blog-inline-img" />`;
+      }
+      return match;
+    });
+  }
+  unusedImages = unusedImages.filter(img => img !== "");
+
   return (
     <div className="pj-root">
       <nav className="pj-nav">
@@ -81,14 +96,14 @@ export default function BlogDetailPage() {
 
         <div 
           className="blog-content"
-          dangerouslySetInnerHTML={{ __html: blog.content?.replace(/\n/g, "<br/>") || "" }}
+          dangerouslySetInnerHTML={{ __html: renderedContent }}
         />
 
-        {blog.images && blog.images.length > 0 && (
+        {unusedImages.length > 0 && (
           <div className="blog-gallery">
-            {blog.images.map((img, i) => (
+            {unusedImages.map((img, i) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={i} src={img} alt={`${blog.title} - hình ${i + 1}`} loading="lazy" />
+              <img key={i} src={img} alt={`${blog.title} - hình bổ sung ${i + 1}`} loading="lazy" />
             ))}
           </div>
         )}
@@ -124,7 +139,7 @@ export default function BlogDetailPage() {
 .blog-content h2{font-size:28px;}
 .blog-content p{margin-bottom:1.5em;}
 .blog-content a{color:var(--cyan);text-decoration:underline;text-underline-offset:4px;}
-.blog-content img{max-width:100%;border-radius:12px;}
+.blog-content img{max-width:100%;border-radius:12px;margin: 16px 0;}
 
 .blog-gallery{margin-top:40px;display:flex;flex-direction:column;gap:20px;}
 .blog-gallery img{width:100%;border-radius:16px;border:1px solid var(--line);}

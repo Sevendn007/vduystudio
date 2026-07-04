@@ -49,6 +49,7 @@ const SERVICES = (lang: Lang): { slug: string; icon: Platform; name: string; des
   { slug: "facebook", icon: "facebook", name: "Facebook", desc: lang === "en" ? "Verification badge · personal account & fanpage recovery" : "Tích xanh · mở khóa tài khoản cá nhân & Fanpage" },
   { slug: "instagram-threads", icon: "instagram", name: "Instagram / Threads", desc: lang === "en" ? "Official badge & account recovery per Meta policy" : "Tích xanh & mở khóa tài khoản theo chính sách Meta" },
   { slug: "bao-chi", icon: "press", name: lang === "en" ? "Press & PR" : "Báo chí", desc: lang === "en" ? "Press booking · SEO-standard PR writing on major outlets" : "Booking báo chí · viết bài PR chuẩn SEO trên đầu báo lớn" },
+  { slug: "website", icon: "website", name: "Website & Tools", desc: lang === "en" ? "Landing pages · E-commerce · Custom software for SMBs" : "Thiết kế Landing page, Portfolio, Web bán hàng & Tool phần mềm" },
 ];
 
 // Tên hiển thị + icon của platform slug (mọi thẻ dự án render từ dữ liệu
@@ -59,6 +60,7 @@ const PLATFORM_NAME: Record<string, string> = {
   instagram: "Instagram",
   "instagram-threads": "Instagram",
   "bao-chi": "Báo chí",
+  "website": "Website",
 };
 const ICON_OF: Record<string, Platform> = {
   tiktok: "tiktok",
@@ -66,6 +68,7 @@ const ICON_OF: Record<string, Platform> = {
   instagram: "instagram",
   "instagram-threads": "instagram",
   "bao-chi": "press",
+  "website": "website",
 };
 
 // Chữ theo ngôn ngữ (switch VI/EN trên nav).
