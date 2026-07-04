@@ -7,9 +7,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { PersonAvatar } from "@/components/brand";
+import Carousel from "@/components/Carousel";
+import { PersonAvatar, PlatformIcon, Platform } from "@/components/brand";
 import { extractMark, extractPlanet } from "@/lib/logoSprites";
-import { useLang, LangToggle } from "@/lib/i18n";
+import { useLang, Lang, LangToggle } from "@/lib/i18n";
 import { siteText, site } from "@/lib/site";
 import { getProcess } from "@/lib/services";
 import { fetchFeedbacks, fetchProjects, DbFeedback, DbProject } from "@/lib/data";
@@ -76,40 +77,12 @@ const DEFAULT_PROJECTS: ShowProject[] = [
   },
 ];
 
-const SVC_ICONS: Record<string, JSX.Element> = {
-  verify: (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
-      <path d="M2 21v-.8A7 7 0 0 1 13 14.5" />
-      <path d="m15 18 2.4 2.4L22 15.8" />
-    </svg>
-  ),
-  brand: (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9" />
-      <path d="m8.5 12.2 2.3 2.3 4.7-5" />
-    </svg>
-  ),
-  growth: (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <path d="m3 17 6-6 4 4 8-8" />
-      <path d="M15 7h6v6" />
-    </svg>
-  ),
-  mega: (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <path d="m3 11 15-7v16L3 14v-3Z" />
-      <path d="M11.6 17.5A3 3 0 1 1 6 15.6" />
-      <path d="M21 9v4" />
-    </svg>
-  ),
-};
-
-const SERVICES = [
-  { slug: "tiktok", icon: "verify", en: ["Social Media", "Verification"], vi: ["Tích xanh", "Mạng xã hội"] },
-  { slug: "facebook", icon: "brand", en: ["Digital", "Branding"], vi: ["Xây dựng", "Thương hiệu"] },
-  { slug: "instagram-threads", icon: "growth", en: ["Strategy &", "Growth"], vi: ["Chiến lược", "Tăng trưởng"] },
-  { slug: "bao-chi", icon: "mega", en: ["PR &", "Booking"], vi: ["Báo chí &", "Booking"] },
+// Dịch vụ: nội dung chuẩn 4 nền tảng như bản Galaxy.
+const SERVICES = (lang: Lang): { slug: string; icon: Platform; name: string; desc: string }[] => [
+  { slug: "tiktok", icon: "tiktok", name: "TikTok", desc: lang === "en" ? "Verification badge · account recovery · livestream & shop cart unlocks" : "Tích xanh chính thống · mở khóa tài khoản · livestream & giỏ hàng" },
+  { slug: "facebook", icon: "facebook", name: "Facebook", desc: lang === "en" ? "Verification badge · personal account & fanpage recovery" : "Tích xanh · mở khóa tài khoản cá nhân & Fanpage" },
+  { slug: "instagram-threads", icon: "instagram", name: "Instagram / Threads", desc: lang === "en" ? "Official badge & account recovery per Meta policy" : "Tích xanh & mở khóa tài khoản theo chính sách Meta" },
+  { slug: "bao-chi", icon: "press", name: lang === "en" ? "Press & PR" : "Báo chí", desc: lang === "en" ? "Press booking · SEO-standard PR writing on major outlets" : "Booking báo chí · viết bài PR chuẩn SEO trên đầu báo lớn" },
 ];
 
 // Tên hiển thị của platform slug (dùng cho overlay khi dữ liệu lấy từ DB).
@@ -196,9 +169,10 @@ function SpriteImg({ kind, alt = "", className }: { kind: "mark" | "p1" | "p2"; 
   return <img src={url} alt={alt} className={className} draggable={false} />;
 }
 
-// Mark 3D có ĐỘ DÀY thật: xếp nhiều lớp ảnh dọc trục Z (translateZ) rồi quay
-// cả khối quanh trục dọc — nhìn nghiêng thấy cạnh, không mỏng như tờ giấy.
-function Mark3D({ layers = 9, className, alt = "" }: { layers?: number; className?: string; alt?: string }) {
+// Mark 3D có ĐỘ DÀY thật: xếp nhiều lớp ảnh dọc trục Z rồi quay cả khối
+// quanh trục dọc. Bước lớp 0.6px (< 1px) nên khi quay nghiêng các lớp hoà
+// thành cạnh liền khối, không lộ sọc.
+function Mark3D({ layers = 16, className, alt = "" }: { layers?: number; className?: string; alt?: string }) {
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {
     let mounted = true;
@@ -217,7 +191,7 @@ function Mark3D({ layers = 9, className, alt = "" }: { layers?: number; classNam
             aria-hidden={i !== layers - 1}
             draggable={false}
             className={i === layers - 1 ? "front" : "side"}
-            style={{ transform: `translateZ(${(i - (layers - 1) / 2) * 2.2}px)` }}
+            style={{ transform: `translateZ(${(i - (layers - 1) / 2) * 0.6}px)` }}
           />
         ))}
     </div>
@@ -252,7 +226,7 @@ export default function OptionPremium() {
       <nav className="pm-nav">
         <a href="#pm-top" className="pm-brand">
           <span className="pm-brand-spin">
-            <Mark3D layers={5} className="nav" alt="VDuyStudio" />
+            <Mark3D layers={8} className="nav" alt="VDuyStudio" />
           </span>
           <span className="pm-brandname">VDUYSTUDIO</span>
         </a>
@@ -290,7 +264,7 @@ export default function OptionPremium() {
         </div>
         <div className="pm-hero-inner">
           <div className="pm-mark3d">
-            <Mark3D layers={9} alt="VDuyStudio" />
+            <Mark3D layers={16} alt="VDuyStudio" />
             <span className="pm-mark-glow" aria-hidden />
           </div>
           <div className="pm-word3d">
@@ -333,14 +307,13 @@ export default function OptionPremium() {
         <div className="pm-container">
           <h2 className="pm-label">{t.services}</h2>
           <div className="pm-services">
-            {SERVICES.map((s) => (
+            {SERVICES(lang).map((s) => (
               <Link href={`/dich-vu/${s.slug}`} className="pm-svc" key={s.slug}>
-                <span className="pm-svc-name">
-                  {(lang === "en" ? s.en : s.vi)[0]}
-                  <br />
-                  {(lang === "en" ? s.en : s.vi)[1]}
-                </span>
-                <span className="pm-svc-icon">{SVC_ICONS[s.icon]}</span>
+                <span className="pm-svc-halo" aria-hidden />
+                <PlatformIcon kind={s.icon} size={44} />
+                <h3>{s.name}</h3>
+                <p>{s.desc}</p>
+                <span className="pm-svc-go">{lang === "en" ? "View details →" : "Xem chi tiết →"}</span>
               </Link>
             ))}
           </div>
@@ -355,7 +328,7 @@ export default function OptionPremium() {
             <span className="pm-arrows" aria-hidden>← →</span>
           </div>
           <div className="pm-bento">
-            {projects.map((p, i) => {
+            {projects.slice(0, 4).map((p, i) => {
               const sp = p as ShowProject;
               // Ảnh dự phòng theo vị trí (d1–d4) khi ảnh DB lỗi/thiếu.
               const fb = DEFAULT_PROJECTS[i]?.image_url ?? null;
@@ -409,11 +382,6 @@ export default function OptionPremium() {
                     </div>
                   )}
 
-                  {i > 3 && (
-                    <div className="pm-stage mini-stage">
-                      <IPhone src={p.image_url} alt={p.title} size="sm" />
-                    </div>
-                  )}
 
 
                   {i !== 3 && (
@@ -426,6 +394,24 @@ export default function OptionPremium() {
               );
             })}
           </div>
+
+          {/* Từ dự án thứ 5 trở đi: trượt ngang 3 thẻ/khung (tự chạy + mũi tên + chấm) */}
+          {projects.length > 4 && (
+            <div className="pm-more">
+              <Carousel per={3} ariaLabel={t.portfolio}>
+                {projects.slice(4).map((p) => (
+                  <div className="pm-mini" key={p.id}>
+                    <IPhone src={p.image_url} alt={p.title} size="sm" />
+                    <div className="pm-mini-info">
+                      <h3>{p.title}</h3>
+                      {p.result && <p>{p.result}</p>}
+                      {p.tag && <span className="pm-mini-tag">{p.tag}</span>}
+                    </div>
+                  </div>
+                ))}
+              </Carousel>
+            </div>
+          )}
         </div>
       </section>
 
@@ -569,7 +555,7 @@ export default function OptionPremium() {
 .pm-planet.pl1{left:19%;top:28%;width:clamp(26px,3vw,46px);height:auto;
  animation:pmFloat 12s ease-in-out infinite reverse;filter:drop-shadow(0 0 18px rgba(153,246,228,.3));}
 @keyframes pmFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
-.pm-comet{position:absolute;top:14%;left:74%;width:130px;height:1.5px;border-radius:2px;
+.pm-comet{position:absolute;top:7%;left:84%;width:130px;height:1.5px;border-radius:2px;
  background:linear-gradient(90deg,#fff,transparent);opacity:0;transform:rotate(-32deg);
  animation:pmComet 12s ease-in 3s infinite;}
 @keyframes pmComet{0%{opacity:0;transform:rotate(-32deg) translateX(0)}4%{opacity:.9}
@@ -596,9 +582,9 @@ export default function OptionPremium() {
 @keyframes pmSpinY{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
 .pm-mark-glow{position:absolute;left:50%;bottom:-6%;transform:translateX(-50%);width:72%;height:36px;border-radius:50%;
  background:radial-gradient(ellipse,rgba(20,184,166,.45),transparent 70%);filter:blur(9px);}
-.pm-word3d{position:relative;display:inline-block;z-index:1;margin-top:clamp(-120px,-9vw,-36px);
- font-family:'Druk Wide Super','Druk Wide',var(--font-archivo),var(--font-grotesk),sans-serif;
- font-weight:900;font-stretch:125%;font-size:min(10.5vw,170px);line-height:1;letter-spacing:.01em;}
+.pm-word3d{position:relative;display:inline-block;z-index:1;
+ margin-top:calc(clamp(260px,34vw,440px) / -2.64 - .38em);
+ font-family:'Anton',sans-serif;font-weight:400;font-size:min(13vw,200px);line-height:1;letter-spacing:.02em;}
 .pm-word3d-back{position:absolute;inset:0;color:#062a2e;white-space:nowrap;
  text-shadow:1px 1px 0 #0a3a40,2px 2px 0 #083137,3px 3px 0 #06282d,4px 4px 0 #052024,5px 5px 0 #04181c,6px 6px 0 #031114,
  10px 12px 24px rgba(0,0,0,.7);}
@@ -652,15 +638,15 @@ export default function OptionPremium() {
 .pm-arrows{color:#4a6274;font-size:19px;letter-spacing:8px;margin-bottom:26px;}
 
 /* ===== services ===== */
-.pm-services{display:grid;grid-template-columns:repeat(4,1fr);}
-.pm-svc{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:10px 26px 14px;transition:.25s;}
-.pm-svc+.pm-svc{border-left:1px solid var(--line);}
-.pm-svc:first-child{padding-left:0;}
-.pm-svc-name{font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(17px,1.9vw,22px);line-height:1.25;color:#fff;}
-.pm-svc-icon{color:var(--cyan);opacity:.9;flex-shrink:0;width:44px;height:44px;border:1px solid rgba(56,189,248,.3);border-radius:50%;
- display:flex;align-items:center;justify-content:center;transition:.25s;}
-.pm-svc:hover .pm-svc-icon{background:var(--cyan-soft);box-shadow:0 0 24px rgba(56,189,248,.25);}
-.pm-svc:hover .pm-svc-name{color:var(--cyan);}
+.pm-services{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+.pm-svc{position:relative;display:flex;flex-direction:column;gap:10px;padding:26px 22px;min-height:216px;
+ background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.25s;}
+.pm-svc-halo{position:absolute;top:-46px;right:-46px;width:120px;height:120px;border-radius:50%;
+ background:radial-gradient(circle,rgba(45,212,191,.22),transparent 70%);}
+.pm-svc h3{font-family:'Oswald',sans-serif;font-weight:700;font-size:18px;margin:8px 0 0;color:#fff;}
+.pm-svc p{margin:0;color:var(--muted);font-size:13px;line-height:1.55;flex:1;}
+.pm-svc-go{color:var(--cyan);font-size:12.5px;font-weight:700;}
+.pm-svc:hover{border-color:rgba(45,212,191,.5);background:rgba(45,212,191,.05);transform:translateY(-4px);}
 
 /* ===== bento portfolio ===== */
 .pm-bento{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;}
@@ -672,7 +658,18 @@ export default function OptionPremium() {
  display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.45);}
 .pm-card:nth-child(1),.pm-card:nth-child(4){grid-column:span 12;}
 .pm-card:nth-child(2),.pm-card:nth-child(3){grid-column:span 6;}
-.pm-card:nth-child(n+5){grid-column:span 4;}
+
+/* slider dự án 5+ */
+.pm-more{margin-top:22px;}
+.pm-mini{display:flex;flex-direction:column;align-items:center;gap:16px;padding:26px 18px 22px;
+ background:var(--card);border:1px solid var(--line);border-radius:20px;transition:.25s;}
+.pm-mini:hover{border-color:rgba(45,212,191,.5);transform:translateY(-4px);}
+.pm-mini-info{text-align:center;}
+.pm-mini-info h3{font-family:'Oswald',sans-serif;font-weight:700;font-size:18px;margin:0 0 5px;}
+.pm-mini-info p{margin:0;color:var(--muted);font-size:12.5px;}
+.pm-mini-tag{display:inline-block;margin-top:10px;font-size:10.5px;font-weight:800;letter-spacing:1px;
+ text-transform:uppercase;color:#03222e;background:linear-gradient(90deg,#5eead4,#22d3ee);
+ padding:4px 12px;border-radius:100px;}
 .pm-card-bgword{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);font-family:'Anton',sans-serif;
  font-size:clamp(90px,13vw,210px);letter-spacing:6px;color:rgba(180,220,245,.04);white-space:nowrap;pointer-events:none;}
 
@@ -776,11 +773,8 @@ export default function OptionPremium() {
 @media(max-width:980px){
  .pm-menu{display:none;}
  .pm-hero{min-height:0;padding:56px 20px 64px;}
- .pm-services{grid-template-columns:1fr 1fr;gap:6px 0;}
- .pm-svc{padding:18px 22px;}
- .pm-svc:first-child{padding-left:22px;}
- .pm-svc:nth-child(odd){border-left:none;padding-left:0;}
- .pm-svc:nth-child(n+3){border-top:1px solid var(--line);}
+ .pm-services{grid-template-columns:1fr 1fr;gap:16px;}
+ .pm-svc{min-height:0;}
  .pm-card:nth-child(n){grid-column:span 12;}
  .pm-stage,.pm-card:nth-child(3) .pm-stage{flex-direction:column;text-align:center;}
  .pm-ovl{align-items:center;}
@@ -798,14 +792,12 @@ export default function OptionPremium() {
  .pm-nav{padding:10px 14px;}
  .pm-hero{padding:40px 16px 52px;}
  .pm-mark3d{width:min(240px,64vw);}
- .pm-word3d{font-size:12vw;margin-top:-6vw;}
+ .pm-word3d{font-size:15vw;margin-top:calc(min(240px,64vw) / -2.64 - .38em);}
  .pm-hero-h1{font-size:24px;}
  .pm-planet.pl1{left:8%;top:16%;}
  .pm-planet.pl2{right:-4%;top:60%;}
  .pm-services{grid-template-columns:1fr;}
- .pm-svc:nth-child(odd){padding-left:0;}
- .pm-svc:nth-child(n+2){border-top:1px solid var(--line);border-left:none;}
- .pm-svc{padding:16px 0;}
+ .pm-svc{padding:22px 18px;}
  .pm-phone.lg,.pm-phone.md,.pm-phone.sm{width:min(210px,58vw);}
  .pm-phone.tilt-l,.pm-phone.tilt-r{transform:none;}
  .pm-stats{flex-wrap:wrap;gap:14px 0;}

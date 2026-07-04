@@ -38,37 +38,84 @@ function memo(key: string, fn: () => Promise<string>): Promise<string> {
   return p;
 }
 
-// Giữ các khối liên thông (4 hướng) có diện tích >= minSize và KHÔNG chạm
-// mép dưới vùng crop (khối chạm mép dưới = chữ wordmark bị cắt ngang → bỏ).
+// Gán nhãn khối liên thông (4 hướng) rồi chỉ giữ: khối không chạm mép dưới
+// (chạm = chữ wordmark bị cắt ngang), đủ lớn tuyệt đối (>= minSize) VÀ đủ
+// lớn tương đối (>= 6% khối lớn nhất) — loại cả sao nền lẫn mảnh vệt rời.
 function keepLargeComponents(mask: Uint8Array, w: number, h: number, minSize: number): Uint8Array {
   const n = w * h;
-  const out = new Uint8Array(n);
-  const seen = new Uint8Array(n);
+  const label = new Int32Array(n);
   const stack = new Int32Array(n);
-  const comp = new Int32Array(n);
+  const sizes: number[] = [0];
+  const touchesBottom: boolean[] = [false];
   const bottomRow = n - w;
+  let next = 1;
   for (let i = 0; i < n; i++) {
-    if (!mask[i] || seen[i]) continue;
+    if (!mask[i] || label[i]) continue;
     let top = 0;
     let count = 0;
-    let touchesBottom = false;
+    let tb = false;
     stack[top++] = i;
-    seen[i] = 1;
+    label[i] = next;
     while (top > 0) {
       const p = stack[--top];
-      comp[count++] = p;
-      if (p >= bottomRow) touchesBottom = true;
+      count++;
+      if (p >= bottomRow) tb = true;
       const x = p % w;
-      if (x > 0 && mask[p - 1] && !seen[p - 1]) { seen[p - 1] = 1; stack[top++] = p - 1; }
-      if (x < w - 1 && mask[p + 1] && !seen[p + 1]) { seen[p + 1] = 1; stack[top++] = p + 1; }
-      if (p >= w && mask[p - w] && !seen[p - w]) { seen[p - w] = 1; stack[top++] = p - w; }
-      if (p < n - w && mask[p + w] && !seen[p + w]) { seen[p + w] = 1; stack[top++] = p + w; }
+      if (x > 0 && mask[p - 1] && !label[p - 1]) { label[p - 1] = next; stack[top++] = p - 1; }
+      if (x < w - 1 && mask[p + 1] && !label[p + 1]) { label[p + 1] = next; stack[top++] = p + 1; }
+      if (p >= w && mask[p - w] && !label[p - w]) { label[p - w] = next; stack[top++] = p - w; }
+      if (p < n - w && mask[p + w] && !label[p + w]) { label[p + w] = next; stack[top++] = p + w; }
     }
-    if (count >= minSize && !touchesBottom) {
-      for (let k = 0; k < count; k++) out[comp[k]] = 1;
+    sizes[next] = count;
+    touchesBottom[next] = tb;
+    next++;
+  }
+  let maxSize = 0;
+  for (let l = 1; l < next; l++) if (!touchesBottom[l] && sizes[l] > maxSize) maxSize = sizes[l];
+  const keepLabel = new Uint8Array(next);
+  for (let l = 1; l < next; l++) {
+    keepLabel[l] = !touchesBottom[l] && sizes[l] >= minSize && sizes[l] >= maxSize * 0.06 ? 1 : 0;
+  }
+  const out = new Uint8Array(n);
+  for (let i = 0; i < n; i++) if (keepLabel[label[i]]) out[i] = 1;
+  return out;
+}
+
+// Đổi tông màu về xanh ngọc: remap dải hue xanh dương → tím → hồng (185–350°)
+// sang teal → cyan (150–195°), giữ độ bão hòa/độ sáng nên chất 3D không đổi.
+// excludeCircle: vùng badge tích xanh giữ nguyên màu xanh dương gốc.
+function tealify(d: Uint8ClampedArray, w: number, h: number, excludeCircle?: { x: number; y: number; r: number }) {
+  const r2 = excludeCircle ? excludeCircle.r * excludeCircle.r : 0;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (excludeCircle) {
+        const dx = x - excludeCircle.x;
+        const dy = y - excludeCircle.y;
+        if (dx * dx + dy * dy < r2) continue;
+      }
+      const i = (y * w + x) * 4;
+      const r = d[i], g = d[i + 1], b = d[i + 2];
+      const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+      const dlt = mx - mn;
+      const s = mx === 0 ? 0 : dlt / mx;
+      if (s < 0.12 || dlt === 0) continue; // xám/trắng/chrome giữ nguyên
+      let hue: number;
+      if (mx === r) hue = 60 * (((g - b) / dlt + 6) % 6);
+      else if (mx === g) hue = 60 * ((b - r) / dlt + 2);
+      else hue = 60 * ((r - g) / dlt + 4);
+      if (hue < 185 || hue > 350) continue;
+      const nh = (150 + ((hue - 185) / 165) * 45) / 60; // teal 150° → cyan 195°
+      const c = dlt;
+      const xx = c * (1 - Math.abs((nh % 2) - 1));
+      const m = mx - c;
+      let nr = 0, ng = 0, nb = 0;
+      if (nh < 3) { ng = c; nb = xx; } // 120–180°: xanh lá → cyan
+      else { ng = xx; nb = c; }        // 180–240°: cyan → xanh dương
+      d[i] = nr + m;
+      d[i + 1] = ng + m;
+      d[i + 2] = nb + m;
     }
   }
-  return out;
 }
 
 // Lấp các "lỗ" tối nằm hoàn toàn bên trong vùng giữ (không thông ra biên).
@@ -163,6 +210,9 @@ export function extractMark(): Promise<string> {
     fillHoles(keep, sw, sh);
     const alpha = featherAlpha(keep, sw, sh);
     for (let i = 0; i < n; i++) d[i * 4 + 3] = alpha[i];
+    // Đổi tông tím → xanh ngọc; giữ nguyên màu badge tích xanh (hình tròn
+    // quanh badge, tâm ~70.9%/18.5% vùng crop, bán kính ~10.5% bề rộng).
+    tealify(d, sw, sh, { x: sw * 0.709, y: sh * 0.185, r: sw * 0.105 });
     ctx.putImageData(id, 0, 0);
     return cv.toDataURL("image/png");
   });
@@ -200,6 +250,7 @@ export function extractPlanet(kind: keyof typeof PLANETS): Promise<string> {
         d[(y * size + x) * 4 + 3] = (a * a * 255) | 0;
       }
     }
+    tealify(d, size, size);
     ctx.putImageData(id, 0, 0);
     return cv.toDataURL("image/png");
   });
