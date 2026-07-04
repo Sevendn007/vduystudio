@@ -143,15 +143,15 @@ function fillHoles(keep: Uint8Array, w: number, h: number) {
   for (let i = 0; i < n; i++) if (!keep[i] && !outside[i]) keep[i] = 1;
 }
 
-// Box blur tách trục (bán kính 1, chạy 1 lượt) trên mask 0/1 → alpha 0..255.
-// Giảm blur để cạnh cực kỳ sắc nét (8K sharp), không bị viền mờ nham nhở khi xếp 3D.
+// Box blur tách trục (bán kính 2, chạy 2 lượt) trên mask 0/1 → alpha 0..255.
+// Trả lại blur mềm mại để khử răng cưa, kết hợp opacity bên CSS để tạo 3D mịn.
 function featherAlpha(keep: Uint8Array, w: number, h: number): Uint8Array {
   const n = w * h;
   let a = new Float32Array(n);
   for (let i = 0; i < n; i++) a[i] = keep[i] * 255;
-  const R = 1;
+  const R = 2;
   const win = R * 2 + 1;
-  for (let pass = 0; pass < 1; pass++) {
+  for (let pass = 0; pass < 2; pass++) {
     const tmp = new Float32Array(n);
     for (let y = 0; y < h; y++) {
       const row = y * w;
@@ -205,8 +205,8 @@ export function extractMark(): Promise<string> {
     for (let i = 0; i < n; i++) {
       const j = i * 4;
       const L = 0.2126 * d[j] + 0.7152 * d[j + 1] + 0.0722 * d[j + 2];
-      // Tăng ngưỡng L > 62 để cắt gọn gàng các chi tiết thừa, giúp logo sắc cạnh.
-      if (L > 62) mask[i] = 1;
+      // Ngưỡng 46 kết hợp featherAlpha R=2 sẽ tạo mép sắc, mềm mượt tự nhiên.
+      if (L > 46) mask[i] = 1;
     }
     const keep = keepLargeComponents(mask, sw, sh, Math.max(600, (n * 0.0015) | 0));
     fillHoles(keep, sw, sh);
