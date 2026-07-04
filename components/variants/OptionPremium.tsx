@@ -196,6 +196,34 @@ function SpriteImg({ kind, alt = "", className }: { kind: "mark" | "p1" | "p2"; 
   return <img src={url} alt={alt} className={className} draggable={false} />;
 }
 
+// Mark 3D có ĐỘ DÀY thật: xếp nhiều lớp ảnh dọc trục Z (translateZ) rồi quay
+// cả khối quanh trục dọc — nhìn nghiêng thấy cạnh, không mỏng như tờ giấy.
+function Mark3D({ layers = 9, className, alt = "" }: { layers?: number; className?: string; alt?: string }) {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    extractMark().then((u) => mounted && setUrl(u)).catch(() => {});
+    return () => { mounted = false; };
+  }, []);
+  return (
+    <div className={`pm-mark-stack ${className ?? ""}`}>
+      {url &&
+        Array.from({ length: layers }, (_, i) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={i}
+            src={url}
+            alt={i === layers - 1 ? alt : ""}
+            aria-hidden={i !== layers - 1}
+            draggable={false}
+            className={i === layers - 1 ? "front" : "side"}
+            style={{ transform: `translateZ(${(i - (layers - 1) / 2) * 2.2}px)` }}
+          />
+        ))}
+    </div>
+  );
+}
+
 export default function OptionPremium() {
   const { lang } = useLang();
   const st = siteText(lang);
@@ -224,7 +252,7 @@ export default function OptionPremium() {
       <nav className="pm-nav">
         <a href="#pm-top" className="pm-brand">
           <span className="pm-brand-spin">
-            <SpriteImg kind="mark" alt="VDuyStudio" />
+            <Mark3D layers={5} className="nav" alt="VDuyStudio" />
           </span>
           <span className="pm-brandname">VDUYSTUDIO</span>
         </a>
@@ -262,7 +290,7 @@ export default function OptionPremium() {
         </div>
         <div className="pm-hero-inner">
           <div className="pm-mark3d">
-            <SpriteImg kind="mark" alt="VDuyStudio" />
+            <Mark3D layers={9} alt="VDuyStudio" />
             <span className="pm-mark-glow" aria-hidden />
           </div>
           <div className="pm-word3d">
@@ -484,8 +512,8 @@ export default function OptionPremium() {
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Inter:wght@400;600;700&display=swap');
 
 .pm-root{
- --bg:#030510;--fg:#e6edf3;--muted:#92a3c0;--cyan:#38bdf8;--cyan-soft:rgba(56,189,248,.14);
- --line:rgba(135,155,225,.17);--card:#070b16;
+ --bg:#02090c;--fg:#e6f0f2;--muted:#8fadb5;--cyan:#2dd4bf;--cyan-soft:rgba(45,212,191,.14);
+ --line:rgba(94,209,214,.16);--card:#05141a;
  font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden;
  padding-bottom:calc(20px + env(safe-area-inset-bottom));}
 .pm-root *{box-sizing:border-box;}
@@ -495,14 +523,14 @@ export default function OptionPremium() {
 
 /* ===== nav ===== */
 .pm-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:14px;
- padding:12px clamp(16px,4vw,36px);background:rgba(3,5,16,.8);backdrop-filter:blur(16px);border-bottom:1px solid rgba(135,155,225,.12);}
+ padding:12px clamp(16px,4vw,36px);background:rgba(2,9,12,.8);backdrop-filter:blur(16px);border-bottom:1px solid rgba(94,209,214,.12);}
 .pm-brand{display:flex;align-items:center;gap:11px;min-width:0;}
 /* icon mark tách nền, xoay quanh trục dọc */
 .pm-brand-spin{display:block;width:46px;height:38px;perspective:420px;flex-shrink:0;}
 .pm-brand-spin img,.pm-brand-spin span{display:block;width:100%;height:100%;object-fit:contain;
- animation:pmSpinY 10s linear infinite;filter:drop-shadow(0 0 12px rgba(129,140,248,.55));}
+ filter:drop-shadow(0 0 12px rgba(45,212,191,.55));}
 .pm-brandname{font-family:'Anton',sans-serif;font-size:15px;letter-spacing:2px;color:var(--cyan);
- text-shadow:0 0 20px rgba(56,189,248,.65);}
+ text-shadow:0 0 20px rgba(45,212,191,.65);}
 .pm-menu{display:flex;gap:30px;font-size:13.5px;font-weight:600;color:var(--muted);}
 .pm-menu a{padding:8px 0;transition:.2s;}
 .pm-menu a:hover{color:#fff;}
@@ -514,10 +542,10 @@ export default function OptionPremium() {
  padding:clamp(30px,5vh,64px) 20px clamp(40px,6vh,72px);}
 .pm-space{position:absolute;inset:0;pointer-events:none;}
 .pm-nebula{position:absolute;inset:0;background:
- radial-gradient(760px 560px at 26% 42%,rgba(147,51,234,.20),transparent 65%),
- radial-gradient(560px 460px at 16% 68%,rgba(236,72,153,.10),transparent 65%),
- radial-gradient(720px 520px at 80% 26%,rgba(37,99,235,.17),transparent 65%),
- radial-gradient(640px 520px at 66% 92%,rgba(56,189,248,.10),transparent 65%);}
+ radial-gradient(760px 560px at 26% 42%,rgba(13,148,136,.20),transparent 65%),
+ radial-gradient(560px 460px at 16% 68%,rgba(6,182,212,.12),transparent 65%),
+ radial-gradient(720px 520px at 80% 26%,rgba(8,145,178,.18),transparent 65%),
+ radial-gradient(640px 520px at 66% 92%,rgba(45,212,191,.10),transparent 65%);}
 .pm-stars{position:absolute;inset:-320px 0 0;background-repeat:repeat;}
 .pm-stars.sa{background-image:
  radial-gradient(1.2px 1.2px at 25px 35px,#fff,transparent),
@@ -537,9 +565,9 @@ export default function OptionPremium() {
 @keyframes pmStarsGlow{0%,100%{opacity:.55}50%{opacity:.95}}
 .pm-planet{position:absolute;}
 .pm-planet.pl2{right:6%;top:44%;width:clamp(84px,10vw,160px);height:auto;
- animation:pmFloat 16s ease-in-out infinite;filter:drop-shadow(0 0 34px rgba(120,150,255,.28));}
+ animation:pmFloat 16s ease-in-out infinite;filter:drop-shadow(0 0 34px rgba(94,234,212,.25));}
 .pm-planet.pl1{left:19%;top:28%;width:clamp(26px,3vw,46px);height:auto;
- animation:pmFloat 12s ease-in-out infinite reverse;filter:drop-shadow(0 0 18px rgba(190,220,255,.3));}
+ animation:pmFloat 12s ease-in-out infinite reverse;filter:drop-shadow(0 0 18px rgba(153,246,228,.3));}
 @keyframes pmFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
 .pm-comet{position:absolute;top:14%;left:74%;width:130px;height:1.5px;border-radius:2px;
  background:linear-gradient(90deg,#fff,transparent);opacity:0;transform:rotate(-32deg);
@@ -556,51 +584,55 @@ export default function OptionPremium() {
 @keyframes pmStar{0%,100%{opacity:0;transform:scale(.5) rotate(0deg)}50%{opacity:.85;transform:scale(1.05) rotate(22deg)}}
 
 /* cụm nội dung hero */
-.pm-hero-inner{position:relative;display:flex;flex-direction:column;align-items:center;max-width:1000px;}
-.pm-mark3d{position:relative;width:clamp(230px,29vw,370px);perspective:1200px;}
-.pm-mark3d img{width:100%;height:auto;display:block;animation:pmSpinY 14s linear infinite;
- filter:drop-shadow(0 26px 60px rgba(80,60,220,.4)) drop-shadow(0 0 44px rgba(56,189,248,.22));}
-.pm-mark3d>span:first-child{display:block;width:100%;aspect-ratio:1.4;}
+.pm-hero-inner{position:relative;display:flex;flex-direction:column;align-items:center;max-width:1200px;}
+.pm-mark3d{position:relative;width:clamp(260px,34vw,440px);perspective:1300px;z-index:2;}
+/* mark 3D nhiều lớp — có độ dày, nhìn nghiêng thấy cạnh khi xoay */
+.pm-mark-stack{position:relative;width:100%;aspect-ratio:1.32;transform-style:preserve-3d;
+ animation:pmSpinY 20s linear infinite;}
+.pm-mark-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;}
+.pm-mark-stack img.side{filter:brightness(.45) saturate(1.15);}
+.pm-mark-stack img.front{filter:drop-shadow(0 22px 50px rgba(20,184,166,.35)) drop-shadow(0 0 40px rgba(45,212,191,.2));}
+.pm-mark-stack.nav{animation-duration:14s;}
 @keyframes pmSpinY{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
 .pm-mark-glow{position:absolute;left:50%;bottom:-6%;transform:translateX(-50%);width:72%;height:36px;border-radius:50%;
- background:radial-gradient(ellipse,rgba(99,102,241,.4),transparent 70%);filter:blur(9px);}
-.pm-word3d{position:relative;display:inline-block;margin-top:clamp(8px,1.6vh,18px);
- font-family:var(--font-archivo),var(--font-grotesk),sans-serif;font-weight:900;font-stretch:125%;
- font-size:clamp(40px,6.6vw,84px);line-height:1;letter-spacing:.01em;}
-.pm-word3d-back{position:absolute;inset:0;color:#0d1638;white-space:nowrap;
- text-shadow:1px 1px 0 #101a40,2px 2px 0 #0d1535,3px 3px 0 #0a112b,4px 4px 0 #080d22,5px 5px 0 #060a19,
- 8px 10px 20px rgba(0,0,0,.65);}
+ background:radial-gradient(ellipse,rgba(20,184,166,.45),transparent 70%);filter:blur(9px);}
+.pm-word3d{position:relative;display:inline-block;z-index:1;margin-top:clamp(-120px,-9vw,-36px);
+ font-family:'Druk Wide Super','Druk Wide',var(--font-archivo),var(--font-grotesk),sans-serif;
+ font-weight:900;font-stretch:125%;font-size:min(10.5vw,170px);line-height:1;letter-spacing:.01em;}
+.pm-word3d-back{position:absolute;inset:0;color:#062a2e;white-space:nowrap;
+ text-shadow:1px 1px 0 #0a3a40,2px 2px 0 #083137,3px 3px 0 #06282d,4px 4px 0 #052024,5px 5px 0 #04181c,6px 6px 0 #031114,
+ 10px 12px 24px rgba(0,0,0,.7);}
 .pm-word3d-front{position:relative;white-space:nowrap;}
-.pm-word3d-front i{font-style:normal;background:linear-gradient(180deg,#9edcff 0%,#5b8cff 45%,#8b5cf6 100%);
+.pm-word3d-front i{font-style:normal;background:linear-gradient(180deg,#a7f3d0 0%,#2dd4bf 45%,#0e7490 100%);
  -webkit-background-clip:text;background-clip:text;color:transparent;}
 .pm-word3d-front em{font-style:normal;background:linear-gradient(180deg,#ffffff 10%,#cfdae4 40%,#8fa3b8 55%,#eef4f9 78%,#aab9c9 100%);
  background-size:100% 220%;-webkit-background-clip:text;background-clip:text;color:transparent;
  animation:pmChrome 6s ease-in-out infinite;}
 @keyframes pmChrome{0%,100%{background-position:0 0}50%{background-position:0 45%}}
 .pm-hero-tag{margin-top:clamp(16px,2.6vh,26px);display:inline-block;font-size:11.5px;letter-spacing:2px;
- text-transform:uppercase;color:#7dd3fc;border:1px solid rgba(103,232,249,.3);background:rgba(103,232,249,.05);
+ text-transform:uppercase;color:#5eead4;border:1px solid rgba(94,234,212,.32);background:rgba(94,234,212,.06);
  padding:7px 16px;border-radius:100px;font-weight:700;}
 .pm-hero-h1{margin:14px 0 0;font-size:clamp(26px,4vw,46px);font-weight:800;letter-spacing:-.8px;color:#eef3fb;
  font-family:var(--font-grotesk),'Inter',sans-serif;}
-.pm-holo{background:linear-gradient(90deg,#67e8f9,#a78bfa,#f0abfc,#67e8f9);background-size:250% 100%;
+.pm-holo{background:linear-gradient(90deg,#5eead4,#67e8f9,#a7f3d0,#5eead4);background-size:250% 100%;
  -webkit-background-clip:text;background-clip:text;color:transparent;animation:pmHolo 6s linear infinite;}
 @keyframes pmHolo{to{background-position:250% 0}}
 .pm-statline{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 30px;margin-top:clamp(18px,3vh,28px);
  font-size:13.5px;color:var(--muted);}
-.pm-statline b{color:#7dd3fc;font-size:16px;margin-right:5px;}
+.pm-statline b{color:#5eead4;font-size:16px;margin-right:5px;}
 
 /* wordmark vector (footer) */
 .pm-wordmark{font-family:var(--font-archivo),var(--font-grotesk),sans-serif;font-weight:900;font-stretch:125%;
  font-size:clamp(36px,6.6vw,72px);line-height:1.05;letter-spacing:.01em;text-transform:uppercase;
  filter:drop-shadow(0 10px 30px rgba(0,0,0,.5));}
-.pm-w1{background:linear-gradient(180deg,#9edcff 0%,#5b8cff 48%,#8b5cf6 100%);
+.pm-w1{background:linear-gradient(180deg,#a7f3d0 0%,#2dd4bf 48%,#0e7490 100%);
  -webkit-background-clip:text;background-clip:text;color:transparent;}
 .pm-w2{background:linear-gradient(180deg,#ffffff 12%,#ccd9e4 42%,#8fa3b8 58%,#e9f1f8 100%);
  -webkit-background-clip:text;background-clip:text;color:transparent;}
 
 /* ===== marquee thương hiệu ===== */
 .pm-marquee-wrap{display:flex;align-items:center;margin:26px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
- background:rgba(7,10,24,.5);overflow:hidden;}
+ background:rgba(4,14,18,.5);overflow:hidden;}
 .pm-marquee-label{flex-shrink:0;padding:16px 26px;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
  color:var(--cyan);border-right:1px solid var(--line);}
 .pm-marquee{flex:1;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
@@ -632,11 +664,11 @@ export default function OptionPremium() {
 
 /* ===== bento portfolio ===== */
 .pm-bento{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;}
-.pm-card{position:relative;overflow:hidden;border-radius:24px;border:1px solid rgba(129,140,248,.24);
+.pm-card{position:relative;overflow:hidden;border-radius:24px;border:1px solid rgba(45,212,191,.22);
  background:
-  radial-gradient(560px 300px at 18% 88%,rgba(99,102,241,.16),transparent 65%),
-  radial-gradient(520px 280px at 85% 12%,rgba(147,51,234,.14),transparent 70%),
-  linear-gradient(180deg,#0a0f1f 0%,#04070f 100%);
+  radial-gradient(560px 300px at 18% 88%,rgba(13,148,136,.16),transparent 65%),
+  radial-gradient(520px 280px at 85% 12%,rgba(8,145,178,.15),transparent 70%),
+  linear-gradient(180deg,#06161c 0%,#03090d 100%);
  display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.45);}
 .pm-card:nth-child(1),.pm-card:nth-child(4){grid-column:span 12;}
 .pm-card:nth-child(2),.pm-card:nth-child(3){grid-column:span 6;}
@@ -766,7 +798,7 @@ export default function OptionPremium() {
  .pm-nav{padding:10px 14px;}
  .pm-hero{padding:40px 16px 52px;}
  .pm-mark3d{width:min(240px,64vw);}
- .pm-word3d{font-size:clamp(34px,10vw,44px);}
+ .pm-word3d{font-size:12vw;margin-top:-6vw;}
  .pm-hero-h1{font-size:24px;}
  .pm-planet.pl1{left:8%;top:16%;}
  .pm-planet.pl2{right:-4%;top:60%;}

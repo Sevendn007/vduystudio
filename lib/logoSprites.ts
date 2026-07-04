@@ -10,8 +10,10 @@
 
 const LOGO_SRC = "/images/logo.png";
 
-// Vùng mark theo tỉ lệ ảnh (đo trên logo 16:9): x 32.2–77.2%, y 11.5–74.5%.
-const MARK = { x: 0.322, y: 0.115, w: 0.45, h: 0.63 };
+// Vùng mark theo tỉ lệ ảnh (đo trên logo 16:9): x 32.2–77.2%, y 11.5–73%.
+// Mép dưới nằm TRÊN wordmark "VDUYSTUDIO" của ảnh; khối nào chạm mép dưới
+// (chữ bị cắt ngang) sẽ bị loại trong keepLargeComponents.
+const MARK = { x: 0.322, y: 0.115, w: 0.45, h: 0.615 };
 
 let logoPromise: Promise<HTMLImageElement> | null = null;
 function loadLogo(): Promise<HTMLImageElement> {
@@ -36,29 +38,33 @@ function memo(key: string, fn: () => Promise<string>): Promise<string> {
   return p;
 }
 
-// Giữ các khối liên thông (4 hướng) có diện tích >= minSize.
+// Giữ các khối liên thông (4 hướng) có diện tích >= minSize và KHÔNG chạm
+// mép dưới vùng crop (khối chạm mép dưới = chữ wordmark bị cắt ngang → bỏ).
 function keepLargeComponents(mask: Uint8Array, w: number, h: number, minSize: number): Uint8Array {
   const n = w * h;
   const out = new Uint8Array(n);
   const seen = new Uint8Array(n);
   const stack = new Int32Array(n);
   const comp = new Int32Array(n);
+  const bottomRow = n - w;
   for (let i = 0; i < n; i++) {
     if (!mask[i] || seen[i]) continue;
     let top = 0;
     let count = 0;
+    let touchesBottom = false;
     stack[top++] = i;
     seen[i] = 1;
     while (top > 0) {
       const p = stack[--top];
       comp[count++] = p;
+      if (p >= bottomRow) touchesBottom = true;
       const x = p % w;
       if (x > 0 && mask[p - 1] && !seen[p - 1]) { seen[p - 1] = 1; stack[top++] = p - 1; }
       if (x < w - 1 && mask[p + 1] && !seen[p + 1]) { seen[p + 1] = 1; stack[top++] = p + 1; }
       if (p >= w && mask[p - w] && !seen[p - w]) { seen[p - w] = 1; stack[top++] = p - w; }
       if (p < n - w && mask[p + w] && !seen[p + w]) { seen[p + w] = 1; stack[top++] = p + w; }
     }
-    if (count >= minSize) {
+    if (count >= minSize && !touchesBottom) {
       for (let k = 0; k < count; k++) out[comp[k]] = 1;
     }
   }
