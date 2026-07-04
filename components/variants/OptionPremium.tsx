@@ -649,7 +649,7 @@ export default function OptionPremium() {
 .side-stage .pm-ovl-ic{margin-bottom:3px;}
 .side-stage .pm-phone.md{width:clamp(155px,16.5vw,205px);}
 .pm-card:nth-child(2) .pm-card-info,
-.pm-card:nth-child(3) .pm-card-info{padding:0 12px 8px;}
+.pm-card:nth-child(3) .pm-card-info{padding:0 12px 16px;}
 .pm-card:nth-child(2) .pm-card-info h3,
 .pm-card:nth-child(3) .pm-card-info h3{font-size:clamp(13px,1.4vw,17px);margin:0 0 2px;}
 .pm-card:nth-child(2) .pm-card-info p,
