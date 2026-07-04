@@ -554,8 +554,10 @@ export default function OptionPremium() {
 .pm-label-row{display:flex;justify-content:space-between;align-items:center;}
 
 /* ===== services (card 3D nghiêng theo chuột + glare) ===== */
-.pm-services{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
-.pm-svcwrap{border-radius:18px;}
+.pm-services{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;}
+.pm-svcwrap{border-radius:18px;grid-column:span 2;}
+.pm-svcwrap:nth-last-child(2):nth-child(4),
+.pm-svcwrap:last-child:nth-child(5) { grid-column: span 3; }
 .pm-svc-ic{display:inline-flex;width:64px;height:64px;align-items:center;justify-content:center;border-radius:16px;
  background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.25);
  animation:pmFloat 5.5s ease-in-out infinite;
@@ -694,6 +696,7 @@ export default function OptionPremium() {
  .pm-menu{display:none;}
  .pm-hero{min-height:0;padding:56px 20px 64px;}
  .pm-services{grid-template-columns:1fr 1fr;gap:16px;}
+ .pm-svcwrap{grid-column:span 1!important;}
  .pm-svc{min-height:0;}
  .pm-card:nth-child(n){grid-column:span 12;}
  .pm-stage,.pm-card:nth-child(3) .pm-stage{flex-direction:column;text-align:center;}
@@ -724,6 +727,7 @@ export default function OptionPremium() {
   .pm-marquee-item{font-size:14px;padding:12px 0 12px 22px;}
   .pm-marquee-item i{margin-left:22px;}
   .pm-services{grid-template-columns:1fr;}
+  .pm-svcwrap{grid-column:span 1!important;}
   .pm-svc{padding:22px 18px;}
   /* Bento cards mobile: full width, compact layout */
   .pm-card{max-height:none;}

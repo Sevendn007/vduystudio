@@ -58,7 +58,7 @@ export function PremiumFooter() {
         .pm-btn:hover{transform:scale(1.04);box-shadow:0 0 64px rgba(56,189,248,.6);}
         .pm-footbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-top:60px;padding:18px 0;
          border-top:1px solid var(--line, rgba(94,209,214,.16));color:#51697b;font-size:13.5px;}
-        .pm-footbar-social{display:flex;align-items:center;gap:12px;}
+        .pm-footbar-social{display:flex;align-items:center;gap:12px;margin-right:72px;}
         .pm-social-title-inline{color:var(--muted, #8fadb5);}
         .pm-foot-contact-inline{display:flex;align-items:center;gap:12px;}
         .pm-foot-contact-inline a{display:flex;color:var(--muted, #8fadb5);transition:.2s;}
