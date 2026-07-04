@@ -588,12 +588,10 @@ export default function OptionPremium() {
 .pm-mark-glow{position:absolute;left:50%;bottom:-6%;transform:translateX(-50%);width:72%;height:36px;border-radius:50%;
  background:radial-gradient(ellipse,rgba(20,184,166,.45),transparent 70%);filter:blur(9px);}
 .pm-word3d{position:relative;display:inline-block;z-index:1;
- font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(50px,11vw,170px);line-height:1.2;letter-spacing:-0.05em;transform:scaleY(1.7);
- background:linear-gradient(180deg,#f0f9ff 0%,#e0f2fe 45%,#bae6fd 100%);
- -webkit-background-clip:text;background-clip:text;color:transparent;text-transform:uppercase;
- -webkit-text-stroke:4px #e0f2fe;}
-.pm-word3d.left {text-align:right;margin-right:-2vw;}
-.pm-word3d.right {text-align:left;margin-left:0vw;}
+ font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(40px,9vw,140px);line-height:1.2;transform:scaleY(1.7);
+ color:#f0f9ff;-webkit-text-stroke:0.025em #f0f9ff;text-transform:uppercase;}
+.pm-word3d.left {flex:1;text-align:right;letter-spacing:0.12em;margin-right:-4.5vw;}
+.pm-word3d.right {flex:1;text-align:left;letter-spacing:-0.02em;margin-left:-2vw;}
 .pm-hero-tag{margin-top:clamp(-20px,1vh,10px);display:inline-block;font-size:11.5px;letter-spacing:2px;
  text-transform:uppercase;color:#5eead4;border:1px solid rgba(94,234,212,.32);background:rgba(94,234,212,.06);
  padding:7px 16px;border-radius:100px;font-weight:700;z-index:2;position:relative;}
