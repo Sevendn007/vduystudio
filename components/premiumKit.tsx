@@ -13,10 +13,10 @@ import type { DbProject } from "@/lib/data";
 
 // Dự án showcase khi DB trống — dùng chung cho trang chủ & /du-an.
 export const DEFAULT_PROJECTS: DbProject[] = [
-  { id: "p1", platform: "tiktok", tag: "Verification", title: "Khuyến Dương", result: "TikTok · 1,7Tr Follower · 62,7Tr Thích", image_url: "/images/d1.png" },
-  { id: "p2", platform: "tiktok", tag: "Verification", title: "Chí Khang", result: "TikTok · 2,7Tr Follower · 239,3Tr Thích", image_url: "/images/d2.png" },
-  { id: "p3", platform: "tiktok", tag: "Verification", title: "Chuyện Ma Chú 3 Duy", result: "TikTok · 3,2Tr Follower · 148,5Tr Thích", image_url: "/images/d3.png" },
-  { id: "p4", platform: "tiktok", tag: "Verification", title: "Mai Trí Thức", result: "TikTok · 2,2Tr Follower · 178,1Tr Thích", image_url: "/images/d4.png" },
+  { id: "p1", platform: "tiktok", tag: "Verification", title: "Khuyến Dương", result: "TikTok · 1,7Tr Follower · 62,7Tr Thích", image_url: "/images/d1.png", sort_order: null, date: null },
+  { id: "p2", platform: "tiktok", tag: "Verification", title: "Chí Khang", result: "TikTok · 2,7Tr Follower · 239,3Tr Thích", image_url: "/images/d2.png", sort_order: null, date: null },
+  { id: "p3", platform: "tiktok", tag: "Verification", title: "Chuyện Ma Chú 3 Duy", result: "TikTok · 3,2Tr Follower · 148,5Tr Thích", image_url: "/images/d3.png", sort_order: null, date: null },
+  { id: "p4", platform: "tiktok", tag: "Verification", title: "Mai Trí Thức", result: "TikTok · 2,2Tr Follower · 178,1Tr Thích", image_url: "/images/d4.png", sort_order: null, date: null },
 ];
 
 export function SpriteImg({ kind, alt = "", className }: { kind: "mark" | "p1" | "p2"; alt?: string; className?: string }) {

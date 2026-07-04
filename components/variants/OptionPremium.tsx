@@ -175,7 +175,7 @@ export default function OptionPremium() {
 
   const feedbacks: DbFeedback[] =
     dbFeedbacks ??
-    st.testimonials.map((c, i) => ({ id: `t${i}`, name: c.name, company: c.company, quote: c.quote, rating: 5, image_url: null }));
+    st.testimonials.map((c, i) => ({ id: `t${i}`, name: c.name, company: c.company, quote: c.quote, rating: 5, image_url: null, sort_order: null, date: null }));
   const hueOf = (i: number) => [330, 210, 160, 40, 280, 120][i % 6];
   const projects: DbProject[] = dbProjects && dbProjects.length > 0 ? dbProjects : DEFAULT_PROJECTS;
   const t = TX[lang];
