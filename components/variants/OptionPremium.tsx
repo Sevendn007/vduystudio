@@ -217,63 +217,28 @@ export default function OptionPremium() {
         </div>
       </nav>
 
-      {/* HERO — logo vector nền trong suốt: monogram VD + tích xanh quay như
-          địa cầu trong vành elip; sao ✦ chớp nhẹ, hành tinh có vành đai */}
+      {/* HERO — nguyên artwork logo.png làm nền full-bleed (nền logo = nền hero,
+          không có vết cắt); sao/hành tinh của chính logo được thêm hiệu ứng
+          chớp sáng, glow thở nhịp, vệt sáng quét, sao chổi, lắc 3D nhẹ */}
       <header className="pm-hero">
-        <div className="pm-hero-fx" aria-hidden />
-        <span className="pm-planet-a" aria-hidden>
-          <svg viewBox="0 0 72 44">
-            <defs>
-              <radialGradient id="pmPlA" cx="35%" cy="30%" r="80%">
-                <stop offset="0%" stopColor="#8fb4d4" />
-                <stop offset="55%" stopColor="#3d5a78" />
-                <stop offset="100%" stopColor="#131e2b" />
-              </radialGradient>
-              <linearGradient id="pmPlR" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="rgba(125,211,252,0)" />
-                <stop offset="50%" stopColor="rgba(125,211,252,.85)" />
-                <stop offset="100%" stopColor="rgba(167,139,250,0)" />
-              </linearGradient>
-            </defs>
-            <circle cx="36" cy="22" r="13" fill="url(#pmPlA)" />
-            <ellipse cx="36" cy="22" rx="28" ry="8" fill="none" stroke="url(#pmPlR)" strokeWidth="1.6" transform="rotate(-16 36 22)" />
-          </svg>
-        </span>
-        <span className="pm-moon" aria-hidden />
+        <div className="pm-hero-art" aria-hidden />
+        <div className="pm-hero-veil" aria-hidden />
+        <span className="pm-sheen" aria-hidden />
+        <span className="pm-comet" aria-hidden />
+        <span className="pm-glow g1" aria-hidden />
+        <span className="pm-glow g2" aria-hidden />
+        <span className="pm-glint" aria-hidden>✦</span>
         {[
-          { c: "t1", ch: "✦" },
-          { c: "t2", ch: "✧" },
-          { c: "t3", ch: "✦" },
-          { c: "t4", ch: "✦" },
-          { c: "t5", ch: "✧" },
+          { c: "s1", ch: "✦" },
+          { c: "s2", ch: "✧" },
+          { c: "s3", ch: "✦" },
+          { c: "s4", ch: "✧" },
+          { c: "s5", ch: "✦" },
+          { c: "s6", ch: "✧" },
+          { c: "s7", ch: "✦" },
         ].map((s) => (
-          <span key={s.c} className={`pm-twinkle ${s.c}`} aria-hidden>{s.ch}</span>
+          <span key={s.c} className={`pm-star ${s.c}`} aria-hidden>{s.ch}</span>
         ))}
-        <div className="pm-hero-logo">
-          <div className="pm-mono-wrap">
-            <svg className="pm-ellipse" viewBox="0 0 440 200" aria-hidden>
-              <defs>
-                <linearGradient id="pmRing" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#67e8f9" />
-                  <stop offset="55%" stopColor="#818cf8" />
-                  <stop offset="100%" stopColor="#f0abfc" />
-                </linearGradient>
-              </defs>
-              <ellipse cx="220" cy="100" rx="206" ry="58" fill="none" stroke="url(#pmRing)" strokeWidth="3.5" opacity=".75" transform="rotate(-13 220 100)" />
-            </svg>
-            <span className="pm-orbit" aria-hidden />
-            <div className="pm-mono">
-              <span className="pm-mono-txt">VD</span>
-              <span className="pm-mono-badge"><VDuyBadge size={48} intro={false} /></span>
-            </div>
-          </div>
-          <div className="pm-wordmark">
-            <span className="pm-w1">VDUY</span>
-            <span className="pm-w2">STUDIO</span>
-          </div>
-          <div className="pm-tagline">Digital Reputation Studio</div>
-          <span className="pm-beam" aria-hidden />
-        </div>
         <p className="pm-hero-sub">{t.heroSub}</p>
       </header>
 
@@ -475,8 +440,8 @@ export default function OptionPremium() {
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Inter:wght@400;600;700&display=swap');
 
 .pm-root{
- --bg:#04080d;--fg:#e6edf3;--muted:#8ca3b5;--cyan:#38bdf8;--cyan-soft:rgba(56,189,248,.14);
- --line:rgba(120,180,215,.16);--card:#070e15;
+ --bg:#030510;--fg:#e6edf3;--muted:#92a3c0;--cyan:#38bdf8;--cyan-soft:rgba(56,189,248,.14);
+ --line:rgba(135,155,225,.17);--card:#070b16;
  font-family:'Inter',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden;
  padding-bottom:calc(20px + env(safe-area-inset-bottom));}
 .pm-root *{box-sizing:border-box;}
@@ -486,7 +451,7 @@ export default function OptionPremium() {
 
 /* ===== nav ===== */
 .pm-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:14px;
- padding:12px clamp(16px,4vw,36px);background:rgba(4,8,13,.78);backdrop-filter:blur(16px);border-bottom:1px solid rgba(120,180,215,.1);}
+ padding:12px clamp(16px,4vw,36px);background:rgba(3,5,16,.8);backdrop-filter:blur(16px);border-bottom:1px solid rgba(135,155,225,.12);}
 .pm-brand{display:flex;align-items:center;gap:11px;min-width:0;}
 /* Mark nav: chữ VD gradient + badge tích xanh vector (nền trong suốt) */
 .pm-brand-vd{position:relative;font-family:'Anton',sans-serif;font-size:25px;line-height:1;flex-shrink:0;
@@ -501,78 +466,63 @@ export default function OptionPremium() {
 .pm-nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 
 /* ===== hero ===== */
-.pm-hero{position:relative;margin:14px clamp(10px,2vw,20px) 0;border-radius:26px;overflow:hidden;text-align:center;
- display:flex;flex-direction:column;align-items:center;
- padding:clamp(48px,7vw,84px) 20px clamp(56px,8vw,104px);
- background:
-  radial-gradient(1000px 460px at 50% 118%,rgba(34,211,238,.30),transparent 64%),
-  radial-gradient(720px 340px at 14% 96%,rgba(8,90,120,.5),transparent 70%),
-  radial-gradient(640px 300px at 86% 84%,rgba(56,189,248,.16),transparent 70%),
-  radial-gradient(520px 240px at 70% 8%,rgba(14,60,88,.5),transparent 70%),
-  linear-gradient(180deg,#0a141d 0%,#071420 55%,#03101b 100%);
- border:1px solid rgba(120,180,215,.12);}
-.pm-hero-fx{position:absolute;inset:0;pointer-events:none;
- background-image:
-  radial-gradient(1.3px 1.3px at 12% 24%,rgba(255,255,255,.9),transparent),
-  radial-gradient(1px 1px at 28% 66%,rgba(255,255,255,.55),transparent),
-  radial-gradient(1.5px 1.5px at 44% 18%,rgba(190,240,255,.85),transparent),
-  radial-gradient(1px 1px at 58% 74%,rgba(255,255,255,.5),transparent),
-  radial-gradient(1.2px 1.2px at 72% 30%,rgba(255,255,255,.8),transparent),
-  radial-gradient(1px 1px at 86% 58%,rgba(190,240,255,.6),transparent),
-  radial-gradient(1.4px 1.4px at 93% 14%,rgba(255,255,255,.75),transparent),
-  radial-gradient(1px 1px at 8% 82%,rgba(255,255,255,.5),transparent);}
-/* hero logo: monogram VD + badge quay như quả địa cầu, vành elip gradient */
-.pm-hero-logo{position:relative;display:flex;flex-direction:column;align-items:center;}
-.pm-mono-wrap{position:relative;perspective:1100px;display:flex;align-items:center;justify-content:center;
- padding:clamp(24px,4vw,44px) clamp(56px,10vw,110px);animation:pmFloat 7s ease-in-out infinite;}
-.pm-ellipse{position:absolute;width:116%;left:-8%;top:50%;transform:translateY(-52%);pointer-events:none;
- filter:drop-shadow(0 0 16px rgba(129,140,248,.45));}
-.pm-orbit{position:absolute;inset:0 4%;border:1px dashed rgba(56,189,248,.25);border-radius:50%;
- animation:pmOrbitSpin 24s linear infinite;pointer-events:none;}
-.pm-orbit::after{content:"";position:absolute;top:-3px;left:calc(50% - 4px);width:8px;height:8px;border-radius:50%;
- background:#7dd3fc;box-shadow:0 0 14px 3px rgba(56,189,248,.7);}
-@keyframes pmOrbitSpin{to{transform:rotate(360deg)}}
-.pm-mono{position:relative;animation:pmGlobe 11s ease-in-out infinite;transform-style:preserve-3d;}
-@keyframes pmGlobe{0%,58%{transform:rotateY(0deg)}79%,100%{transform:rotateY(360deg)}}
-@keyframes pmFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-.pm-mono-txt{display:block;font-family:'Anton',sans-serif;font-size:clamp(110px,17vw,190px);line-height:1;letter-spacing:-.01em;
- background:linear-gradient(132deg,#7dd3fc 4%,#60a5fa 34%,#8b5cf6 62%,#e879f9 96%);
- -webkit-background-clip:text;background-clip:text;color:transparent;
- filter:drop-shadow(0 8px 40px rgba(109,90,246,.45)) drop-shadow(0 0 26px rgba(56,189,248,.25));}
-.pm-mono-badge{position:absolute;top:-9%;right:-14%;}
+.pm-hero{position:relative;margin:14px clamp(10px,2vw,20px) 0;border-radius:26px;overflow:hidden;
+ aspect-ratio:1.9;max-height:min(78vh,780px);background:#030409;
+ border:1px solid rgba(130,150,225,.16);box-shadow:0 30px 80px rgba(0,0,0,.5);}
+.pm-hero-art{position:absolute;inset:-2.5%;background:url('/images/logo.png') center/cover no-repeat;
+ animation:pmSway 16s ease-in-out infinite;will-change:transform;}
+@keyframes pmSway{0%,100%{transform:perspective(1400px) rotateY(-2.2deg) scale(1.03)}
+ 50%{transform:perspective(1400px) rotateY(2.2deg) scale(1.07)}}
+.pm-hero-veil{position:absolute;inset:0;pointer-events:none;background:
+ radial-gradient(145% 125% at 50% 42%,transparent 55%,rgba(2,3,9,.88) 98%),
+ linear-gradient(180deg,rgba(2,3,9,.45) 0%,transparent 15%),
+ linear-gradient(0deg,rgba(2,3,9,.55) 0%,transparent 18%);}
+.pm-sheen{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
+ background:linear-gradient(115deg,transparent 43%,rgba(150,190,255,.13) 50%,transparent 57%) no-repeat;
+ background-size:300% 100%;animation:pmSheen 9s ease-in-out infinite;}
+@keyframes pmSheen{0%,52%{background-position:135% 0}88%,100%{background-position:-115% 0}}
+.pm-comet{position:absolute;top:15%;left:76%;width:120px;height:1.5px;border-radius:2px;pointer-events:none;
+ background:linear-gradient(90deg,#fff,transparent);opacity:0;transform:rotate(-32deg);
+ animation:pmComet 12s ease-in 3s infinite;}
+@keyframes pmComet{0%{opacity:0;transform:rotate(-32deg) translateX(0)}4%{opacity:.9}
+ 13%{opacity:0;transform:rotate(-32deg) translateX(-340px)}100%{opacity:0}}
+.pm-glow{position:absolute;border-radius:50%;pointer-events:none;mix-blend-mode:screen;filter:blur(8px);
+ opacity:.15;animation:pmBreath 6.5s ease-in-out infinite;}
+.pm-glow.g1{width:12%;aspect-ratio:1;right:10.5%;top:52%;
+ background:radial-gradient(circle,rgba(140,175,255,.55),transparent 68%);}
+.pm-glow.g2{width:6.5%;aspect-ratio:1;left:27%;top:44%;
+ background:radial-gradient(circle,rgba(200,225,255,.5),transparent 68%);animation-delay:2.6s;}
+@keyframes pmBreath{0%,100%{opacity:.12}50%{opacity:.65}}
+.pm-glint{position:absolute;left:62.5%;top:16%;font-size:clamp(16px,2.4vw,30px);line-height:1;color:#eaf6ff;
+ pointer-events:none;opacity:0;text-shadow:0 0 18px rgba(160,215,255,.95),0 0 5px #fff;
+ animation:pmGlint 7.5s ease-in-out 1.4s infinite;}
+@keyframes pmGlint{0%,84%,100%{opacity:0;transform:scale(.35) rotate(0deg)}91%{opacity:1;transform:scale(1.2) rotate(42deg)}}
+.pm-star{position:absolute;color:#dcecff;opacity:0;pointer-events:none;line-height:1;
+ text-shadow:0 0 13px rgba(150,205,255,.9),0 0 4px #fff;animation:pmStar 5.5s ease-in-out infinite;}
+.pm-star.s1{top:9%;left:26%;font-size:14px;animation-delay:.4s;}
+.pm-star.s2{top:34%;left:11.5%;font-size:11px;animation-delay:1.6s;animation-duration:6.5s;}
+.pm-star.s3{top:69%;left:6.5%;font-size:13px;animation-delay:2.9s;}
+.pm-star.s4{top:86%;left:45%;font-size:10px;animation-delay:4.4s;animation-duration:7s;}
+.pm-star.s5{top:14%;right:11%;font-size:15px;animation-delay:1s;}
+.pm-star.s6{top:47%;right:5.5%;font-size:11px;animation-delay:3.6s;animation-duration:6s;}
+.pm-star.s7{top:84%;right:28%;font-size:12px;animation-delay:2.2s;}
+@keyframes pmStar{0%,100%{opacity:0;transform:scale(.5) rotate(0deg)}50%{opacity:.85;transform:scale(1.05) rotate(22deg)}}
+/* chữ đề dẫn nổi trên ảnh hero */
+.pm-hero-sub{position:absolute;left:50%;bottom:4.5%;transform:translateX(-50%);margin:0;width:92%;text-align:center;
+ font-size:clamp(13px,1.9vw,20px);font-weight:700;color:#f1f6fb;text-shadow:0 2px 24px rgba(0,0,0,.9);}
+
+/* wordmark vector (footer) */
 .pm-wordmark{font-family:var(--font-archivo),var(--font-grotesk),sans-serif;font-weight:900;font-stretch:125%;
  font-size:clamp(36px,6.6vw,72px);line-height:1.05;letter-spacing:.01em;text-transform:uppercase;
- margin-top:clamp(2px,1vw,10px);filter:drop-shadow(0 10px 30px rgba(0,0,0,.5));}
+ filter:drop-shadow(0 10px 30px rgba(0,0,0,.5));}
 .pm-w1{background:linear-gradient(180deg,#9edcff 0%,#5b8cff 48%,#8b5cf6 100%);
  -webkit-background-clip:text;background-clip:text;color:transparent;}
 .pm-w2{background:linear-gradient(180deg,#ffffff 12%,#ccd9e4 42%,#8fa3b8 58%,#e9f1f8 100%);
  -webkit-background-clip:text;background-clip:text;color:transparent;}
-.pm-tagline{margin-top:12px;font-size:clamp(10px,1.5vw,14px);font-weight:600;letter-spacing:.42em;
- text-transform:uppercase;color:#b6c6d5;padding-left:.42em;}
-.pm-beam{display:block;width:min(430px,72vw);height:2px;margin:20px auto 0;border-radius:2px;
- background:linear-gradient(90deg,transparent,#67e8f9 50%,transparent);box-shadow:0 0 18px rgba(103,232,249,.8);}
-.pm-hero-sub{position:relative;margin:26px 0 0;font-size:clamp(15px,2.2vw,22px);font-weight:700;color:#eaf3f9;
- text-shadow:0 2px 22px rgba(0,0,0,.6);}
-
-/* hành tinh có vành đai + mặt trăng + sao ✦ chớp nhẹ */
-.pm-planet-a{position:absolute;left:9%;top:20%;width:clamp(54px,7vw,84px);opacity:.85;
- pointer-events:none;animation:pmFloat 14s ease-in-out infinite;}
-.pm-planet-a svg{width:100%;height:auto;display:block;}
-.pm-moon{position:absolute;right:11%;bottom:26%;width:20px;height:20px;border-radius:50%;pointer-events:none;
- background:radial-gradient(circle at 34% 30%,#aab8c8,#5c6b7d 60%,#232e3b);
- box-shadow:0 0 18px rgba(150,180,210,.25);animation:pmFloat 10s ease-in-out infinite reverse;}
-.pm-twinkle{position:absolute;color:#d9efff;opacity:0;pointer-events:none;line-height:1;
- text-shadow:0 0 14px rgba(147,214,252,.9),0 0 4px #fff;animation:pmTwinkle 5s ease-in-out infinite;}
-.pm-twinkle.t1{top:18%;left:24%;font-size:15px;animation-delay:.3s;}
-.pm-twinkle.t2{top:13%;right:27%;font-size:11px;animation-delay:1.8s;animation-duration:6s;}
-.pm-twinkle.t3{top:58%;left:11%;font-size:13px;animation-delay:3s;}
-.pm-twinkle.t4{bottom:20%;right:15%;font-size:16px;animation-delay:1.1s;animation-duration:6.5s;}
-.pm-twinkle.t5{bottom:32%;left:31%;font-size:10px;animation-delay:4s;}
-@keyframes pmTwinkle{0%,100%{opacity:0;transform:scale(.5) rotate(0deg)}50%{opacity:.75;transform:scale(1) rotate(24deg)}}
 
 /* ===== marquee thương hiệu ===== */
 .pm-marquee-wrap{display:flex;align-items:center;margin:26px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
- background:rgba(10,20,29,.5);overflow:hidden;}
+ background:rgba(7,10,24,.5);overflow:hidden;}
 .pm-marquee-label{flex-shrink:0;padding:16px 26px;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
  color:var(--cyan);border-right:1px solid var(--line);}
 .pm-marquee{flex:1;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
@@ -604,11 +554,11 @@ export default function OptionPremium() {
 
 /* ===== bento portfolio ===== */
 .pm-bento{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;}
-.pm-card{position:relative;overflow:hidden;border-radius:24px;border:1px solid rgba(56,189,248,.22);
+.pm-card{position:relative;overflow:hidden;border-radius:24px;border:1px solid rgba(129,140,248,.24);
  background:
-  radial-gradient(560px 300px at 18% 88%,rgba(34,211,238,.14),transparent 65%),
-  radial-gradient(520px 280px at 85% 12%,rgba(14,90,130,.28),transparent 70%),
-  linear-gradient(180deg,#081119 0%,#050c13 100%);
+  radial-gradient(560px 300px at 18% 88%,rgba(99,102,241,.16),transparent 65%),
+  radial-gradient(520px 280px at 85% 12%,rgba(147,51,234,.14),transparent 70%),
+  linear-gradient(180deg,#0a0f1f 0%,#04070f 100%);
  display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.45);}
 .pm-card:nth-child(1),.pm-card:nth-child(4){grid-column:span 12;}
 .pm-card:nth-child(2),.pm-card:nth-child(3){grid-column:span 6;}
@@ -680,7 +630,7 @@ export default function OptionPremium() {
 
 /* ===== process ===== */
 .pm-process{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:20px;overflow:hidden;
- background:rgba(9,17,25,.55);}
+ background:rgba(8,11,24,.55);}
 .pm-step{padding:26px 24px;border-left:1px solid var(--line);}
 .pm-step:first-child{border-left:none;}
 .pm-step-num{font-family:'Anton',sans-serif;font-size:14px;letter-spacing:3px;color:var(--cyan);}
@@ -689,7 +639,7 @@ export default function OptionPremium() {
 
 /* ===== feedback ===== */
 .pm-fb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
-.pm-fb{background:rgba(9,17,25,.55);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column;}
+.pm-fb{background:rgba(8,11,24,.55);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column;}
 .pm-fb-stars{color:#fbbf24;letter-spacing:2px;font-size:12.5px;margin-bottom:12px;}
 .pm-fb p{margin:0 0 18px;font-size:14px;line-height:1.65;color:#c7d6e2;flex:1;}
 .pm-fb-person{display:flex;align-items:center;gap:11px;}
@@ -715,6 +665,7 @@ export default function OptionPremium() {
 /* ===== tablet ===== */
 @media(max-width:980px){
  .pm-menu{display:none;}
+ .pm-hero{aspect-ratio:1.6;}
  .pm-services{grid-template-columns:1fr 1fr;gap:6px 0;}
  .pm-svc{padding:18px 22px;}
  .pm-svc:first-child{padding-left:22px;}
@@ -735,7 +686,8 @@ export default function OptionPremium() {
 /* ===== phone ===== */
 @media(max-width:560px){
  .pm-nav{padding:10px 14px;}
- .pm-hero{margin:10px;border-radius:20px;}
+ .pm-hero{margin:10px;border-radius:20px;aspect-ratio:1.15;max-height:none;}
+ .pm-hero-sub{font-size:12.5px;}
  .pm-services{grid-template-columns:1fr;}
  .pm-svc:nth-child(odd){padding-left:0;}
  .pm-svc:nth-child(n+2){border-top:1px solid var(--line);border-left:none;}
