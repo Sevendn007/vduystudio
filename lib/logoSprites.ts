@@ -44,19 +44,7 @@ function memo(key: string, fn: () => Promise<string>): Promise<string> {
 function keepLargeComponents(mask: Uint8Array, w: number, h: number, minSize: number): Uint8Array {
   const n = w * h;
   const label = new Int32Array(n);
-  const stack = new Int32Array(n);
-  const sizes: number[] = [0];
-  const touchesBottom: boolean[] = [false];
-  const bottomRow = n - w;
   let next = 1;
-  for (let i = 0; i < n; i++) {
-    if (!mask[i] || label[i]) continue;
-    let top = 0;
-    let count = 0;
-    let tb = false;
-    stack[top++] = i;
-    label[i] = next;
-    while (top > 0) {
   const uf = new Int32Array(n);
   for (let i = 0; i < n; i++) uf[i] = i;
   function find(i: number) {
@@ -112,7 +100,6 @@ function keepLargeComponents(mask: Uint8Array, w: number, h: number, minSize: nu
   }
   const keepLabel = new Uint8Array(next);
   for (let l = 1; l < next; l++) {
-    // Không dùng touchesBottom để tránh xóa nhầm logo chính. Giữ lại mảnh > 0.5% diện tích lớn nhất.
     keepLabel[l] = sizes[l] >= 20 && sizes[l] >= maxSize * 0.005 ? 1 : 0;
   }
   const out = new Uint8Array(n);
