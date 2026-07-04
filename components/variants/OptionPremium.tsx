@@ -8,6 +8,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PersonAvatar } from "@/components/brand";
+import { VDuyBadge } from "@/components/logo";
 import { useLang, LangToggle } from "@/lib/i18n";
 import { siteText, site } from "@/lib/site";
 import { getProcess } from "@/lib/services";
@@ -199,7 +200,10 @@ export default function OptionPremium() {
       {/* NAV */}
       <nav className="pm-nav">
         <a href="#pm-top" className="pm-brand">
-          <span className="pm-brandmark" role="img" aria-label="VDuyStudio" />
+          <span className="pm-brand-vd">
+            VD
+            <span className="pm-brand-badge"><VDuyBadge size={15} intro={false} /></span>
+          </span>
           <span className="pm-brandname">VDUYSTUDIO</span>
         </a>
         <div className="pm-menu">
@@ -213,21 +217,62 @@ export default function OptionPremium() {
         </div>
       </nav>
 
-      {/* HERO — logo.png thật: mark quay như địa cầu, hành tinh & sao lấp lánh */}
+      {/* HERO — logo vector nền trong suốt: monogram VD + tích xanh quay như
+          địa cầu trong vành elip; sao ✦ chớp nhẹ, hành tinh có vành đai */}
       <header className="pm-hero">
         <div className="pm-hero-fx" aria-hidden />
-        <span className="pm-planet p1" aria-hidden />
-        <span className="pm-planet p2" aria-hidden />
-        {["t1", "t2", "t3", "t4", "t5", "t6"].map((c) => (
-          <span key={c} className={`pm-twinkle ${c}`} aria-hidden />
+        <span className="pm-planet-a" aria-hidden>
+          <svg viewBox="0 0 72 44">
+            <defs>
+              <radialGradient id="pmPlA" cx="35%" cy="30%" r="80%">
+                <stop offset="0%" stopColor="#8fb4d4" />
+                <stop offset="55%" stopColor="#3d5a78" />
+                <stop offset="100%" stopColor="#131e2b" />
+              </radialGradient>
+              <linearGradient id="pmPlR" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="rgba(125,211,252,0)" />
+                <stop offset="50%" stopColor="rgba(125,211,252,.85)" />
+                <stop offset="100%" stopColor="rgba(167,139,250,0)" />
+              </linearGradient>
+            </defs>
+            <circle cx="36" cy="22" r="13" fill="url(#pmPlA)" />
+            <ellipse cx="36" cy="22" rx="28" ry="8" fill="none" stroke="url(#pmPlR)" strokeWidth="1.6" transform="rotate(-16 36 22)" />
+          </svg>
+        </span>
+        <span className="pm-moon" aria-hidden />
+        {[
+          { c: "t1", ch: "✦" },
+          { c: "t2", ch: "✧" },
+          { c: "t3", ch: "✦" },
+          { c: "t4", ch: "✦" },
+          { c: "t5", ch: "✧" },
+        ].map((s) => (
+          <span key={s.c} className={`pm-twinkle ${s.c}`} aria-hidden>{s.ch}</span>
         ))}
         <div className="pm-hero-logo">
-          <div className="pm-mark-wrap">
+          <div className="pm-mono-wrap">
+            <svg className="pm-ellipse" viewBox="0 0 440 200" aria-hidden>
+              <defs>
+                <linearGradient id="pmRing" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#67e8f9" />
+                  <stop offset="55%" stopColor="#818cf8" />
+                  <stop offset="100%" stopColor="#f0abfc" />
+                </linearGradient>
+              </defs>
+              <ellipse cx="220" cy="100" rx="206" ry="58" fill="none" stroke="url(#pmRing)" strokeWidth="3.5" opacity=".75" transform="rotate(-13 220 100)" />
+            </svg>
             <span className="pm-orbit" aria-hidden />
-            <span className="pm-orbit o2" aria-hidden />
-            <div className="pm-mark" role="img" aria-label="VDuyStudio" />
+            <div className="pm-mono">
+              <span className="pm-mono-txt">VD</span>
+              <span className="pm-mono-badge"><VDuyBadge size={48} intro={false} /></span>
+            </div>
           </div>
-          <div className="pm-word" aria-hidden />
+          <div className="pm-wordmark">
+            <span className="pm-w1">VDUY</span>
+            <span className="pm-w2">STUDIO</span>
+          </div>
+          <div className="pm-tagline">Digital Reputation Studio</div>
+          <span className="pm-beam" aria-hidden />
         </div>
         <p className="pm-hero-sub">{t.heroSub}</p>
       </header>
@@ -403,8 +448,10 @@ export default function OptionPremium() {
       {/* CTA / FOOTER */}
       <footer className="pm-footer">
         <div className="pm-container">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/logo.png" alt="VDuyStudio" className="pm-foot-logo" />
+          <div className="pm-wordmark small">
+            <span className="pm-w1">VDUY</span>
+            <span className="pm-w2">STUDIO</span>
+          </div>
           <h2 className="pm-foot-title">{t.cta}</h2>
           <a href={contact.zalo} target="_blank" rel="noreferrer" className="pm-btn">
             {t.btn}
@@ -441,10 +488,12 @@ export default function OptionPremium() {
 .pm-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:14px;
  padding:12px clamp(16px,4vw,36px);background:rgba(4,8,13,.78);backdrop-filter:blur(16px);border-bottom:1px solid rgba(120,180,215,.1);}
 .pm-brand{display:flex;align-items:center;gap:11px;min-width:0;}
-/* Mark VD + tích xanh tách từ logo.png (crop bằng background-position) */
-.pm-brandmark{width:40px;height:40px;border-radius:30%;flex-shrink:0;
- background:url('/images/logo.png') no-repeat #060a12;background-size:300% auto;background-position:55% 25%;
- box-shadow:0 0 0 1px rgba(120,180,215,.25),0 0 24px rgba(99,102,241,.4);}
+/* Mark nav: chữ VD gradient + badge tích xanh vector (nền trong suốt) */
+.pm-brand-vd{position:relative;font-family:'Anton',sans-serif;font-size:25px;line-height:1;flex-shrink:0;
+ background:linear-gradient(135deg,#7dd3fc 0%,#8b5cf6 68%,#e879f9 100%);
+ -webkit-background-clip:text;background-clip:text;color:transparent;
+ padding-right:11px;filter:drop-shadow(0 0 14px rgba(129,140,248,.5));}
+.pm-brand-badge{position:absolute;top:-7px;right:-4px;}
 .pm-brandname{font-family:'Anton',sans-serif;font-size:15px;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 20px rgba(56,189,248,.65);}
 .pm-menu{display:flex;gap:30px;font-size:13.5px;font-weight:600;color:var(--muted);}
 .pm-menu a{padding:8px 0;transition:.2s;}
@@ -472,50 +521,54 @@ export default function OptionPremium() {
   radial-gradient(1px 1px at 86% 58%,rgba(190,240,255,.6),transparent),
   radial-gradient(1.4px 1.4px at 93% 14%,rgba(255,255,255,.75),transparent),
   radial-gradient(1px 1px at 8% 82%,rgba(255,255,255,.5),transparent);}
-/* hero logo: mark quay như quả địa cầu + wordmark (đều crop từ logo.png) */
-.pm-hero-logo{position:relative;display:flex;flex-direction:column;align-items:center;gap:clamp(2px,1vw,10px);}
-.pm-mark-wrap{position:relative;perspective:1000px;width:clamp(250px,36vw,400px);aspect-ratio:1.23;
- animation:pmFloat 7s ease-in-out infinite;}
-.pm-mark{width:100%;height:100%;
- background:url('/images/logo.png') no-repeat;background-size:232% auto;background-position:58% 21%;
- -webkit-mask-image:radial-gradient(120% 120% at 50% 50%,#000 72%,transparent 100%);
- mask-image:radial-gradient(120% 120% at 50% 50%,#000 72%,transparent 100%);
- animation:pmGlobe 11s ease-in-out infinite;
- filter:drop-shadow(0 0 46px rgba(99,102,241,.35));}
+/* hero logo: monogram VD + badge quay như quả địa cầu, vành elip gradient */
+.pm-hero-logo{position:relative;display:flex;flex-direction:column;align-items:center;}
+.pm-mono-wrap{position:relative;perspective:1100px;display:flex;align-items:center;justify-content:center;
+ padding:clamp(24px,4vw,44px) clamp(56px,10vw,110px);animation:pmFloat 7s ease-in-out infinite;}
+.pm-ellipse{position:absolute;width:116%;left:-8%;top:50%;transform:translateY(-52%);pointer-events:none;
+ filter:drop-shadow(0 0 16px rgba(129,140,248,.45));}
+.pm-orbit{position:absolute;inset:0 4%;border:1px dashed rgba(56,189,248,.25);border-radius:50%;
+ animation:pmOrbitSpin 24s linear infinite;pointer-events:none;}
+.pm-orbit::after{content:"";position:absolute;top:-3px;left:calc(50% - 4px);width:8px;height:8px;border-radius:50%;
+ background:#7dd3fc;box-shadow:0 0 14px 3px rgba(56,189,248,.7);}
+@keyframes pmOrbitSpin{to{transform:rotate(360deg)}}
+.pm-mono{position:relative;animation:pmGlobe 11s ease-in-out infinite;transform-style:preserve-3d;}
 @keyframes pmGlobe{0%,58%{transform:rotateY(0deg)}79%,100%{transform:rotateY(360deg)}}
 @keyframes pmFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-.pm-orbit{position:absolute;inset:-6%;border:1px dashed rgba(56,189,248,.32);border-radius:50%;
- animation:pmOrbitSpin 20s linear infinite;pointer-events:none;}
-.pm-orbit::after{content:"";position:absolute;top:-4px;left:calc(50% - 4px);width:8px;height:8px;border-radius:50%;
- background:#7dd3fc;box-shadow:0 0 14px 3px rgba(56,189,248,.7);}
-.pm-orbit.o2{inset:-15%;border-color:rgba(167,139,250,.22);animation-duration:34s;animation-direction:reverse;}
-.pm-orbit.o2::after{width:6px;height:6px;background:#c4b5fd;box-shadow:0 0 12px 2px rgba(167,139,250,.7);}
-@keyframes pmOrbitSpin{to{transform:rotate(360deg)}}
-.pm-word{width:min(600px,82vw);aspect-ratio:3.37;
- background:url('/images/logo.png') no-repeat;background-size:189% auto;background-position:55.3% 94.4%;
- -webkit-mask-image:radial-gradient(85% 100% at 50% 50%,#000 58%,transparent 100%);
- mask-image:radial-gradient(85% 100% at 50% 50%,#000 58%,transparent 100%);
- filter:drop-shadow(0 10px 34px rgba(0,0,0,.55));}
-.pm-hero-sub{position:relative;margin:24px 0 0;font-size:clamp(15px,2.2vw,22px);font-weight:700;color:#eaf3f9;
+.pm-mono-txt{display:block;font-family:'Anton',sans-serif;font-size:clamp(110px,17vw,190px);line-height:1;letter-spacing:-.01em;
+ background:linear-gradient(132deg,#7dd3fc 4%,#60a5fa 34%,#8b5cf6 62%,#e879f9 96%);
+ -webkit-background-clip:text;background-clip:text;color:transparent;
+ filter:drop-shadow(0 8px 40px rgba(109,90,246,.45)) drop-shadow(0 0 26px rgba(56,189,248,.25));}
+.pm-mono-badge{position:absolute;top:-9%;right:-14%;}
+.pm-wordmark{font-family:var(--font-archivo),var(--font-grotesk),sans-serif;font-weight:900;font-stretch:125%;
+ font-size:clamp(36px,6.6vw,72px);line-height:1.05;letter-spacing:.01em;text-transform:uppercase;
+ margin-top:clamp(2px,1vw,10px);filter:drop-shadow(0 10px 30px rgba(0,0,0,.5));}
+.pm-w1{background:linear-gradient(180deg,#9edcff 0%,#5b8cff 48%,#8b5cf6 100%);
+ -webkit-background-clip:text;background-clip:text;color:transparent;}
+.pm-w2{background:linear-gradient(180deg,#ffffff 12%,#ccd9e4 42%,#8fa3b8 58%,#e9f1f8 100%);
+ -webkit-background-clip:text;background-clip:text;color:transparent;}
+.pm-tagline{margin-top:12px;font-size:clamp(10px,1.5vw,14px);font-weight:600;letter-spacing:.42em;
+ text-transform:uppercase;color:#b6c6d5;padding-left:.42em;}
+.pm-beam{display:block;width:min(430px,72vw);height:2px;margin:20px auto 0;border-radius:2px;
+ background:linear-gradient(90deg,transparent,#67e8f9 50%,transparent);box-shadow:0 0 18px rgba(103,232,249,.8);}
+.pm-hero-sub{position:relative;margin:26px 0 0;font-size:clamp(15px,2.2vw,22px);font-weight:700;color:#eaf3f9;
  text-shadow:0 2px 22px rgba(0,0,0,.6);}
 
-/* hành tinh trôi + sao chớp nhẹ */
-.pm-planet{position:absolute;border-radius:50%;pointer-events:none;}
-.pm-planet.p1{width:52px;height:52px;left:11%;top:24%;
- background:radial-gradient(circle at 32% 30%,#9fb3c8,#3c4a5c 58%,#111823);
- box-shadow:0 0 34px rgba(120,170,215,.28);animation:pmFloat 13s ease-in-out infinite;}
-.pm-planet.p2{width:30px;height:30px;right:13%;bottom:24%;
- background:radial-gradient(circle at 35% 30%,#c9b2ff,#5d43ac 58%,#221542);
- box-shadow:0 0 26px rgba(167,139,250,.35);animation:pmFloat 9s ease-in-out infinite reverse;}
-.pm-twinkle{position:absolute;width:4px;height:4px;border-radius:50%;background:#fff;pointer-events:none;
- box-shadow:0 0 12px 3px rgba(190,240,255,.75);opacity:0;animation:pmTwinkle 4.5s ease-in-out infinite;}
-.pm-twinkle.t1{top:20%;left:26%;animation-delay:.2s;}
-.pm-twinkle.t2{top:14%;left:64%;animation-delay:1.4s;animation-duration:5.5s;}
-.pm-twinkle.t3{top:38%;left:82%;animation-delay:2.6s;}
-.pm-twinkle.t4{top:66%;left:18%;animation-delay:3.2s;animation-duration:6s;}
-.pm-twinkle.t5{top:74%;left:70%;animation-delay:.9s;}
-.pm-twinkle.t6{top:48%;left:8%;animation-delay:2s;animation-duration:5s;}
-@keyframes pmTwinkle{0%,100%{opacity:0;transform:scale(.5)}50%{opacity:.95;transform:scale(1.15)}}
+/* hành tinh có vành đai + mặt trăng + sao ✦ chớp nhẹ */
+.pm-planet-a{position:absolute;left:9%;top:20%;width:clamp(54px,7vw,84px);opacity:.85;
+ pointer-events:none;animation:pmFloat 14s ease-in-out infinite;}
+.pm-planet-a svg{width:100%;height:auto;display:block;}
+.pm-moon{position:absolute;right:11%;bottom:26%;width:20px;height:20px;border-radius:50%;pointer-events:none;
+ background:radial-gradient(circle at 34% 30%,#aab8c8,#5c6b7d 60%,#232e3b);
+ box-shadow:0 0 18px rgba(150,180,210,.25);animation:pmFloat 10s ease-in-out infinite reverse;}
+.pm-twinkle{position:absolute;color:#d9efff;opacity:0;pointer-events:none;line-height:1;
+ text-shadow:0 0 14px rgba(147,214,252,.9),0 0 4px #fff;animation:pmTwinkle 5s ease-in-out infinite;}
+.pm-twinkle.t1{top:18%;left:24%;font-size:15px;animation-delay:.3s;}
+.pm-twinkle.t2{top:13%;right:27%;font-size:11px;animation-delay:1.8s;animation-duration:6s;}
+.pm-twinkle.t3{top:58%;left:11%;font-size:13px;animation-delay:3s;}
+.pm-twinkle.t4{bottom:20%;right:15%;font-size:16px;animation-delay:1.1s;animation-duration:6.5s;}
+.pm-twinkle.t5{bottom:32%;left:31%;font-size:10px;animation-delay:4s;}
+@keyframes pmTwinkle{0%,100%{opacity:0;transform:scale(.5) rotate(0deg)}50%{opacity:.75;transform:scale(1) rotate(24deg)}}
 
 /* ===== marquee thương hiệu ===== */
 .pm-marquee-wrap{display:flex;align-items:center;margin:26px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
@@ -645,9 +698,7 @@ export default function OptionPremium() {
 
 /* ===== footer ===== */
 .pm-footer{padding:clamp(56px,8vw,96px) 0 0;text-align:center;}
-.pm-foot-logo{display:block;width:min(480px,84vw);margin:0 auto;
- -webkit-mask-image:radial-gradient(72% 72% at 50% 50%,#000 52%,transparent 98%);
- mask-image:radial-gradient(72% 72% at 50% 50%,#000 52%,transparent 98%);}
+.pm-wordmark.small{font-size:clamp(26px,4vw,42px);margin-bottom:10px;}
 .pm-foot-title{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(34px,6vw,64px);text-transform:uppercase;
  letter-spacing:1px;margin:6px 0 30px;
  background:linear-gradient(180deg,#fff 20%,#9db3c5 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
