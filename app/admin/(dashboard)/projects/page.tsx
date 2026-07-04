@@ -25,6 +25,13 @@ const PLATFORMS = [
   { value: "bao-chi", label: "Báo chí" },
 ];
 
+const SERVICE_TAGS = [
+  "Tích xanh",
+  "Kháng Page",
+  "Booking viết bài",
+  "Mở khoá chức năng",
+];
+
 const inputCls =
   "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none";
 
@@ -128,15 +135,18 @@ export default function ProjectsPage() {
           <input required value={title} onChange={(e) => setTitle(e.target.value)} className={inputCls} placeholder="@brand.hub — 2.1M follow" />
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-700">Loại dịch vụ (Nền tảng)</label>
-          <input list="platform-list" value={platform} onChange={(e) => setPlatform(e.target.value)} className={inputCls} placeholder="Chọn hoặc nhập tự do..." />
-          <datalist id="platform-list">
+          <label className="text-sm font-medium text-gray-700">Nền tảng</label>
+          <select value={platform} onChange={(e) => setPlatform(e.target.value)} className={inputCls}>
             {PLATFORMS.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
-          </datalist>
+          </select>
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-700">Nhãn (hiện trên ảnh)</label>
-          <input value={tag} onChange={(e) => setTag(e.target.value)} className={inputCls} placeholder="TikTok · Tích xanh" />
+          <label className="text-sm font-medium text-gray-700">Loại dịch vụ (Nhãn hiện trên ảnh)</label>
+          <input list="tag-list" value={tag} onChange={(e) => setTag(e.target.value)} className={inputCls} placeholder="Chọn hoặc nhập tự do..." />
+          <datalist id="tag-list">
+            {SERVICE_TAGS.map((t) => (<option key={t} value={t} />))}
+          </datalist>
+          <p className="mt-1 text-xs text-gray-400">Chọn 1 trong 4 loại có sẵn để hiển thị icon dịch vụ, hoặc nhập tự do (không có icon)</p>
         </div>
         <div>
           <label className="text-sm font-medium text-gray-700">Kết quả</label>

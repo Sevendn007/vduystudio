@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Font logo: Druk Wide Super (font thương mại — thả file .woff2 vào public/fonts/
    là tự nhận). Khi chưa có file, chữ logo fallback sang Archivo Expanded 900. */
 @font-face {

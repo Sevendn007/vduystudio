@@ -105,16 +105,20 @@ const TX = {
   },
 };
 
-// Icon 3D theo LOẠI DỊCH VỤ của dự án (suy từ tag/platform admin nhập):
-// tích xanh → badge check 3D; mở khóa → ổ khóa; booking/PR/báo chí → loa.
-// Tất cả lắc nhẹ quanh trục dọc + glow teal.
+// Icon 3D theo LOẠI DỊCH VỤ (tag) admin nhập:
+// "Tích xanh" / "Kháng Page" → badge check 3D (verify)
+// "Mở khoá chức năng"       → ổ khóa (unlock)
+// "Booking viết bài"        → loa (press)
+// Tag tự do / không khớp    → không hiển thị icon (null)
 function ServiceIcon3D({ tag, platform, size = 64 }: { tag?: string | null; platform?: string | null; size?: number }) {
   const key = `${tag ?? ""} ${platform ?? ""}`.toLowerCase();
-  const kind = /khóa|khoá|unlock|rescue|mở|recover/.test(key)
+  const kind = /mở kho[áa]|unlock|rescue|recover/.test(key)
     ? "unlock"
-    : /book|pr\b|báo|press|media|bao-chi/.test(key)
+    : /book|viết bài|pr\b|báo|press|media|bao-chi/.test(key)
       ? "press"
-      : "verify";
+      : /tích xanh|kháng|verif|badge/.test(key)
+        ? "verify"
+        : null;
   return (
     <span className="pm-sic" style={{ width: size, height: size }} aria-hidden>
       {kind === "verify" && <VDuyBadge size={size} intro={false} />}
@@ -566,14 +570,14 @@ export default function OptionPremium() {
 .pm-svc:hover{border-color:rgba(45,212,191,.5);background:rgba(45,212,191,.05);transform:translateY(-4px);}
 
 /* ===== bento portfolio ===== */
-.pm-bento{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;grid-auto-rows:1fr;}
+.pm-bento{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;}
 .pm-card{position:relative;overflow:hidden;border-radius:24px;border:1px solid rgba(45,212,191,.22);
  background:
   radial-gradient(560px 300px at 18% 88%,rgba(13,148,136,.16),transparent 65%),
   radial-gradient(520px 280px at 85% 12%,rgba(8,145,178,.15),transparent 70%),
   linear-gradient(180deg,#06161c 0%,#03090d 100%);
- display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.45);
- container-type:inline-size;height:100%;justify-content:center;}
+ display:flex;flex-direction:column;justify-content:center;box-shadow:0 24px 60px rgba(0,0,0,.45);
+ container-type:inline-size;max-height:calc(100svh - 120px);}
 .pm-card:nth-child(1),.pm-card:nth-child(4){grid-column:span 12;}
 .pm-card:nth-child(2),.pm-card:nth-child(3){grid-column:span 6;}
 
