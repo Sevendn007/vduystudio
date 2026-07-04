@@ -113,13 +113,13 @@ const TX = {
 // Tag tự do / không khớp → không hiển thị icon
 function ServiceIcon3D({ tag, platform, size = 64 }: { tag?: string | null; platform?: string | null; size?: number }) {
   const key = `${tag ?? ""} ${platform ?? ""}`.toLowerCase();
-  const kind = /mở kho[áa]|unlock|rescue|recover/.test(key)
+  const kind = /kh[oó][aá]|unlock|rescue|recover/.test(key)
     ? "unlock"
-    : /book|viết bài|pr\b|báo|press|media|bao-chi/.test(key)
+    : /book|vi[eế]t b[aà]i|pr\b|b[aá]o|press|media|bao-chi/.test(key)
       ? "press"
-      : /kháng|shield|protect/.test(key)
+      : /kh[aá]ng|shield|protect/.test(key)
         ? "shield"
-        : /tích xanh|verif|badge/.test(key)
+        : /t[ií]ch|verif|badge|verification/.test(key)
           ? "verify"
           : null;
   return (
@@ -354,7 +354,7 @@ export default function OptionPremium() {
                     <div className="pm-stage side-stage">
                       <div className="pm-ovl num">
                         <span className="pm-ovl-ic" aria-hidden>
-                          <ServiceIcon3D tag={p.tag} platform={p.platform} size={44} />
+                          <ServiceIcon3D tag={p.tag} platform={p.platform} size={54} />
                         </span>
                         <b>{p.tag ?? platformName}</b>
                         <span>{platformName}</span>
