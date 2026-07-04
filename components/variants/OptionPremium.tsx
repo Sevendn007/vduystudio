@@ -303,7 +303,7 @@ export default function OptionPremium() {
             {projects.slice(0, 4).map((p, i) => {
               // Ảnh dự phòng theo vị trí (d1–d4) khi ảnh DB lỗi/thiếu.
               const fb = DEFAULT_PROJECTS[i]?.image_url ?? null;
-              const platformName = PLATFORM_NAME[p.platform ?? ""] ?? "TikTok";
+              const platformName = PLATFORM_NAME[p.platform ?? ""] ?? p.platform ?? "TikTok";
               const icon = ICON_OF[p.platform ?? ""] ?? "tiktok";
               return (
                 <article className="pm-card" key={p.id}>
@@ -321,6 +321,7 @@ export default function OptionPremium() {
                       <span className="pm-card-icon big" aria-hidden>
                         <ServiceIcon3D tag={p.tag} platform={p.platform} size={96} />
                       </span>
+                      {p.date && <div className="pm-year" aria-hidden>{p.date}</div>}
                     </div>
                   )}
 
@@ -334,6 +335,7 @@ export default function OptionPremium() {
                         <span>{platformName}</span>
                       </div>
                       <IPhone src={p.image_url} fallback={fb} alt={p.title} size="md" tilt={i === 1 ? "l" : "r"} />
+                      {p.date && <div className="pm-year side-year" aria-hidden>{p.date}</div>}
                     </div>
                   )}
 
@@ -400,9 +402,12 @@ export default function OptionPremium() {
         <div className="pm-container">
           <h2 className="pm-label">{t.feedback}</h2>
           <div className="pm-fb-grid">
-            {feedbacks.slice(0, 3).map((c, i) => (
+            {feedbacks.map((c, i) => (
               <div className="pm-fb" key={c.id}>
-                <div className="pm-fb-stars">{"★".repeat(Math.min(5, Math.max(1, c.rating ?? 5)))}</div>
+                <div className="pm-fb-header">
+                  <div className="pm-fb-stars">{"★".repeat(Math.min(5, Math.max(1, c.rating ?? 5)))}</div>
+                  {c.date && <span className="pm-fb-date">{c.date}</span>}
+                </div>
                 <p>“{c.quote}”</p>
                 <div className="pm-fb-person">
                   <PersonAvatar name={c.name} avatarUrl={c.image_url} hue={hueOf(i)} size={40} />
@@ -639,6 +644,13 @@ export default function OptionPremium() {
 .pm-card-info h3{font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(19px,2.2vw,25px);margin:0 0 6px;letter-spacing:.5px;}
 .pm-card-info p{margin:0;color:var(--muted);font-size:13px;}
 
+.pm-year{font-family:'Anton',sans-serif;font-size:clamp(58px,8.5vw,128px);letter-spacing:2px;line-height:1;
+ background:linear-gradient(180deg,#7dd3fc 0%,#0ea5e9 52%,#075985 100%);
+ -webkit-background-clip:text;background-clip:text;color:transparent;
+ filter:drop-shadow(0 10px 34px rgba(2,60,90,.65));position:absolute;z-index:0;opacity:0.3;pointer-events:none;}
+.hero-stage .pm-year{bottom:10%;left:5%;}
+.side-stage .pm-year{bottom:25%;right:5%;font-size:clamp(48px,5vw,90px);}
+
 /* ===== iPhone mockup: style nằm trong premiumKit ===== */
 
 /* ===== clients ===== */
@@ -659,9 +671,12 @@ export default function OptionPremium() {
 .pm-step p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.6;}
 
 /* ===== feedback ===== */
-.pm-fb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
-.pm-fb{background:rgba(8,11,24,.55);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column;}
-.pm-fb-stars{color:#fbbf24;letter-spacing:2px;font-size:12.5px;margin-bottom:12px;}
+.pm-fb-grid{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:16px;scrollbar-width:none;}
+.pm-fb-grid::-webkit-scrollbar{display:none;}
+.pm-fb{flex:0 0 calc(33.333% - 14px);min-width:300px;background:rgba(8,11,24,.55);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column;scroll-snap-align:start;}
+.pm-fb-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.pm-fb-stars{color:#fbbf24;letter-spacing:2px;font-size:12.5px;}
+.pm-fb-date{font-size:11.5px;color:var(--muted);}
 .pm-fb p{margin:0 0 18px;font-size:14px;line-height:1.65;color:#c7d6e2;flex:1;}
 .pm-fb-person{display:flex;align-items:center;gap:11px;}
 .pm-fb-person b{display:block;font-size:13.5px;}

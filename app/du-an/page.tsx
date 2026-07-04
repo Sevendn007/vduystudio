@@ -67,11 +67,12 @@ export default function AllProjectsPage() {
 
       <main className="pj-grid">
         {projects.map((p, i) => {
-          const platformName = PLATFORM_NAME[p.platform ?? ""] ?? "TikTok";
+          const platformName = PLATFORM_NAME[p.platform ?? ""] ?? p.platform ?? "TikTok";
           const icon = ICON_OF[p.platform ?? ""] ?? "tiktok";
           return (
             <article className="pj-card" key={p.id} style={{ animationDelay: `${(i % 8) * 0.06}s` }}>
               <IPhone src={p.image_url} fallback={DEFAULT_PROJECTS[i % 4]?.image_url} alt={p.title} size="sm" />
+              {p.date && <div className="pj-date" aria-hidden>{p.date}</div>}
               <div className="pj-info">
                 <span className="pj-plat">
                   <PlatformIcon kind={icon} size={22} />
@@ -116,6 +117,10 @@ export default function AllProjectsPage() {
  animation:pjIn .5s ease both;}
 @keyframes pjIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .pj-card:hover{border-color:rgba(45,212,191,.5);transform:translateY(-4px);box-shadow:0 20px 44px rgba(0,0,0,.45);}
+.pj-date{font-family:'Anton',sans-serif;font-size:52px;letter-spacing:1px;line-height:1;margin:-10px 0 6px;
+ background:linear-gradient(180deg,#7dd3fc 0%,#0ea5e9 52%,#075985 100%);
+ -webkit-background-clip:text;background-clip:text;color:transparent;
+ filter:drop-shadow(0 6px 20px rgba(2,60,90,.5));opacity:0.6;}
 .pj-info{text-align:center;}
 .pj-plat{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--cyan);
  letter-spacing:.5px;margin-bottom:8px;}

@@ -11,6 +11,8 @@ export type DbFeedback = {
   quote: string;
   rating: number | null;
   image_url: string | null;
+  sort_order: number | null;
+  date: string | null;
 };
 
 export type DbProject = {
@@ -18,8 +20,10 @@ export type DbProject = {
   title: string;
   tag: string | null;
   result: string | null;
-  platform: string | null; // slug: tiktok | facebook | instagram-threads | bao-chi
+  platform: string | null;
   image_url: string | null;
+  sort_order: number | null;
+  date: string | null;
 };
 
 export type DbPriceRow = {
@@ -43,7 +47,8 @@ export async function fetchFeedbacks(): Promise<DbFeedback[] | null> {
   try {
     const { data, error } = await createClient()
       .from("feedbacks")
-      .select("id,name,company,quote,rating,image_url")
+      .select("id,name,company,quote,rating,image_url,sort_order,date")
+      .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false })
       .limit(9);
     if (error || !data || data.length === 0) return null;
@@ -58,7 +63,8 @@ export async function fetchProjects(): Promise<DbProject[] | null> {
   try {
     const { data, error } = await createClient()
       .from("projects")
-      .select("id,title,tag,result,platform,image_url")
+      .select("id,title,tag,result,platform,image_url,sort_order,date")
+      .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false })
       .limit(6);
     if (error || !data || data.length === 0) return null;
@@ -74,7 +80,8 @@ export async function fetchAllProjects(): Promise<DbProject[] | null> {
   try {
     const { data, error } = await createClient()
       .from("projects")
-      .select("id,title,tag,result,platform,image_url")
+      .select("id,title,tag,result,platform,image_url,sort_order,date")
+      .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false })
       .limit(100);
     if (error || !data || data.length === 0) return null;

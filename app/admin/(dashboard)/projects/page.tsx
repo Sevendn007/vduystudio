@@ -14,6 +14,8 @@ type Project = {
   result: string | null;
   platform: string | null;
   image_url: string | null;
+  sort_order: number | null;
+  date: string | null;
 };
 
 const PLATFORMS = [
@@ -38,6 +40,8 @@ export default function ProjectsPage() {
   const [tag, setTag] = useState("");
   const [result, setResult] = useState("");
   const [platform, setPlatform] = useState("tiktok");
+  const [sortOrder, setSortOrder] = useState("");
+  const [date, setDate] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -47,7 +51,8 @@ export default function ProjectsPage() {
     (async () => {
       const { data } = await supabase
         .from("projects")
-        .select("id,title,tag,result,platform,image_url")
+        .select("id,title,tag,result,platform,image_url,sort_order,date")
+        .order("sort_order", { ascending: true })
         .order("created_at", { ascending: false });
       setItems((data as Project[]) ?? []);
       setLoading(false);
@@ -57,13 +62,13 @@ export default function ProjectsPage() {
 
   const resetForm = () => {
     setEditingId(null); setTitle(""); setTag(""); setResult(""); setPlatform("tiktok");
-    setFile(null); setPreview(null);
+    setSortOrder(""); setDate(""); setFile(null); setPreview(null);
     if (fileRef.current) fileRef.current.value = "";
   };
 
   const startEdit = (p: Project) => {
     setEditingId(p.id); setTitle(p.title); setTag(p.tag ?? ""); setResult(p.result ?? "");
-    setPlatform(p.platform ?? "tiktok"); setFile(null); setPreview(p.image_url);
+    setPlatform(p.platform ?? "tiktok"); setSortOrder(p.sort_order?.toString() ?? ""); setDate(p.date ?? ""); setFile(null); setPreview(p.image_url);
     if (fileRef.current) fileRef.current.value = "";
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -80,16 +85,16 @@ export default function ProjectsPage() {
     try {
       let image_url: string | null = preview && preview.startsWith("http") ? preview : null;
       if (file) image_url = await uploadImage(file);
-      const payload = { title, tag: tag || null, result: result || null, platform, image_url };
+      const payload = { title, tag: tag || null, result: result || null, platform, image_url, sort_order: sortOrder ? parseInt(sortOrder) : null, date: date || null };
 
       if (editingId) {
-        const { data, error } = await supabase.from("projects").update(payload).eq("id", editingId).select("id,title,tag,result,platform,image_url");
+        const { data, error } = await supabase.from("projects").update(payload).eq("id", editingId).select("id,title,tag,result,platform,image_url,sort_order,date");
         if (error) throw new Error(error.message);
-        if (data) setItems(items.map((p) => (p.id === editingId ? (data[0] as Project) : p)));
+        if (data) setItems(items.map((p) => (p.id === editingId ? (data[0] as Project) : p)).sort((a, b) => (a.sort_order || 999) - (b.sort_order || 999)));
       } else {
-        const { data, error } = await supabase.from("projects").insert([payload]).select("id,title,tag,result,platform,image_url");
+        const { data, error } = await supabase.from("projects").insert([payload]).select("id,title,tag,result,platform,image_url,sort_order,date");
         if (error) throw new Error(error.message);
-        if (data) setItems([data[0] as Project, ...items]);
+        if (data) setItems([...items, data[0] as Project].sort((a, b) => (a.sort_order || 999) - (b.sort_order || 999)));
       }
       resetForm();
     } catch (err) {
@@ -123,10 +128,11 @@ export default function ProjectsPage() {
           <input required value={title} onChange={(e) => setTitle(e.target.value)} className={inputCls} placeholder="@brand.hub — 2.1M follow" />
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-700">Nền tảng</label>
-          <select value={platform} onChange={(e) => setPlatform(e.target.value)} className={inputCls}>
+          <label className="text-sm font-medium text-gray-700">Loại dịch vụ (Nền tảng)</label>
+          <input list="platform-list" value={platform} onChange={(e) => setPlatform(e.target.value)} className={inputCls} placeholder="Chọn hoặc nhập tự do..." />
+          <datalist id="platform-list">
             {PLATFORMS.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
-          </select>
+          </datalist>
         </div>
         <div>
           <label className="text-sm font-medium text-gray-700">Nhãn (hiện trên ảnh)</label>
@@ -135,6 +141,14 @@ export default function ProjectsPage() {
         <div>
           <label className="text-sm font-medium text-gray-700">Kết quả</label>
           <input value={result} onChange={(e) => setResult(e.target.value)} className={inputCls} placeholder="Tích xanh sau 18 ngày" />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-gray-700">Thứ tự sắp xếp</label>
+          <input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} className={inputCls} placeholder="1, 2, 3... (nhỏ xếp trước)" />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-gray-700">Thời gian (hiển thị trên thẻ)</label>
+          <input value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} placeholder="2024, 07/2024..." />
         </div>
         <div className="md:col-span-2">
           <label className="text-sm font-medium text-gray-700">Ảnh dự án (tùy chọn)</label>

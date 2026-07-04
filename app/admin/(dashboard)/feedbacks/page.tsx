@@ -14,6 +14,8 @@ type Feedback = {
   quote: string;
   rating: number | null;
   image_url: string | null;
+  sort_order: number | null;
+  date: string | null;
 };
 
 const inputCls =
@@ -31,6 +33,8 @@ export default function FeedbacksPage() {
   const [company, setCompany] = useState("");
   const [quote, setQuote] = useState("");
   const [rating, setRating] = useState(5);
+  const [sortOrder, setSortOrder] = useState("");
+  const [date, setDate] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -40,7 +44,8 @@ export default function FeedbacksPage() {
     (async () => {
       const { data } = await supabase
         .from("feedbacks")
-        .select("id,name,company,quote,rating,image_url")
+        .select("id,name,company,quote,rating,image_url,sort_order,date")
+        .order("sort_order", { ascending: true })
         .order("created_at", { ascending: false });
       setItems((data as Feedback[]) ?? []);
       setLoading(false);
@@ -50,13 +55,13 @@ export default function FeedbacksPage() {
 
   const resetForm = () => {
     setEditingId(null); setName(""); setCompany(""); setQuote(""); setRating(5);
-    setFile(null); setPreview(null);
+    setSortOrder(""); setDate(""); setFile(null); setPreview(null);
     if (fileRef.current) fileRef.current.value = "";
   };
 
   const startEdit = (f: Feedback) => {
     setEditingId(f.id); setName(f.name); setCompany(f.company ?? "");
-    setQuote(f.quote); setRating(f.rating ?? 5);
+    setQuote(f.quote); setRating(f.rating ?? 5); setSortOrder(f.sort_order?.toString() ?? ""); setDate(f.date ?? "");
     setFile(null); setPreview(f.image_url);
     if (fileRef.current) fileRef.current.value = "";
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -74,16 +79,16 @@ export default function FeedbacksPage() {
     try {
       let image_url: string | null = preview && preview.startsWith("http") ? preview : null;
       if (file) image_url = await uploadImage(file);
-      const payload = { name, company: company || null, quote, rating, image_url };
+      const payload = { name, company: company || null, quote, rating, image_url, sort_order: sortOrder ? parseInt(sortOrder) : null, date: date || null };
 
       if (editingId) {
-        const { data, error } = await supabase.from("feedbacks").update(payload).eq("id", editingId).select("id,name,company,quote,rating,image_url");
+        const { data, error } = await supabase.from("feedbacks").update(payload).eq("id", editingId).select("id,name,company,quote,rating,image_url,sort_order,date");
         if (error) throw new Error(error.message);
-        if (data) setItems(items.map((f) => (f.id === editingId ? (data[0] as Feedback) : f)));
+        if (data) setItems(items.map((f) => (f.id === editingId ? (data[0] as Feedback) : f)).sort((a, b) => (a.sort_order || 999) - (b.sort_order || 999)));
       } else {
-        const { data, error } = await supabase.from("feedbacks").insert([payload]).select("id,name,company,quote,rating,image_url");
+        const { data, error } = await supabase.from("feedbacks").insert([payload]).select("id,name,company,quote,rating,image_url,sort_order,date");
         if (error) throw new Error(error.message);
-        if (data) setItems([data[0] as Feedback, ...items]);
+        if (data) setItems([...items, data[0] as Feedback].sort((a, b) => (a.sort_order || 999) - (b.sort_order || 999)));
       }
       resetForm();
     } catch (err) {
@@ -131,6 +136,14 @@ export default function FeedbacksPage() {
           </select>
         </div>
         <div>
+          <label className="text-sm font-medium text-gray-700">Thứ tự sắp xếp</label>
+          <input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} className={inputCls} placeholder="1, 2, 3... (nhỏ xếp trước)" />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-gray-700">Thời gian</label>
+          <input value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} placeholder="VD: Hôm qua, 1 tuần trước..." />
+        </div>
+        <div className="md:col-span-2">
           <label className="text-sm font-medium text-gray-700">Ảnh minh chứng (tùy chọn)</label>
           <label className="mt-1 flex items-center gap-2 rounded-lg border border-dashed border-gray-300 px-3 py-2.5 text-sm text-gray-600 cursor-pointer hover:border-blue-400">
             <ImagePlus className="h-4 w-4" />{file ? file.name : "Chọn ảnh…"}
