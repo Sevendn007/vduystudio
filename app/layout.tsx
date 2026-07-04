@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk, Archivo } from "next/font/google";
+import { Inter, Oswald, Anton } from "next/font/google";
 import "./globals.css";
 import ChatFab from "@/components/ChatFab";
 import { LangProvider } from "@/lib/i18n";
@@ -10,18 +10,17 @@ const inter = Inter({
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
+const oswald = Oswald({
   subsets: ["latin", "vietnamese"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-grotesk",
+  variable: "--font-oswald",
   display: "swap",
 });
 
-// Fallback cho Druk Wide Super: Archivo variable (trục width mở rộng tới 125%).
-const archivo = Archivo({
+const anton = Anton({
   subsets: ["latin", "vietnamese"],
-  axes: ["wdth"],
-  variable: "--font-archivo",
+  weight: "400",
+  variable: "--font-anton",
   display: "swap",
 });
 
@@ -56,7 +55,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${inter.variable} ${spaceGrotesk.variable} ${archivo.variable}`}
+      className={`${inter.variable} ${oswald.variable} ${anton.variable}`}
     >
       <body>
         <LangProvider>

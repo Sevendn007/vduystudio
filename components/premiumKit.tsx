@@ -60,17 +60,6 @@ export function Mark3D({ layers = 32, className, alt = "" }: { layers?: number; 
             />
           );
         })}
-      <style>{`
-.pm-mark-stack{position:relative;width:100%;aspect-ratio:1.32;transform-style:preserve-3d;
- animation:pmSpinY 20s linear infinite;will-change:transform;}
-.pm-mark-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;will-change:transform;}
-/* lớp hông: không dùng drop-shadow nặng — brightness + opacity nhẹ cho mượt FPS */
-.pm-mark-stack img.side{filter:brightness(1.5);opacity:.18;}
-.pm-mark-stack img.front,.pm-mark-stack img.back{filter:drop-shadow(0 22px 50px rgba(20,184,166,.35)) drop-shadow(0 0 40px rgba(45,212,191,.2));}
-.pm-mark-stack.nav{animation-duration:14s;}
-@keyframes pmSpinY{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
-@media(prefers-reduced-motion:reduce){.pm-mark-stack{animation:none;}}
-      `}</style>
     </div>
   );
 }
@@ -87,24 +76,6 @@ export function Wordmark({ className, part = "full" }: { className?: string; par
         {part !== "vduy" && <em>STUDIO</em>}
       </span>
       <span className="pm-wm-shine" aria-hidden>{text}</span>
-      <style>{`
-@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
-.pm-wm{position:relative;display:inline-block;font-family:'Anton',sans-serif;font-weight:400;line-height:1;
- letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;}
-.pm-wm-base i{font-style:normal;background:linear-gradient(180deg,#a7f3d0 0%,#2dd4bf 45%,#0e7490 100%);
- -webkit-background-clip:text;background-clip:text;color:transparent;}
-.pm-wm-base em{font-style:normal;background:linear-gradient(180deg,#ffffff 10%,#cfdae4 40%,#8fa3b8 55%,#eef4f9 78%,#aab9c9 100%);
- -webkit-background-clip:text;background-clip:text;color:transparent;}
-.pm-wm-shine{position:absolute;inset:0;pointer-events:none;
- background:linear-gradient(110deg,transparent 42%,rgba(255,255,255,.9) 50%,transparent 58%);
- background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
- animation:pmShine 4.2s ease-in-out infinite alternate;}
-@keyframes pmShine{from{background-position:130% 0}to{background-position:-130% 0}}
-.pm-wm.nav{font-size:16px;letter-spacing:.08em;}
-.pm-wm.foot{font-size:clamp(26px,4vw,42px);}
-.pm-wm.hero{font-size:inherit;letter-spacing:inherit;line-height:inherit;}
-@media(prefers-reduced-motion:reduce){.pm-wm-shine{animation:none;opacity:0;}}
-      `}</style>
     </span>
   );
 }
@@ -125,31 +96,6 @@ export function IPhone({ src, fallback, alt, size = "md", tilt }: { src: string 
         )}
         <span className="pm-island" />
       </div>
-      <style>{`
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@600&display=swap');
-.pm-phone{position:relative;flex-shrink:0;border-radius:46px;padding:7px;
- background:linear-gradient(160deg,#57616e 0%,#181e28 26%,#0a0f16 72%,#3b4450 100%);
- box-shadow:0 34px 74px rgba(0,0,0,.62),0 0 56px rgba(45,212,191,.13),inset 0 0 2px rgba(255,255,255,.4);}
-.pm-phone::before{content:"";position:absolute;right:-2.5px;top:118px;width:3px;height:62px;border-radius:2px;background:#3b4450;}
-.pm-phone::after{content:"";position:absolute;left:-2.5px;top:96px;width:3px;height:30px;border-radius:2px;background:#3b4450;box-shadow:0 44px 0 #3b4450;}
-.pm-phone.lg{width:clamp(210px,22vw,252px);}
-.pm-phone.md{width:clamp(190px,20vw,218px);}
-.pm-phone.sm{width:180px;}
-.pm-phone.tilt-l{transform:rotate(-6deg);}
-.pm-phone.tilt-r{transform:rotate(6deg);}
-.pm-phone-screen{position:relative;border-radius:39px;overflow:hidden;aspect-ratio:1320/2868;background:#000;}
-.pm-phone-screen img{width:100%;height:100%;object-fit:cover;display:block;}
-.pm-phone-screen::after{content:"";position:absolute;inset:0;pointer-events:none;
- background:linear-gradient(115deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.03) 26%,transparent 44%);}
-.pm-island{position:absolute;top:13px;left:50%;transform:translateX(-50%);width:27%;height:21px;background:#000;
- border-radius:20px;z-index:5;box-shadow:inset 0 0 3px rgba(255,255,255,.18);}
-.pm-phone-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#3d6464;
- font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:12px;}
-@media(max-width:560px){
- .pm-phone.lg,.pm-phone.md,.pm-phone.sm{width:min(210px,58vw);}
- .pm-phone.tilt-l,.pm-phone.tilt-r{transform:none;}
-}
-      `}</style>
     </div>
   );
 }
