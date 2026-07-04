@@ -575,7 +575,7 @@ export default function OptionPremium() {
 /* cụm nội dung hero */
 .pm-hero-inner{position:relative;display:flex;flex-direction:column;align-items:center;max-width:1400px;width:100%;}
 .pm-hero-logo-row{display:flex;align-items:center;justify-content:center;width:100%;margin-bottom:12px;gap:0;max-width:98vw;}
-.pm-mark3d{position:relative;width:clamp(220px,36vw,510px);perspective:1300px;z-index:10;flex-shrink:0;}
+.pm-mark3d{position:relative;width:clamp(220px,36vw,480px);perspective:1300px;z-index:10;flex-shrink:0;}
 /* mark 3D nhiều lớp — có độ dày, nhìn nghiêng thấy cạnh khi xoay */
 .pm-mark-stack{position:relative;width:100%;aspect-ratio:1.32;transform-style:preserve-3d;
  animation:pmSpinY 20s linear infinite;will-change:transform;}
@@ -588,15 +588,16 @@ export default function OptionPremium() {
 .pm-mark-glow{position:absolute;left:50%;bottom:-6%;transform:translateX(-50%);width:72%;height:36px;border-radius:50%;
  background:radial-gradient(ellipse,rgba(20,184,166,.45),transparent 70%);filter:blur(9px);}
 .pm-word3d{position:relative;display:inline-block;z-index:1;
- font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(60px,11.5vw,180px);line-height:0.85;letter-spacing:-0.01em;transform:scaleY(1.5);
+ font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(50px,11vw,170px);line-height:1.2;letter-spacing:-0.05em;transform:scaleY(1.7);
  background:linear-gradient(180deg,#f0f9ff 0%,#e0f2fe 45%,#bae6fd 100%);
- -webkit-background-clip:text;background-clip:text;color:transparent;}
-.pm-word3d.left {flex:1;text-align:right;margin-right:-1vw;}
-.pm-word3d.right {flex:1;text-align:left;margin-left:1.5vw;}
-.pm-hero-tag{margin-top:clamp(28px,4.5vh,48px);display:inline-block;font-size:11.5px;letter-spacing:2px;
+ -webkit-background-clip:text;background-clip:text;color:transparent;text-transform:uppercase;
+ -webkit-text-stroke:4px #e0f2fe;}
+.pm-word3d.left {text-align:right;margin-right:-2vw;}
+.pm-word3d.right {text-align:left;margin-left:0vw;}
+.pm-hero-tag{margin-top:clamp(-20px,1vh,10px);display:inline-block;font-size:11.5px;letter-spacing:2px;
  text-transform:uppercase;color:#5eead4;border:1px solid rgba(94,234,212,.32);background:rgba(94,234,212,.06);
  padding:7px 16px;border-radius:100px;font-weight:700;z-index:2;position:relative;}
-.pm-hero-h1{margin:14px 0 0;font-size:clamp(26px,4vw,46px);font-weight:800;letter-spacing:-.8px;color:#eef3fb;
+.pm-hero-h1{margin:10px 0 0;font-size:clamp(26px,4vw,46px);font-weight:800;letter-spacing:-.8px;color:#eef3fb;
  font-family:var(--font-grotesk),'Inter',sans-serif;}
 .pm-holo{background:linear-gradient(90deg,#5eead4,#67e8f9,#a7f3d0,#5eead4);background-size:250% 100%;
  -webkit-background-clip:text;background-clip:text;color:transparent;animation:pmHolo 6s linear infinite;}
