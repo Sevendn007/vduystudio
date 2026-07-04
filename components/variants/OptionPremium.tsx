@@ -105,23 +105,44 @@ const TX = {
   },
 };
 
-// Icon 3D theo LOẠI DỊCH VỤ (tag) admin nhập:
-// "Tích xanh" / "Kháng Page" → badge check 3D (verify)
-// "Mở khoá chức năng"       → ổ khóa (unlock)
-// "Booking viết bài"        → loa (press)
-// Tag tự do / không khớp    → không hiển thị icon (null)
+// Icon 3D theo LOẠI DỊCH VỤ (tag) admin nhập — mỗi loại có icon riêng:
+// "Tích xanh"          → badge check 3D (verify)
+// "Kháng Page"         → khiên bảo vệ (shield)
+// "Mở khoá chức năng"  → ổ khóa (unlock)
+// "Booking viết bài"   → loa (press)
+// Tag tự do / không khớp → không hiển thị icon
 function ServiceIcon3D({ tag, platform, size = 64 }: { tag?: string | null; platform?: string | null; size?: number }) {
   const key = `${tag ?? ""} ${platform ?? ""}`.toLowerCase();
   const kind = /mở kho[áa]|unlock|rescue|recover/.test(key)
     ? "unlock"
     : /book|viết bài|pr\b|báo|press|media|bao-chi/.test(key)
       ? "press"
-      : /tích xanh|kháng|verif|badge/.test(key)
-        ? "verify"
-        : null;
+      : /kháng|shield|protect/.test(key)
+        ? "shield"
+        : /tích xanh|verif|badge/.test(key)
+          ? "verify"
+          : null;
   return (
     <span className="pm-sic" style={{ width: size, height: size }} aria-hidden>
       {kind === "verify" && <VDuyBadge size={size} intro={false} />}
+      {kind === "shield" && (
+        <svg viewBox="0 0 64 64" width={size} height={size}>
+          <defs>
+            <linearGradient id="sicShield" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#5eead4" />
+              <stop offset=".55" stopColor="#14b8a6" />
+              <stop offset="1" stopColor="#0e7490" />
+            </linearGradient>
+            <linearGradient id="sicShieldH" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="rgba(255,255,255,.35)" />
+              <stop offset="1" stopColor="rgba(255,255,255,0)" />
+            </linearGradient>
+          </defs>
+          <path d="M32 4L8 16v16c0 14 10 23 24 28 14-5 24-14 24-28V16L32 4Z" fill="url(#sicShield)" />
+          <path d="M32 4L8 16v16c0 6 2 11 5 16L32 4Z" fill="url(#sicShieldH)" />
+          <path d="M24 32l6 6 12-14" fill="none" stroke="#03222e" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )}
       {kind === "unlock" && (
         <svg viewBox="0 0 64 64" width={size} height={size}>
           <defs>
@@ -577,7 +598,7 @@ export default function OptionPremium() {
   radial-gradient(520px 280px at 85% 12%,rgba(8,145,178,.15),transparent 70%),
   linear-gradient(180deg,#06161c 0%,#03090d 100%);
  display:flex;flex-direction:column;justify-content:center;box-shadow:0 24px 60px rgba(0,0,0,.45);
- container-type:inline-size;max-height:calc(100svh - 120px);}
+ container-type:inline-size;max-height:calc(100svh - 80px);}
 .pm-card:nth-child(1),.pm-card:nth-child(4){grid-column:span 12;}
 .pm-card:nth-child(2),.pm-card:nth-child(3){grid-column:span 6;}
 
@@ -589,7 +610,7 @@ export default function OptionPremium() {
  font-size:clamp(40px,20cqw,180px);letter-spacing:6px;color:rgba(180,220,245,.04);white-space:nowrap;pointer-events:none;max-width:100%;overflow:hidden;text-overflow:clip;text-align:center;}
 
 .pm-stage{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
- gap:clamp(26px,5vw,70px);padding:clamp(36px,5vw,60px) clamp(20px,4vw,56px) clamp(24px,3vw,36px);flex:1;}
+ gap:clamp(18px,4vw,50px);padding:clamp(24px,4vw,48px) clamp(16px,3vw,40px) clamp(16px,2vw,28px);flex:1;}
 .pm-ovl{display:flex;flex-direction:column;line-height:1.02;}
 .pm-ovl b{font-family:var(--pm-font-display);font-weight:400;font-size:clamp(34px,4.6vw,60px);color:#fff;letter-spacing:1px;
  text-shadow:0 6px 34px rgba(0,0,0,.6);}
