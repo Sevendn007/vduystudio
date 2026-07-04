@@ -558,24 +558,23 @@ export default function OptionPremium() {
 .pm-label-row{display:flex;justify-content:space-between;align-items:center;}
 
 /* ===== services (card 3D nghiêng theo chuột + glare) ===== */
-.pm-services{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;}
-.pm-svcwrap{border-radius:18px;grid-column:span 2;}
-.pm-svcwrap:nth-last-child(2):nth-child(4),
-.pm-svcwrap:last-child:nth-child(5) { grid-column: span 3; }
+.pm-services{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;}
+.pm-svcwrap{border-radius:18px;width:calc(33.333% - 12px);display:flex;}
+.pm-svc{position:relative;display:flex;flex-direction:column;gap:10px;padding:26px 22px;min-height:216px;width:100%;
+ background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.25s;}
 .pm-svc-ic{display:inline-flex;width:64px;height:64px;align-items:center;justify-content:center;border-radius:16px;
  background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.25);
  animation:pmFloat 5.5s ease-in-out infinite;
  filter:drop-shadow(0 10px 26px rgba(45,212,191,.3));
  perspective:400px;}
 .pm-svc-ic svg{transform:rotateX(12deg) rotateY(-12deg);transition:.4s ease;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));}
-.pm-svc{position:relative;display:flex;flex-direction:column;gap:10px;padding:26px 22px;min-height:216px;
- background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.25s;}
 .pm-svc:hover .pm-svc-ic svg{transform:rotateX(0deg) rotateY(0deg) scale(1.15);filter:drop-shadow(0 8px 18px rgba(45,212,191,.5));}
 .pm-svc-halo{position:absolute;top:-46px;right:-46px;width:120px;height:120px;border-radius:50%;
  background:radial-gradient(circle,rgba(45,212,191,.22),transparent 70%);}
 .pm-svc h3{font-family:var(--pm-font-heading);font-weight:700;font-size:18px;margin:8px 0 0;color:#fff;}
-.pm-svc-stats{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin:6px 0 10px;}
-.pm-svc-stats b{color:#fff;font-weight:700;}
+.pm-svc-stats{position:absolute;top:20px;right:20px;display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--cyan);
+ background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.2);padding:6px 12px;border-radius:100px;}
+.pm-svc-stats b{color:#fff;font-weight:800;font-size:15px;}
 .pm-svc p{margin:0;color:var(--muted);font-size:13px;line-height:1.55;flex:1;}
 .pm-svc-go{color:var(--cyan);font-size:12.5px;font-weight:700;}
 .pm-svc:hover{border-color:rgba(45,212,191,.5);background:rgba(45,212,191,.05);transform:translateY(-4px);}
@@ -701,8 +700,8 @@ export default function OptionPremium() {
 @media(max-width:980px){
  .pm-menu{display:none;}
  .pm-hero{min-height:0;padding:56px 20px 64px;}
- .pm-services{grid-template-columns:1fr 1fr;gap:16px;}
- .pm-svcwrap{grid-column:span 1!important;}
+ .pm-services{gap:16px;}
+ .pm-svcwrap{width:calc(50% - 8px);}
  .pm-svc{min-height:0;}
  .pm-card:nth-child(n){grid-column:span 12;}
  .pm-stage,.pm-card:nth-child(3) .pm-stage{flex-direction:column;text-align:center;}
@@ -732,8 +731,7 @@ export default function OptionPremium() {
   .pm-marquee-label{padding:13px 14px;font-size:10px;}
   .pm-marquee-item{font-size:14px;padding:12px 0 12px 22px;}
   .pm-marquee-item i{margin-left:22px;}
-  .pm-services{grid-template-columns:1fr;}
-  .pm-svcwrap{grid-column:span 1!important;}
+  .pm-svcwrap{width:100%;}
   .pm-svc{padding:22px 18px;}
   /* Bento cards mobile: full width, compact layout */
   .pm-card{max-height:none;}
