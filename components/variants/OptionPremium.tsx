@@ -350,6 +350,7 @@ export default function OptionPremium() {
                         {p.result && <p className="pm-spot-sub">{p.result}</p>}
                         {p.tag && <span className="pm-mini-tag">{p.tag}</span>}
                       </div>
+                      {p.date && <div className="pm-year wide-year" aria-hidden>{p.date}</div>}
                     </div>
                   )}
 
@@ -591,14 +592,14 @@ export default function OptionPremium() {
 .pm-svc:hover{border-color:rgba(45,212,191,.5);background:rgba(45,212,191,.05);transform:translateY(-4px);}
 
 /* ===== bento portfolio ===== */
-.pm-bento{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;}
+.pm-bento{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;grid-auto-rows:1fr;}
 .pm-card{position:relative;overflow:hidden;border-radius:24px;border:1px solid rgba(45,212,191,.22);
  background:
   radial-gradient(560px 300px at 18% 88%,rgba(13,148,136,.16),transparent 65%),
   radial-gradient(520px 280px at 85% 12%,rgba(8,145,178,.15),transparent 70%),
   linear-gradient(180deg,#06161c 0%,#03090d 100%);
  display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.45);
- container-type:inline-size;}
+ container-type:inline-size;height:100%;justify-content:center;}
 .pm-card:nth-child(1),.pm-card:nth-child(4){grid-column:span 12;}
 .pm-card:nth-child(2),.pm-card:nth-child(3){grid-column:span 6;}
 
@@ -610,7 +611,7 @@ export default function OptionPremium() {
  font-size:clamp(40px,20cqw,180px);letter-spacing:6px;color:rgba(180,220,245,.04);white-space:nowrap;pointer-events:none;max-width:100%;overflow:hidden;text-overflow:clip;text-align:center;}
 
 .pm-stage{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
- gap:clamp(26px,5vw,70px);padding:clamp(36px,5vw,60px) clamp(20px,4vw,56px) clamp(24px,3vw,36px);}
+ gap:clamp(26px,5vw,70px);padding:clamp(36px,5vw,60px) clamp(20px,4vw,56px) clamp(24px,3vw,36px);flex:1;}
 .pm-ovl{display:flex;flex-direction:column;line-height:1.02;}
 .pm-ovl b{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(34px,4.6vw,60px);color:#fff;letter-spacing:1px;
  text-shadow:0 6px 34px rgba(0,0,0,.6);}
@@ -650,6 +651,7 @@ export default function OptionPremium() {
  filter:drop-shadow(0 10px 34px rgba(2,60,90,.65));position:absolute;z-index:0;opacity:0.3;pointer-events:none;}
 .hero-stage .pm-year{bottom:10%;left:5%;}
 .side-stage .pm-year{bottom:25%;right:5%;font-size:clamp(48px,5vw,90px);}
+.wide-stage .pm-year{bottom:15%;right:15%;}
 
 /* ===== iPhone mockup: style nằm trong premiumKit ===== */
 
