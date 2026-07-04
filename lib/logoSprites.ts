@@ -74,7 +74,8 @@ function keepLargeComponents(mask: Uint8Array, w: number, h: number, minSize: nu
   for (let l = 1; l < next; l++) if (!touchesBottom[l] && sizes[l] > maxSize) maxSize = sizes[l];
   const keepLabel = new Uint8Array(next);
   for (let l = 1; l < next; l++) {
-    keepLabel[l] = !touchesBottom[l] && sizes[l] >= minSize && sizes[l] >= maxSize * 0.06 ? 1 : 0;
+    // Giảm ngưỡng relative xuống 0.01 (1%) để không xóa mất vòng tròn (ring) của logo
+    keepLabel[l] = !touchesBottom[l] && sizes[l] >= minSize && sizes[l] >= maxSize * 0.01 ? 1 : 0;
   }
   const out = new Uint8Array(n);
   for (let i = 0; i < n; i++) if (keepLabel[label[i]]) out[i] = 1;
