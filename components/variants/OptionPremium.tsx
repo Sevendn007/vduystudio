@@ -8,7 +8,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PersonAvatar } from "@/components/brand";
-import { VDuyBadge, VDuyWordmark } from "@/components/logo";
+import { extractMark, extractPlanet } from "@/lib/logoSprites";
 import { useLang, LangToggle } from "@/lib/i18n";
 import { siteText, site } from "@/lib/site";
 import { getProcess } from "@/lib/services";
@@ -125,6 +125,10 @@ const PLATFORM_NAME: Record<string, string> = {
 const TX = {
   vi: {
     menu: ["Dịch vụ", "Quy trình", "Dự án", "Feedback"],
+    heroTag: "Dịch vụ xác minh & bảo vệ tài khoản mạng xã hội",
+    heroA: "Xây dựng",
+    heroB: "uy tín số",
+    heroC: "cho thương hiệu của bạn",
     heroSub: "Xây dựng thương hiệu số & tích xanh chính thống.",
     trusted: "Đồng hành cùng",
     services: "Dịch vụ",
@@ -137,6 +141,10 @@ const TX = {
   },
   en: {
     menu: ["Services", "Process", "Projects", "Feedback"],
+    heroTag: "Social media verification & account protection services",
+    heroA: "Building",
+    heroB: "digital trust",
+    heroC: "for your brand",
     heroSub: "Bold Digital Branding & Social Verification.",
     trusted: "Trusted by",
     services: "Services",
@@ -173,6 +181,21 @@ function IPhone({ src, fallback, alt, size = "md", tilt }: { src: string | null;
   );
 }
 
+// Ảnh sprite tách từ logo.png (mark trong suốt / hành tinh) — xử lý bằng
+// canvas phía client, cache theo module nên chỉ chạy một lần.
+function SpriteImg({ kind, alt = "", className }: { kind: "mark" | "p1" | "p2"; alt?: string; className?: string }) {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    const p = kind === "mark" ? extractMark() : extractPlanet(kind);
+    p.then((u) => mounted && setUrl(u)).catch(() => {});
+    return () => { mounted = false; };
+  }, [kind]);
+  if (!url) return <span className={className} aria-hidden />;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={url} alt={alt} className={className} draggable={false} />;
+}
+
 export default function OptionPremium() {
   const { lang } = useLang();
   const st = siteText(lang);
@@ -199,8 +222,11 @@ export default function OptionPremium() {
     <div className="pm-root" id="pm-top">
       {/* NAV */}
       <nav className="pm-nav">
-        <a href="#pm-top" className="pm-brand" style={{ width: "90px", height: "46px", overflow: "hidden", position: "relative", borderRadius: "8px" }}>
-          <img src="/images/logo.png" alt="VDuyStudio" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -46%)", height: "180px", width: "auto", maxWidth: "none" }} />
+        <a href="#pm-top" className="pm-brand">
+          <span className="pm-brand-spin">
+            <SpriteImg kind="mark" alt="VDuyStudio" />
+          </span>
+          <span className="pm-brandname">VDUYSTUDIO</span>
         </a>
         <div className="pm-menu">
           <a href="#pm-services">{t.menu[0]}</a>
@@ -213,12 +239,50 @@ export default function OptionPremium() {
         </div>
       </nav>
 
+      {/* HERO — mark VJ + tích xanh tách nền từ logo.png (pixel gốc, trong
+          suốt) xoay quanh trục dọc trên nền vũ trụ động; wordmark 3D, tagline,
+          headline và hàng số liệu uy tín */}
       <header className="pm-hero">
-        <div className="pm-hero-art" aria-hidden />
-        <div className="pm-hero-veil" aria-hidden />
-        
-        <div className="pm-hero-content">
-          <p className="pm-hero-sub">{t.heroSub}</p>
+        <div className="pm-space" aria-hidden>
+          <div className="pm-nebula" />
+          <div className="pm-stars sa" />
+          <div className="pm-stars sb" />
+          <SpriteImg kind="p2" className="pm-planet pl2" />
+          <SpriteImg kind="p1" className="pm-planet pl1" />
+          <span className="pm-comet" />
+          {[
+            { c: "s1", ch: "✦" },
+            { c: "s2", ch: "✧" },
+            { c: "s3", ch: "✦" },
+            { c: "s4", ch: "✧" },
+            { c: "s5", ch: "✦" },
+          ].map((s) => (
+            <span key={s.c} className={`pm-star ${s.c}`}>{s.ch}</span>
+          ))}
+        </div>
+        <div className="pm-hero-inner">
+          <div className="pm-mark3d">
+            <SpriteImg kind="mark" alt="VDuyStudio" />
+            <span className="pm-mark-glow" aria-hidden />
+          </div>
+          <div className="pm-word3d">
+            <span className="pm-word3d-back" aria-hidden>VDUYSTUDIO</span>
+            <span className="pm-word3d-front">
+              <i>VDUY</i>
+              <em>STUDIO</em>
+            </span>
+          </div>
+          <div className="pm-hero-tag">✦ {t.heroTag}</div>
+          <h1 className="pm-hero-h1">
+            {t.heroA} <span className="pm-holo">{t.heroB}</span> {t.heroC}
+          </h1>
+          <div className="pm-statline">
+            {st.stats.map((s, i) => (
+              <span key={i}>
+                <b>{s.value}</b> {s.label}
+              </span>
+            ))}
+          </div>
         </div>
       </header>
 
@@ -433,48 +497,97 @@ export default function OptionPremium() {
 .pm-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:14px;
  padding:12px clamp(16px,4vw,36px);background:rgba(3,5,16,.8);backdrop-filter:blur(16px);border-bottom:1px solid rgba(135,155,225,.12);}
 .pm-brand{display:flex;align-items:center;gap:11px;min-width:0;}
-/* Mark nav */
-.pm-brand{display:flex;align-items:center;gap:11px;min-width:0; border-radius: 8px; overflow: hidden; mix-blend-mode: screen;}
+/* icon mark tách nền, xoay quanh trục dọc */
+.pm-brand-spin{display:block;width:46px;height:38px;perspective:420px;flex-shrink:0;}
+.pm-brand-spin img,.pm-brand-spin span{display:block;width:100%;height:100%;object-fit:contain;
+ animation:pmSpinY 10s linear infinite;filter:drop-shadow(0 0 12px rgba(129,140,248,.55));}
+.pm-brandname{font-family:'Anton',sans-serif;font-size:15px;letter-spacing:2px;color:var(--cyan);
+ text-shadow:0 0 20px rgba(56,189,248,.65);}
 .pm-menu{display:flex;gap:30px;font-size:13.5px;font-weight:600;color:var(--muted);}
 .pm-menu a{padding:8px 0;transition:.2s;}
 .pm-menu a:hover{color:#fff;}
 .pm-nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 
-/* ===== hero ===== */
-.pm-hero{position:relative;width:100%;height:100vh;min-height:600px;background:#03050c;overflow:hidden;
- display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.pm-hero-art{position:absolute;inset:0;background:url('/images/logo.png') center/cover no-repeat;
- animation:pmSway 16s ease-in-out infinite;will-change:transform;}
-@keyframes pmSway{0%,100%{transform:scale(1.02)}50%{transform:scale(1.06)}}
-.pm-hero-veil{position:absolute;inset:0;pointer-events:none;background:
- linear-gradient(0deg, #020308 0%, #020308 14%, transparent 22%);}
-.pm-hero-content{position:absolute;z-index:10;bottom:6%;left:0;right:0;display:flex;flex-direction:column;align-items:center;}
-.pm-glow{position:absolute;border-radius:50%;pointer-events:none;mix-blend-mode:screen;filter:blur(8px);
- opacity:.15;animation:pmBreath 6.5s ease-in-out infinite;}
-.pm-glow.g1{width:12%;aspect-ratio:1;right:10.5%;top:52%;
- background:radial-gradient(circle,rgba(140,175,255,.55),transparent 68%);}
-.pm-glow.g2{width:6.5%;aspect-ratio:1;left:27%;top:44%;
- background:radial-gradient(circle,rgba(200,225,255,.5),transparent 68%);animation-delay:2.6s;}
-@keyframes pmBreath{0%,100%{opacity:.12}50%{opacity:.65}}
-.pm-glint{position:absolute;left:62.5%;top:16%;font-size:clamp(16px,2.4vw,30px);line-height:1;color:#eaf6ff;
- pointer-events:none;opacity:0;text-shadow:0 0 18px rgba(160,215,255,.95),0 0 5px #fff;
- animation:pmGlint 7.5s ease-in-out 1.4s infinite;}
-@keyframes pmGlint{0%,84%,100%{opacity:0;transform:scale(.35) rotate(0deg)}91%{opacity:1;transform:scale(1.2) rotate(42deg)}}
-.pm-star{position:absolute;color:#dcecff;opacity:0;pointer-events:none;line-height:1;
+/* ===== hero: nền vũ trụ động + mark 3D xoay trục dọc ===== */
+.pm-hero{position:relative;width:100%;min-height:calc(100svh - 62px);background:#03050c;overflow:hidden;
+ display:flex;align-items:center;justify-content:center;text-align:center;
+ padding:clamp(30px,5vh,64px) 20px clamp(40px,6vh,72px);}
+.pm-space{position:absolute;inset:0;pointer-events:none;}
+.pm-nebula{position:absolute;inset:0;background:
+ radial-gradient(760px 560px at 26% 42%,rgba(147,51,234,.20),transparent 65%),
+ radial-gradient(560px 460px at 16% 68%,rgba(236,72,153,.10),transparent 65%),
+ radial-gradient(720px 520px at 80% 26%,rgba(37,99,235,.17),transparent 65%),
+ radial-gradient(640px 520px at 66% 92%,rgba(56,189,248,.10),transparent 65%);}
+.pm-stars{position:absolute;inset:-320px 0 0;background-repeat:repeat;}
+.pm-stars.sa{background-image:
+ radial-gradient(1.2px 1.2px at 25px 35px,#fff,transparent),
+ radial-gradient(1px 1px at 125px 88px,rgba(255,255,255,.8),transparent),
+ radial-gradient(1.4px 1.4px at 210px 160px,#cfe3ff,transparent),
+ radial-gradient(1px 1px at 310px 55px,rgba(255,255,255,.7),transparent),
+ radial-gradient(1.1px 1.1px at 80px 220px,#fff,transparent),
+ radial-gradient(.9px .9px at 260px 260px,rgba(255,255,255,.6),transparent);
+ background-size:360px 320px;animation:pmDrift 110s linear infinite;}
+.pm-stars.sb{background-image:
+ radial-gradient(1.6px 1.6px at 60px 120px,#a5f3fc,transparent),
+ radial-gradient(1.2px 1.2px at 180px 40px,#e9d5ff,transparent),
+ radial-gradient(1px 1px at 300px 200px,#fff,transparent),
+ radial-gradient(1.3px 1.3px at 140px 280px,rgba(255,255,255,.85),transparent);
+ background-size:420px 380px;animation:pmDrift 160s linear infinite reverse,pmStarsGlow 7s ease-in-out infinite;opacity:.85;}
+@keyframes pmDrift{to{transform:translateY(-320px)}}
+@keyframes pmStarsGlow{0%,100%{opacity:.55}50%{opacity:.95}}
+.pm-planet{position:absolute;}
+.pm-planet.pl2{right:6%;top:44%;width:clamp(84px,10vw,160px);height:auto;
+ animation:pmFloat 16s ease-in-out infinite;filter:drop-shadow(0 0 34px rgba(120,150,255,.28));}
+.pm-planet.pl1{left:19%;top:28%;width:clamp(26px,3vw,46px);height:auto;
+ animation:pmFloat 12s ease-in-out infinite reverse;filter:drop-shadow(0 0 18px rgba(190,220,255,.3));}
+@keyframes pmFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+.pm-comet{position:absolute;top:14%;left:74%;width:130px;height:1.5px;border-radius:2px;
+ background:linear-gradient(90deg,#fff,transparent);opacity:0;transform:rotate(-32deg);
+ animation:pmComet 12s ease-in 3s infinite;}
+@keyframes pmComet{0%{opacity:0;transform:rotate(-32deg) translateX(0)}4%{opacity:.9}
+ 13%{opacity:0;transform:rotate(-32deg) translateX(-340px)}100%{opacity:0}}
+.pm-star{position:absolute;color:#dcecff;opacity:0;line-height:1;
  text-shadow:0 0 13px rgba(150,205,255,.9),0 0 4px #fff;animation:pmStar 5.5s ease-in-out infinite;}
-.pm-star.s1{top:9%;left:26%;font-size:14px;animation-delay:.4s;}
-.pm-star.s2{top:34%;left:11.5%;font-size:11px;animation-delay:1.6s;animation-duration:6.5s;}
-.pm-star.s3{top:69%;left:6.5%;font-size:13px;animation-delay:2.9s;}
-.pm-star.s4{top:86%;left:45%;font-size:10px;animation-delay:4.4s;animation-duration:7s;}
-.pm-star.s5{top:14%;right:11%;font-size:15px;animation-delay:1s;}
-.pm-star.s6{top:47%;right:5.5%;font-size:11px;animation-delay:3.6s;animation-duration:6s;}
-.pm-star.s7{top:84%;right:28%;font-size:12px;animation-delay:2.2s;}
+.pm-star.s1{top:16%;left:22%;font-size:14px;animation-delay:.4s;}
+.pm-star.s2{top:32%;left:9%;font-size:11px;animation-delay:1.6s;animation-duration:6.5s;}
+.pm-star.s3{top:70%;left:14%;font-size:13px;animation-delay:2.9s;}
+.pm-star.s4{top:22%;right:13%;font-size:15px;animation-delay:1s;}
+.pm-star.s5{top:66%;right:9%;font-size:11px;animation-delay:3.6s;animation-duration:6s;}
 @keyframes pmStar{0%,100%{opacity:0;transform:scale(.5) rotate(0deg)}50%{opacity:.85;transform:scale(1.05) rotate(22deg)}}
-/* chữ đề dẫn nổi trên ảnh hero */
-.pm-hero-sub{margin:0;width:100%;text-align:center;
- font-family:'Inter',sans-serif;font-weight:600;font-size:clamp(15px,2.2vw,28px);letter-spacing:4px;text-transform:uppercase;
- background:linear-gradient(180deg,#ffffff 0%,#8ba6be 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
- filter:drop-shadow(0 2px 8px rgba(0,0,0,1)) drop-shadow(0 0 20px rgba(56,189,248,0.3));}
+
+/* cụm nội dung hero */
+.pm-hero-inner{position:relative;display:flex;flex-direction:column;align-items:center;max-width:1000px;}
+.pm-mark3d{position:relative;width:clamp(230px,29vw,370px);perspective:1200px;}
+.pm-mark3d img{width:100%;height:auto;display:block;animation:pmSpinY 14s linear infinite;
+ filter:drop-shadow(0 26px 60px rgba(80,60,220,.4)) drop-shadow(0 0 44px rgba(56,189,248,.22));}
+.pm-mark3d>span:first-child{display:block;width:100%;aspect-ratio:1.4;}
+@keyframes pmSpinY{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
+.pm-mark-glow{position:absolute;left:50%;bottom:-6%;transform:translateX(-50%);width:72%;height:36px;border-radius:50%;
+ background:radial-gradient(ellipse,rgba(99,102,241,.4),transparent 70%);filter:blur(9px);}
+.pm-word3d{position:relative;display:inline-block;margin-top:clamp(8px,1.6vh,18px);
+ font-family:var(--font-archivo),var(--font-grotesk),sans-serif;font-weight:900;font-stretch:125%;
+ font-size:clamp(40px,6.6vw,84px);line-height:1;letter-spacing:.01em;}
+.pm-word3d-back{position:absolute;inset:0;color:#0d1638;white-space:nowrap;
+ text-shadow:1px 1px 0 #101a40,2px 2px 0 #0d1535,3px 3px 0 #0a112b,4px 4px 0 #080d22,5px 5px 0 #060a19,
+ 8px 10px 20px rgba(0,0,0,.65);}
+.pm-word3d-front{position:relative;white-space:nowrap;}
+.pm-word3d-front i{font-style:normal;background:linear-gradient(180deg,#9edcff 0%,#5b8cff 45%,#8b5cf6 100%);
+ -webkit-background-clip:text;background-clip:text;color:transparent;}
+.pm-word3d-front em{font-style:normal;background:linear-gradient(180deg,#ffffff 10%,#cfdae4 40%,#8fa3b8 55%,#eef4f9 78%,#aab9c9 100%);
+ background-size:100% 220%;-webkit-background-clip:text;background-clip:text;color:transparent;
+ animation:pmChrome 6s ease-in-out infinite;}
+@keyframes pmChrome{0%,100%{background-position:0 0}50%{background-position:0 45%}}
+.pm-hero-tag{margin-top:clamp(16px,2.6vh,26px);display:inline-block;font-size:11.5px;letter-spacing:2px;
+ text-transform:uppercase;color:#7dd3fc;border:1px solid rgba(103,232,249,.3);background:rgba(103,232,249,.05);
+ padding:7px 16px;border-radius:100px;font-weight:700;}
+.pm-hero-h1{margin:14px 0 0;font-size:clamp(26px,4vw,46px);font-weight:800;letter-spacing:-.8px;color:#eef3fb;
+ font-family:var(--font-grotesk),'Inter',sans-serif;}
+.pm-holo{background:linear-gradient(90deg,#67e8f9,#a78bfa,#f0abfc,#67e8f9);background-size:250% 100%;
+ -webkit-background-clip:text;background-clip:text;color:transparent;animation:pmHolo 6s linear infinite;}
+@keyframes pmHolo{to{background-position:250% 0}}
+.pm-statline{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 30px;margin-top:clamp(18px,3vh,28px);
+ font-size:13.5px;color:var(--muted);}
+.pm-statline b{color:#7dd3fc;font-size:16px;margin-right:5px;}
 
 /* wordmark vector (footer) */
 .pm-wordmark{font-family:var(--font-archivo),var(--font-grotesk),sans-serif;font-weight:900;font-stretch:125%;
@@ -630,7 +743,7 @@ export default function OptionPremium() {
 /* ===== tablet ===== */
 @media(max-width:980px){
  .pm-menu{display:none;}
- .pm-hero{aspect-ratio:1.6;}
+ .pm-hero{min-height:0;padding:56px 20px 64px;}
  .pm-services{grid-template-columns:1fr 1fr;gap:6px 0;}
  .pm-svc{padding:18px 22px;}
  .pm-svc:first-child{padding-left:22px;}
@@ -651,8 +764,12 @@ export default function OptionPremium() {
 /* ===== phone ===== */
 @media(max-width:560px){
  .pm-nav{padding:10px 14px;}
- .pm-hero{height:90vh;min-height:500px;}
- .pm-hero-sub{font-size:13px;letter-spacing:2px;padding:0 20px;}
+ .pm-hero{padding:40px 16px 52px;}
+ .pm-mark3d{width:min(240px,64vw);}
+ .pm-word3d{font-size:clamp(34px,10vw,44px);}
+ .pm-hero-h1{font-size:24px;}
+ .pm-planet.pl1{left:8%;top:16%;}
+ .pm-planet.pl2{right:-4%;top:60%;}
  .pm-services{grid-template-columns:1fr;}
  .pm-svc:nth-child(odd){padding-left:0;}
  .pm-svc:nth-child(n+2){border-top:1px solid var(--line);border-left:none;}
