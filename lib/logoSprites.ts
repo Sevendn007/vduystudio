@@ -211,8 +211,8 @@ export function extractMark(): Promise<string> {
     const alpha = featherAlpha(keep, sw, sh);
     for (let i = 0; i < n; i++) d[i * 4 + 3] = alpha[i];
     // Đổi tông tím → xanh ngọc; giữ nguyên màu badge tích xanh (hình tròn
-    // quanh badge, tâm ~70.9%/18.5% vùng crop, bán kính ~10.5% bề rộng).
-    tealify(d, sw, sh, { x: sw * 0.709, y: sh * 0.185, r: sw * 0.105 });
+    // Disable tealify to keep original logo colors as requested.
+    // tealify(d, sw, sh, { x: sw * 0.709, y: sh * 0.185, r: sw * 0.105 });
     ctx.putImageData(id, 0, 0);
     return cv.toDataURL("image/png");
   });
@@ -250,7 +250,7 @@ export function extractPlanet(kind: keyof typeof PLANETS): Promise<string> {
         d[(y * size + x) * 4 + 3] = (a * a * 255) | 0;
       }
     }
-    tealify(d, size, size);
+    // tealify(d, size, size);
     ctx.putImageData(id, 0, 0);
     return cv.toDataURL("image/png");
   });

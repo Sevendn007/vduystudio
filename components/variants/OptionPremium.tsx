@@ -172,7 +172,7 @@ function SpriteImg({ kind, alt = "", className }: { kind: "mark" | "p1" | "p2"; 
 // Mark 3D có ĐỘ DÀY thật: xếp nhiều lớp ảnh dọc trục Z rồi quay cả khối
 // quanh trục dọc. Bước lớp 0.6px (< 1px) nên khi quay nghiêng các lớp hoà
 // thành cạnh liền khối, không lộ sọc.
-function Mark3D({ layers = 16, className, alt = "" }: { layers?: number; className?: string; alt?: string }) {
+function Mark3D({ layers = 24, className, alt = "" }: { layers?: number; className?: string; alt?: string }) {
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {
     let mounted = true;
@@ -182,18 +182,21 @@ function Mark3D({ layers = 16, className, alt = "" }: { layers?: number; classNa
   return (
     <div className={`pm-mark-stack ${className ?? ""}`}>
       {url &&
-        Array.from({ length: layers }, (_, i) => (
+        Array.from({ length: layers }, (_, i) => {
+          const isFront = i === layers - 1;
+          const isBack = i === 0;
+          return (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             key={i}
             src={url}
-            alt={i === layers - 1 ? alt : ""}
-            aria-hidden={i !== layers - 1}
+            alt={isFront ? alt : ""}
+            aria-hidden={!isFront}
             draggable={false}
-            className={i === layers - 1 ? "front" : "side"}
-            style={{ transform: `translateZ(${(i - (layers - 1) / 2) * 0.6}px)` }}
+            className={isFront ? "front" : isBack ? "back" : "side"}
+            style={{ transform: `translateZ(${(i - (layers - 1) / 2) * 0.3}px)` }}
           />
-        ))}
+        )})}
     </div>
   );
 }
@@ -263,17 +266,27 @@ export default function OptionPremium() {
           ))}
         </div>
         <div className="pm-hero-inner">
-          <div className="pm-mark3d">
-            <Mark3D layers={16} alt="VDuyStudio" />
-            <span className="pm-mark-glow" aria-hidden />
+          <div className="pm-hero-logo-row">
+            <div className="pm-word3d left">
+              <span className="pm-word3d-back" aria-hidden>VDUY</span>
+              <span className="pm-word3d-front">
+                <i>VDUY</i>
+              </span>
+            </div>
+            
+            <div className="pm-mark3d">
+              <Mark3D alt="VDuyStudio" />
+              <span className="pm-mark-glow" aria-hidden />
+            </div>
+
+            <div className="pm-word3d right">
+              <span className="pm-word3d-back" aria-hidden>STUDIO</span>
+              <span className="pm-word3d-front">
+                <em>STUDIO</em>
+              </span>
+            </div>
           </div>
-          <div className="pm-word3d">
-            <span className="pm-word3d-back" aria-hidden>VDUYSTUDIO</span>
-            <span className="pm-word3d-front">
-              <i>VDUY</i>
-              <em>STUDIO</em>
-            </span>
-          </div>
+
           <div className="pm-hero-tag">✦ {t.heroTag}</div>
           <h1 className="pm-hero-h1">
             {t.heroA} <span className="pm-holo">{t.heroB}</span> {t.heroC}
@@ -570,21 +583,21 @@ export default function OptionPremium() {
 @keyframes pmStar{0%,100%{opacity:0;transform:scale(.5) rotate(0deg)}50%{opacity:.85;transform:scale(1.05) rotate(22deg)}}
 
 /* cụm nội dung hero */
-.pm-hero-inner{position:relative;display:flex;flex-direction:column;align-items:center;max-width:1200px;}
-.pm-mark3d{position:relative;width:clamp(260px,34vw,440px);perspective:1300px;z-index:2;}
+.pm-hero-inner{position:relative;display:flex;flex-direction:column;align-items:center;max-width:1400px;width:100%;}
+.pm-hero-logo-row{display:flex;align-items:flex-end;justify-content:center;width:100%;margin-bottom:12px;gap:2vw;}
+.pm-mark3d{position:relative;width:clamp(312px,40.8vw,528px);perspective:1300px;z-index:2;flex-shrink:0;}
 /* mark 3D nhiều lớp — có độ dày, nhìn nghiêng thấy cạnh khi xoay */
 .pm-mark-stack{position:relative;width:100%;aspect-ratio:1.32;transform-style:preserve-3d;
  animation:pmSpinY 20s linear infinite;}
-.pm-mark-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;}
-.pm-mark-stack img.side{filter:brightness(.45) saturate(1.15);}
-.pm-mark-stack img.front{filter:drop-shadow(0 22px 50px rgba(20,184,166,.35)) drop-shadow(0 0 40px rgba(45,212,191,.2));}
+.pm-mark-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;image-rendering:auto;}
+.pm-mark-stack img.side{filter:brightness(.45) saturate(1.15);opacity:0.92;}
+.pm-mark-stack img.front,.pm-mark-stack img.back{filter:drop-shadow(0 22px 50px rgba(20,184,166,.35)) drop-shadow(0 0 40px rgba(45,212,191,.2));}
 .pm-mark-stack.nav{animation-duration:14s;}
 @keyframes pmSpinY{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
 .pm-mark-glow{position:absolute;left:50%;bottom:-6%;transform:translateX(-50%);width:72%;height:36px;border-radius:50%;
  background:radial-gradient(ellipse,rgba(20,184,166,.45),transparent 70%);filter:blur(9px);}
 .pm-word3d{position:relative;display:inline-block;z-index:1;
- margin-top:calc(clamp(260px,34vw,440px) / -2.64 - .38em);
- font-family:'Anton',sans-serif;font-weight:400;font-size:min(13vw,200px);line-height:1;letter-spacing:.02em;}
+ font-family:'Anton',sans-serif;font-weight:400;font-size:min(15.6vw,240px);line-height:0.85;letter-spacing:.02em;}
 .pm-word3d-back{position:absolute;inset:0;color:#062a2e;white-space:nowrap;
  text-shadow:1px 1px 0 #0a3a40,2px 2px 0 #083137,3px 3px 0 #06282d,4px 4px 0 #052024,5px 5px 0 #04181c,6px 6px 0 #031114,
  10px 12px 24px rgba(0,0,0,.7);}
@@ -787,13 +800,13 @@ export default function OptionPremium() {
  .pm-step:nth-child(n+3){border-top:1px solid var(--line);}
  .pm-fb-grid{grid-template-columns:1fr;}
 }
-/* ===== phone ===== */
-@media(max-width:560px){
- .pm-nav{padding:10px 14px;}
- .pm-hero{padding:40px 16px 52px;}
- .pm-mark3d{width:min(240px,64vw);}
- .pm-word3d{font-size:15vw;margin-top:calc(min(240px,64vw) / -2.64 - .38em);}
- .pm-hero-h1{font-size:24px;}
+ @media(max-width:560px){
+  .pm-nav{padding:10px 14px;}
+  .pm-hero{padding:40px 16px 52px;}
+  .pm-hero-logo-row{flex-direction:column;align-items:center;}
+  .pm-mark3d{width:min(288px,76vw);}
+  .pm-word3d{font-size:18vw;line-height:1;}
+  .pm-hero-h1{font-size:24px;}
  .pm-planet.pl1{left:8%;top:16%;}
  .pm-planet.pl2{right:-4%;top:60%;}
  .pm-services{grid-template-columns:1fr;}
