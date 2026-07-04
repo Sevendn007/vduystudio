@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Tilt from "@/components/tilt";
 import { PersonAvatar, PlatformIcon, Platform } from "@/components/brand";
+import { VDuyBadge } from "@/components/logo";
 import { SpriteImg, Mark3D, Wordmark, IPhone, DEFAULT_PROJECTS } from "@/components/premiumKit";
 import { useLang, Lang, LangToggle } from "@/lib/i18n";
 import { siteText, site } from "@/lib/site";
@@ -104,6 +105,59 @@ const TX = {
   },
 };
 
+// Icon 3D theo LOẠI DỊCH VỤ của dự án (suy từ tag/platform admin nhập):
+// tích xanh → badge check 3D; mở khóa → ổ khóa; booking/PR/báo chí → loa.
+// Tất cả lắc nhẹ quanh trục dọc + glow teal.
+function ServiceIcon3D({ tag, platform, size = 64 }: { tag?: string | null; platform?: string | null; size?: number }) {
+  const key = `${tag ?? ""} ${platform ?? ""}`.toLowerCase();
+  const kind = /khóa|khoá|unlock|rescue|mở|recover/.test(key)
+    ? "unlock"
+    : /book|pr\b|báo|press|media|bao-chi/.test(key)
+      ? "press"
+      : "verify";
+  return (
+    <span className="pm-sic" style={{ width: size, height: size }} aria-hidden>
+      {kind === "verify" && <VDuyBadge size={size} intro={false} />}
+      {kind === "unlock" && (
+        <svg viewBox="0 0 64 64" width={size} height={size}>
+          <defs>
+            <linearGradient id="sicLock" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#5eead4" />
+              <stop offset=".55" stopColor="#14b8a6" />
+              <stop offset="1" stopColor="#0e7490" />
+            </linearGradient>
+            <linearGradient id="sicShkl" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#e6fffb" />
+              <stop offset="1" stopColor="#67e8f9" />
+            </linearGradient>
+          </defs>
+          <path d="M20 30v-8a12 12 0 0 1 23-4.6" fill="none" stroke="url(#sicShkl)" strokeWidth="7" strokeLinecap="round" />
+          <rect x="14" y="28" width="36" height="28" rx="9" fill="url(#sicLock)" />
+          <rect x="14" y="28" width="36" height="11" rx="9" fill="rgba(255,255,255,.2)" />
+          <circle cx="32" cy="41" r="4.6" fill="#03222e" />
+          <rect x="29.8" y="43" width="4.4" height="8" rx="2.2" fill="#03222e" />
+        </svg>
+      )}
+      {kind === "press" && (
+        <svg viewBox="0 0 64 64" width={size} height={size}>
+          <defs>
+            <linearGradient id="sicMega" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#5eead4" />
+              <stop offset=".55" stopColor="#14b8a6" />
+              <stop offset="1" stopColor="#0e7490" />
+            </linearGradient>
+          </defs>
+          <path d="M9 26v13l25 11V15L9 26Z" fill="url(#sicMega)" />
+          <path d="M9 26v13l25 5V21l-25 5Z" fill="rgba(255,255,255,.14)" />
+          <rect x="12" y="40" width="9" height="12" rx="3.5" fill="#0e7490" />
+          <path className="pm-sic-wave" d="M41 24c4.5 3 4.5 13 0 16" fill="none" stroke="url(#sicMega)" strokeWidth="4" strokeLinecap="round" />
+          <path className="pm-sic-wave w2" d="M48.5 19c7.5 5 7.5 21 0 26" fill="none" stroke="url(#sicMega)" strokeWidth="4" strokeLinecap="round" />
+        </svg>
+      )}
+    </span>
+  );
+}
+
 export default function OptionPremium() {
   const { lang } = useLang();
   const st = siteText(lang);
@@ -139,7 +193,7 @@ export default function OptionPremium() {
         <div className="pm-menu">
           <a href="#pm-services">{t.menu[0]}</a>
           <a href="#pm-process">{t.menu[1]}</a>
-          <a href="#pm-projects">{t.menu[2]}</a>
+          <Link href="/du-an">{t.menu[2]}</Link>
           <a href="#pm-feedback">{t.menu[3]}</a>
         </div>
         <div className="pm-nav-right">
@@ -184,7 +238,7 @@ export default function OptionPremium() {
             </div>
           </div>
 
-          <div className="pm-hero-tag">✦ {t.heroTag}</div>
+          <div className="pm-hero-tag">✦ {t.heroTag} ✦</div>
           <h1 className="pm-hero-h1">
             {t.heroA} <span className="pm-holo">{t.heroB}</span> {t.heroC}
           </h1>
@@ -265,7 +319,7 @@ export default function OptionPremium() {
                       </div>
                       <IPhone src={p.image_url} fallback={fb} alt={p.title} size="lg" tilt="r" />
                       <span className="pm-card-icon big" aria-hidden>
-                        <PlatformIcon kind={icon} size={96} />
+                        <ServiceIcon3D tag={p.tag} platform={p.platform} size={96} />
                       </span>
                     </div>
                   )}
@@ -274,7 +328,7 @@ export default function OptionPremium() {
                     <div className="pm-stage side-stage">
                       <div className="pm-ovl num">
                         <span className="pm-ovl-ic" aria-hidden>
-                          <PlatformIcon kind={icon} size={34} />
+                          <ServiceIcon3D tag={p.tag} platform={p.platform} size={44} />
                         </span>
                         <b>{p.tag ?? platformName}</b>
                         <span>{platformName}</span>
@@ -288,7 +342,7 @@ export default function OptionPremium() {
                       <IPhone src={p.image_url} fallback={fb} alt={p.title} size="lg" />
                       <div className="pm-spot">
                         <span className="pm-card-icon" aria-hidden>
-                          <PlatformIcon kind={icon} size={54} />
+                          <ServiceIcon3D tag={p.tag} platform={p.platform} size={54} />
                         </span>
                         <h3>{p.title}</h3>
                         {p.result && <p className="pm-spot-sub">{p.result}</p>}
@@ -351,7 +405,7 @@ export default function OptionPremium() {
                 <div className="pm-fb-stars">{"★".repeat(Math.min(5, Math.max(1, c.rating ?? 5)))}</div>
                 <p>“{c.quote}”</p>
                 <div className="pm-fb-person">
-                  <PersonAvatar name={c.name} hue={hueOf(i)} size={40} />
+                  <PersonAvatar name={c.name} avatarUrl={c.image_url} hue={hueOf(i)} size={40} />
                   <div>
                     <b>{c.name}</b>
                     {c.company && <span>{c.company}</span>}
@@ -518,9 +572,12 @@ export default function OptionPremium() {
 .pm-svc-ic{display:inline-flex;width:64px;height:64px;align-items:center;justify-content:center;border-radius:16px;
  background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.25);
  animation:pmFloat 5.5s ease-in-out infinite;
- filter:drop-shadow(0 10px 26px rgba(45,212,191,.3));}
+ filter:drop-shadow(0 10px 26px rgba(45,212,191,.3));
+ perspective:400px;}
+.pm-svc-ic svg{transform:rotateX(12deg) rotateY(-12deg);transition:.4s ease;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));}
 .pm-svc{position:relative;display:flex;flex-direction:column;gap:10px;padding:26px 22px;min-height:216px;
  background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.25s;}
+.pm-svc:hover .pm-svc-ic svg{transform:rotateX(0deg) rotateY(0deg) scale(1.15);filter:drop-shadow(0 8px 18px rgba(45,212,191,.5));}
 .pm-svc-halo{position:absolute;top:-46px;right:-46px;width:120px;height:120px;border-radius:50%;
  background:radial-gradient(circle,rgba(45,212,191,.22),transparent 70%);}
 .pm-svc h3{font-family:'Oswald',sans-serif;font-weight:700;font-size:18px;margin:8px 0 0;color:#fff;}
@@ -558,12 +615,17 @@ export default function OptionPremium() {
  background:linear-gradient(180deg,#bae6fd 0%,#38bdf8 48%,#0369a1 100%);
  -webkit-background-clip:text;background-clip:text;color:transparent;
  filter:drop-shadow(0 8px 30px rgba(2,60,90,.6));}
-/* icon nền tảng trên thẻ dự án — trôi bồng bềnh + glow */
-.pm-card-icon{display:inline-flex;animation:pmFloat 6s ease-in-out infinite;
- filter:drop-shadow(0 14px 34px rgba(45,212,191,.35)) drop-shadow(0 0 18px rgba(45,212,191,.2));}
-.pm-ovl-ic{display:inline-flex;margin-bottom:12px;animation:pmFloat 5s ease-in-out infinite;
- filter:drop-shadow(0 10px 24px rgba(45,212,191,.4));}
+/* icon dịch vụ 3D trên thẻ dự án — trôi bồng bềnh + glow */
+.pm-card-icon{display:inline-flex;animation:pmFloat 6s ease-in-out infinite;}
+.pm-ovl-ic{display:inline-flex;margin-bottom:12px;}
 .pm-spot .pm-card-icon{margin-bottom:16px;}
+.pm-sic{display:inline-flex;align-items:center;justify-content:center;perspective:520px;}
+.pm-sic>svg{animation:pmIcSway 4.6s ease-in-out infinite alternate;
+ filter:drop-shadow(0 12px 26px rgba(45,212,191,.45)) drop-shadow(0 3px 8px rgba(0,0,0,.5));}
+@keyframes pmIcSway{from{transform:rotateY(-24deg) translateY(0)}to{transform:rotateY(24deg) translateY(-6px)}}
+.pm-sic-wave{animation:pmWave 2.4s ease-in-out infinite;}
+.pm-sic-wave.w2{animation-delay:.4s;}
+@keyframes pmWave{0%,100%{opacity:.25}50%{opacity:1}}
 
 /* card 3: đảo chiều để nhịp bento so le */
 .pm-card:nth-child(3) .pm-stage{flex-direction:row-reverse;}
@@ -660,7 +722,7 @@ export default function OptionPremium() {
   .pm-stage{gap:22px;padding:28px 16px 20px;}
   .pm-ovl b{font-size:30px;}
   .pm-ovl span{font-size:15px;}
-  .pm-card-icon.big svg{width:56px;height:56px;}
+  .pm-card-icon.big{transform:scale(.62);transform-origin:center;}
   .pm-spot h3{font-size:24px;}
   .pm-card-bgword{font-size:78px;}
   .pm-viewall{font-size:12px;}

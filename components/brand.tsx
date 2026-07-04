@@ -94,11 +94,13 @@ export function PlatformIcon({ kind, size = 46 }: { kind: Platform; size?: numbe
 // Avatar khách hàng: chân dung minh họa + vòng + badge tích xanh.
 export function PersonAvatar({
   name,
+  avatarUrl,
   hue = 210,
   size = 48,
   verified = true,
 }: {
   name: string;
+  avatarUrl?: string | null;
   hue?: number;
   size?: number;
   verified?: boolean;
@@ -106,17 +108,27 @@ export function PersonAvatar({
   const uid = `pa-${name.replace(/[^a-z0-9]/gi, "")}`;
   return (
     <span style={{ position: "relative", width: size, height: size, display: "inline-block", flexShrink: 0 }}>
-      <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden>
-        <defs>
-          <linearGradient id={uid} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor={`hsl(${hue},70%,62%)`} />
-            <stop offset="1" stopColor={`hsl(${hue + 40},65%,45%)`} />
-          </linearGradient>
-        </defs>
-        <rect width="48" height="48" rx="24" fill={`url(#${uid})`} />
-        <circle cx="24" cy="19" r="8" fill="#fff" fillOpacity="0.92" />
-        <path d="M9 42 c0-8.5 6.7-13 15-13 s15 4.5 15 13 Z" fill="#fff" fillOpacity="0.92" />
-      </svg>
+      {avatarUrl ? (
+        <img
+          src={avatarUrl}
+          alt={name}
+          width={size}
+          height={size}
+          style={{ borderRadius: "50%", objectFit: "cover" }}
+        />
+      ) : (
+        <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden>
+          <defs>
+            <linearGradient id={uid} x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor={`hsl(${hue},70%,62%)`} />
+              <stop offset="1" stopColor={`hsl(${hue + 40},65%,45%)`} />
+            </linearGradient>
+          </defs>
+          <rect width="48" height="48" rx="24" fill={`url(#${uid})`} />
+          <circle cx="24" cy="19" r="8" fill="#fff" fillOpacity="0.92" />
+          <path d="M9 42 c0-8.5 6.7-13 15-13 s15 4.5 15 13 Z" fill="#fff" fillOpacity="0.92" />
+        </svg>
+      )}
       {verified && (
         <span style={{ position: "absolute", right: -2, bottom: -2 }}>
           <svg width={size * 0.42} height={size * 0.42} viewBox="0 0 24 24">
@@ -125,7 +137,7 @@ export function PersonAvatar({
               d="M12 2.5l2 1.5 2.5-.2.9 2.3 2.2 1.3-.7 2.4.7 2.4-2.2 1.3-.9 2.3-2.5-.2-2 1.5-2-1.5-2.5.2-.9-2.3-2.2-1.3.7-2.4-.7-2.4 2.2-1.3.9-2.3 2.5.2z"
               fill="#1877f2"
             />
-            <path d="M8.5 12l2.2 2.2 4.3-4.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            <path d="M9.5 12.2l2 2 4.5-4.5" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
           </svg>
         </span>
       )}
