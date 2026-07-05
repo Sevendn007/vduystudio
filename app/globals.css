@@ -70,7 +70,10 @@ a {
 .pm-wm-shine{position:absolute;inset:0;pointer-events:none;
  background:linear-gradient(110deg,transparent 42%,rgba(255,255,255,.9) 50%,transparent 58%);
  background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
- animation:pmShine 4.2s ease-in-out infinite alternate;}
+ animation:pmShine 4.2s ease-in-out infinite alternate;
+ /* tách layer riêng: repaint của vệt sáng chỉ gói trong khung chữ, không
+    invalidate cả vùng hero mỗi frame */
+ transform:translateZ(0);}
 @keyframes pmShine{from{background-position:130% 0}to{background-position:-130% 0}}
 .pm-wm.nav{font-size:16px;letter-spacing:.08em;}
 .pm-wm.foot{font-size:clamp(26px,4vw,42px);}
@@ -80,7 +83,9 @@ a {
 /* --- Mark3D stack (premiumKit) --- */
 .pm-mark-stack{position:relative;width:100%;aspect-ratio:1.32;transform-style:preserve-3d;
  animation:pmSpinY 20s linear infinite;will-change:transform;}
-.pm-mark-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;will-change:transform;}
+/* không đặt will-change trên từng lớp img — mỗi lớp đã có transform 3D riêng
+   (tự thành compositor layer), will-change chỉ tốn thêm bộ nhớ GPU */
+.pm-mark-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;}
 .pm-mark-stack img.side{filter:brightness(1.5);opacity:.18;}
 .pm-mark-stack img.front,.pm-mark-stack img.back{filter:drop-shadow(0 22px 50px rgba(20,184,166,.35)) drop-shadow(0 0 40px rgba(45,212,191,.2));}
 .pm-mark-stack.nav{animation-duration:14s;}
@@ -122,6 +127,10 @@ a {
 .pm-menu a{padding:8px 0;transition:.2s;}
 .pm-menu a:hover{color:#fff;}
 .pm-nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+
+/* --- Below-fold: bỏ qua render/animation khi chưa cuộn tới --- */
+.pm-section,.pm-marquee-wrap,.pm-footer{content-visibility:auto;contain-intrinsic-size:auto 700px;}
+.pm-marquee-wrap{contain-intrinsic-size:auto 54px;}
 
 /* --- Hero skeleton / base (visible before hydration) --- */
 .pm-hero{position:relative;width:100%;min-height:calc(100svh - 62px);background:#03050c;overflow:hidden;
