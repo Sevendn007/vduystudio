@@ -28,9 +28,11 @@ export function PlatformIcon({ kind, size = 46 }: { kind: Platform; size?: numbe
     return (
       <svg {...common} aria-hidden>
         <rect width="48" height="48" rx={r} fill="#010101" />
-        <path d={note} fill="#25F4EE" transform="translate(-1.4,-1.4)" />
-        <path d={note} fill="#FE2C55" transform="translate(1.4,1.4)" />
-        <path d={note} fill="#fff" />
+        <g transform="translate(-2.5, 0)">
+          <path d={note} fill="#25F4EE" transform="translate(-1.4,-1.4)" />
+          <path d={note} fill="#FE2C55" transform="translate(1.4,1.4)" />
+          <path d={note} fill="#fff" />
+        </g>
       </svg>
     );
   }

@@ -40,13 +40,13 @@ export default function ChatFab() {
       </button>
 
       <style>{`
-.cfab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:9998;display:flex;flex-direction:column;align-items:flex-end;gap:12px;font-family:var(--font-inter),system-ui,sans-serif;}
+.cfab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:9998;display:flex;flex-direction:column;align-items:flex-end;gap:12px;font-family:var(--font-inter),system-ui,sans-serif;pointer-events:none;}
 .cfab-item{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 16px;border-radius:100px;background:#fff;color:#0f1115;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.25);text-decoration:none;
  opacity:0;transform:translateY(12px) scale(.9);pointer-events:none;transition:.25s cubic-bezier(.2,.8,.2,1);}
 .cfab.open .cfab-item{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
 .cfab-item svg{border-radius:50%;flex-shrink:0;}
 .cfab-label{white-space:nowrap;}
-.cfab-main{position:relative;width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;
+.cfab-main{position:relative;width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;pointer-events:auto;
  background:linear-gradient(135deg,#1877f2,#0068FF);box-shadow:0 12px 30px rgba(24,119,242,.45);display:flex;align-items:center;justify-content:center;transition:.25s;}
 .cfab-main:hover{transform:scale(1.06);}
 .cfab-icon-chat,.cfab-icon-close{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transition:.25s;color:#fff;font-size:22px;font-weight:700;}
