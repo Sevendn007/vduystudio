@@ -67,35 +67,45 @@ export default function WelcomePopup() {
   const { lang } = useLang();
   const contact = useContact();
   const [mounted, setMounted] = useState(false); // đã gắn vào DOM
-  const [show, setShow] = useState(false); // trạng thái animation vào/ra
+  const [closing, setClosing] = useState(false); // đang chạy animation đóng
   const t = TX[lang];
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (sessionStorage.getItem(SEEN_KEY)) return;
-    const id = setTimeout(() => {
-      setMounted(true);
-      requestAnimationFrame(() => setShow(true));
-    }, OPEN_DELAY);
+    // ?popup=1 để xem lại popup mà không cần xoá sessionStorage (tiện test).
+    const force = new URLSearchParams(window.location.search).get("popup") === "1";
+    if (!force && sessionStorage.getItem(SEEN_KEY)) return;
+    const id = setTimeout(() => setMounted(true), OPEN_DELAY);
     return () => clearTimeout(id);
   }, []);
 
   const close = useCallback(() => {
-    setShow(false);
+    setClosing(true);
     sessionStorage.setItem(SEEN_KEY, "1");
-    setTimeout(() => setMounted(false), 260); // chờ animation đóng
+    setTimeout(() => setMounted(false), 240); // chờ animation đóng
   }, []);
 
-  // ESC để đóng + khóa cuộn nền khi popup mở
+  // ESC để đóng + khóa cuộn nền khi popup mở.
+  // iOS Safari bỏ qua body{overflow:hidden} nên phải "đóng băng" body bằng
+  // position:fixed và trả lại đúng vị trí cuộn khi đóng — nếu không, khách
+  // vẫn kéo được trang phía sau và lọt ra vùng nền trống.
   useEffect(() => {
     if (!mounted) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+
+    const y = window.scrollY;
+    const s = document.body.style;
+    const prev = { position: s.position, top: s.top, width: s.width, overflow: s.overflow };
+    s.position = "fixed";
+    s.top = `-${y}px`;
+    s.width = "100%";
+    s.overflow = "hidden";
+
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
+      Object.assign(s, prev);
+      window.scrollTo({ top: y, behavior: "instant" as ScrollBehavior });
     };
   }, [mounted, close]);
 
@@ -109,7 +119,7 @@ export default function WelcomePopup() {
   ].filter(Boolean) as { key: string; url: string; icon: Platform | null; label: string; sub: string }[];
 
   return (
-    <div className={`wp-overlay${show ? " in" : ""}`} role="dialog" aria-modal="true" aria-label={t.title} onClick={close}>
+    <div className={`wp-overlay${closing ? " out" : ""}`} role="dialog" aria-modal="true" aria-label={t.title} onClick={close}>
       <div className="wp-card" onClick={(e) => e.stopPropagation()}>
         <span className="wp-glow" aria-hidden />
         <button className="wp-close" onClick={close} aria-label={t.close}>✕</button>
@@ -184,10 +194,15 @@ export default function WelcomePopup() {
       </div>
 
       <style>{`
+/* Hiện bằng CSS animation (không phụ thuộc requestAnimationFrame — trên
+   mobile rAF có thể bị hoãn khi tab chạy nền / đang cuộn, khiến popup nằm
+   im ở opacity:0 mà vẫn chặn tương tác). */
 .wp-overlay{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;
  padding:clamp(12px,3vw,28px);background:rgba(1,6,9,.72);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
- opacity:0;transition:opacity .26s ease;font-family:var(--pm-font-body);overflow-y:auto;}
-.wp-overlay.in{opacity:1;}
+ font-family:var(--pm-font-body);overflow-y:auto;overscroll-behavior:contain;
+ animation:wpFadeIn .26s ease both;}
+.wp-overlay.out{animation:wpFadeIn .22s ease reverse both;}
+@keyframes wpFadeIn{from{opacity:0}to{opacity:1}}
 .wp-card{position:relative;width:min(880px,100%);max-height:calc(100svh - 32px);overflow-y:auto;overflow-x:hidden;
  padding:clamp(26px,3.4vw,40px) clamp(18px,3vw,42px) clamp(24px,3vw,34px);
  border:1px solid rgba(45,212,191,.28);border-radius:26px;color:#e6f0f2;text-align:center;
@@ -196,10 +211,11 @@ export default function WelcomePopup() {
   radial-gradient(620px 360px at 84% 92%,rgba(8,145,178,.18),transparent 66%),
   linear-gradient(180deg,#06161c 0%,#02090c 100%);
  box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 70px rgba(45,212,191,.12);
- transform:translateY(22px) scale(.96);opacity:0;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .3s ease;
- scrollbar-width:none;}
+ -webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-width:none;
+ animation:wpCardIn .3s cubic-bezier(.2,.8,.2,1) both;}
 .wp-card::-webkit-scrollbar{display:none;}
-.wp-overlay.in .wp-card{transform:none;opacity:1;}
+.wp-overlay.out .wp-card{animation:wpCardIn .22s ease reverse both;}
+@keyframes wpCardIn{from{transform:translateY(22px) scale(.96);opacity:0}to{transform:none;opacity:1}}
 .wp-glow{position:absolute;top:-90px;left:50%;transform:translateX(-50%);width:340px;height:180px;border-radius:50%;
  background:radial-gradient(ellipse,rgba(45,212,191,.35),transparent 70%);filter:blur(30px);pointer-events:none;}
 .wp-close{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;cursor:pointer;
@@ -288,8 +304,9 @@ export default function WelcomePopup() {
  .wp-trust-tx span{font-size:9.5px;}
  .wp-cta{margin-top:16px;padding:13px 28px;font-size:13px;}
 }
+/* Tắt animation vẫn phải thấy popup (animation:none → về style gốc, hiện luôn) */
 @media(prefers-reduced-motion:reduce){
- .wp-overlay,.wp-card{transition:none;}
+ .wp-overlay,.wp-card{animation:none!important;}
 }
       `}</style>
     </div>

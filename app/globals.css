@@ -32,6 +32,11 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  /* Nền tối ở gốc trang: trên mobile (iOS rubber-band, thanh địa chỉ thu/phóng)
+     phần ngoài .pm-root lộ ra sẽ là nền trắng nếu không set — gây "trắng màn
+     hình" khi kéo quá cuối trang. Admin có div bg-gray-100 min-h-screen riêng
+     nên không bị ảnh hưởng. */
+  background: #02090c;
 }
 
 body {
