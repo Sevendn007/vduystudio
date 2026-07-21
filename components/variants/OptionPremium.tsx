@@ -11,6 +11,7 @@ import Tilt from "@/components/tilt";
 import { PersonAvatar, PlatformIcon, Platform } from "@/components/brand";
 import { VDuyBadge } from "@/components/logo";
 import { PremiumFooter } from "@/components/PremiumFooter";
+import WelcomePopup from "@/components/WelcomePopup";
 import { SpriteImg, Mark3D, Wordmark, IPhone, DEFAULT_PROJECTS } from "@/components/premiumKit";
 import { useLang, Lang, LangToggle } from "@/lib/i18n";
 import { siteText, site } from "@/lib/site";
@@ -211,6 +212,9 @@ export default function OptionPremium() {
 
   return (
     <div className="pm-root" id="pm-top">
+      {/* Popup chào mừng — bung 1 lần mỗi phiên truy cập */}
+      <WelcomePopup />
+
       {/* NAV */}
       <nav className="pm-nav">
         <a href="#pm-top" className="pm-brand">
