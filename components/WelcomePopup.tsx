@@ -75,8 +75,27 @@ export default function WelcomePopup() {
     // ?popup=1 để xem lại popup mà không cần xoá sessionStorage (tiện test).
     const force = new URLSearchParams(window.location.search).get("popup") === "1";
     if (!force && sessionStorage.getItem(SEEN_KEY)) return;
-    const id = setTimeout(() => setMounted(true), OPEN_DELAY);
-    return () => clearTimeout(id);
+    if (force) {
+      const id = setTimeout(() => setMounted(true), OPEN_DELAY);
+      return () => clearTimeout(id);
+    }
+    // Không che hero: mở sau 12s hoặc khi cuộn qua 50% trang.
+    let done = false;
+    const open = () => {
+      if (done) return;
+      done = true;
+      setMounted(true);
+    };
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (max > 0 && window.scrollY / max >= 0.5) open();
+    };
+    const id = setTimeout(open, 12000);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      clearTimeout(id);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   const close = useCallback(() => {

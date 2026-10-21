@@ -1,0 +1,67 @@
+/* ======================================================================
+   HOLO GLASS — design tokens (xem redesign_spec.md §3).
+   Mọi màu / khoảng cách / motion trong UI mới phải lấy từ đây.
+   ====================================================================== */
+:root {
+  /* màu */
+  --c-void: #02040a;
+  --c-abyss: #050b14;
+  --c-deep: #071a22;
+  --c-teal-900: #062a30;
+  --c-aqua: #5ef2e6;
+  --c-ice: #bffcf6;
+  --c-cyan: #22d3ee;
+  --c-lilac: #b9a7ff;
+  --c-pearl: #e8f4ff;
+  --c-text: #c9d6e2;
+  --c-muted: #7f94a8;
+  --c-line: rgba(94, 242, 230, 0.14);
+  --c-glass: rgba(12, 24, 34, 0.55);
+  --c-verified: #20a1ff;
+  --c-star: #fbbf24;
+  --c-on-aqua: #03222e;
+
+  /* gradient */
+  --g-chrome: linear-gradient(100deg, #bffcf6 0%, #5ef2e6 35%, #b9a7ff 60%, #5ef2e6 85%, #e8f4ff 100%);
+  --g-aqua: linear-gradient(135deg, #5ef2e6 0%, #22d3ee 100%);
+  --g-border: linear-gradient(135deg, rgba(94, 242, 230, 0.55), rgba(185, 167, 255, 0.35) 50%, rgba(94, 242, 230, 0.08));
+  --g-void: radial-gradient(1200px 700px at 50% -10%, rgba(34, 211, 238, 0.16), transparent 60%),
+    radial-gradient(900px 600px at 85% 30%, rgba(185, 167, 255, 0.08), transparent 65%), #02040a;
+
+  /* typography */
+  --ff-display: var(--font-display), "Space Grotesk", system-ui, sans-serif;
+  --ff-body: var(--font-body), "Be Vietnam Pro", system-ui, sans-serif;
+  --ff-mono: var(--font-mono), "JetBrains Mono", ui-monospace, monospace;
+  --fs-hero: clamp(40px, 6.4vw, 104px);
+  --fs-h2: clamp(32px, 4.4vw, 64px);
+  --fs-h3: clamp(20px, 1.8vw, 28px);
+  --fs-lead: clamp(16px, 1.3vw, 20px);
+  --fs-body: 16px;
+  --fs-small: 13px;
+  --fs-eyebrow: 12px;
+  --fs-stat: clamp(32px, 3.6vw, 56px);
+
+  /* spacing */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px;
+  --sp-6: 32px; --sp-7: 48px; --sp-8: 64px; --sp-9: 96px; --sp-10: 144px;
+  --section-y: clamp(80px, 11vw, 160px);
+  --container: 1240px;
+  --gutter: clamp(16px, 4vw, 32px);
+
+  /* shape & effects */
+  --r-sm: 10px; --r-md: 16px; --r-lg: 24px; --r-xl: 32px; --r-pill: 999px;
+  --glow-sm: 0 0 24px rgba(94, 242, 230, 0.25);
+  --glow-md: 0 0 48px rgba(94, 242, 230, 0.3), 0 0 2px rgba(191, 252, 246, 0.6) inset;
+  --shadow-card: 0 30px 80px -20px rgba(0, 0, 0, 0.65);
+  --blur-glass: blur(18px) saturate(140%);
+
+  /* motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 180ms;
+  --dur-base: 420ms;
+  --dur-slow: 900ms;
+
+  /* z-index */
+  --z-bg: 0; --z-content: 10; --z-nav: 50; --z-fab: 60; --z-popup: 80;
+}
