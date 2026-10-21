@@ -110,7 +110,7 @@ const LogoTurnCanvas = forwardRef<LogoTurnHandle, { mobile?: boolean; alt: strin
         alt={alt}
         width={960}
         height={864}
-        {...{ fetchpriority: "high" }}
+        loading="eager"
         decoding="async"
         draggable={false}
       />

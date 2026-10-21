@@ -24,7 +24,9 @@ export default function Projects() {
   const [active, setActive] = useState(0);
   const [open, setOpen] = useState<DbProject | null>(null);
   const [paused, setPaused] = useState(false);
-  const drag = useRef<{ x: number; moved: boolean } | null>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ x: number; dx: number; moved: boolean; id: number } | null>(null);
+  const wheelLock = useRef(0);
 
   useEffect(() => {
     let m = true;
@@ -52,6 +54,55 @@ export default function Projects() {
   const cur = items[active];
   const fallback = (i: number) => DEFAULT_PROJECTS[i % DEFAULT_PROJECTS.length].image_url!;
 
+  // Kéo/vuốt: thẻ chạy theo tay (CSS var --drag, không re-render), thả ra thì bắt về thẻ gần nhất.
+  const cardStep = () => {
+    const c = trackRef.current?.querySelector<HTMLElement>(".cf-card");
+    return (c?.offsetWidth ?? 240) * 0.78;
+  };
+  const setDrag = (v: number, dragging: boolean) => {
+    const t = trackRef.current;
+    if (!t) return;
+    t.style.setProperty("--drag", v.toFixed(3));
+    t.classList.toggle("is-dragging", dragging);
+  };
+  const onDown = (e: React.PointerEvent) => {
+    if (e.button !== 0) return;
+    drag.current = { x: e.clientX, dx: 0, moved: false, id: e.pointerId };
+  };
+  useEffect(() => {
+    const move = (e: PointerEvent) => {
+      const d = drag.current;
+      if (!d || e.pointerId !== d.id) return;
+      d.dx = e.clientX - d.x;
+      if (Math.abs(d.dx) > 6) d.moved = true;
+      if (d.moved) setDrag(d.dx / cardStep(), true);
+    };
+    const up = (e: PointerEvent) => {
+      const d = drag.current;
+      if (!d || e.pointerId !== d.id) return;
+      const steps = Math.round(-d.dx / cardStep());
+      const flick = steps === 0 && Math.abs(d.dx) > 30 ? (d.dx < 0 ? 1 : -1) : steps;
+      setDrag(0, false);
+      if (d.moved && flick) go(flick);
+      setTimeout(() => (drag.current = null), 0);
+    };
+    window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+    return () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+    };
+  }, [go]);
+  const onWheel = (e: React.WheelEvent) => {
+    if (Math.abs(e.deltaX) < Math.abs(e.deltaY) || Math.abs(e.deltaX) < 12) return;
+    const now = Date.now();
+    if (now - wheelLock.current < 450) return;
+    wheelLock.current = now;
+    go(e.deltaX > 0 ? 1 : -1);
+  };
+
   return (
     <section className="section projects" id="projects" aria-labelledby="projects-title">
       <div className="container">
@@ -76,18 +127,10 @@ export default function Projects() {
         }}
         onPointerEnter={() => setPaused(true)}
         onPointerLeave={() => setPaused(false)}
-        onPointerDown={(e) => (drag.current = { x: e.clientX, moved: false })}
-        onPointerMove={(e) => {
-          const d = drag.current;
-          if (d && Math.abs(e.clientX - d.x) > 40) {
-            go(e.clientX < d.x ? 1 : -1);
-            drag.current = { x: e.clientX, moved: true };
-          }
-        }}
-        onPointerUp={() => setTimeout(() => (drag.current = null), 0)}
+        onWheel={onWheel}
       >
         <div className="cf-ring" aria-hidden />
-        <div className="cf-track">
+        <div ref={trackRef} className="cf-track" onPointerDown={onDown}>
           {items.map((p, i) => {
             let off = i - active;
             if (off > n / 2) off -= n;
@@ -126,9 +169,14 @@ export default function Projects() {
               </button>
             );
           })}
+          <button className="cf-arrow cf-prev" onClick={() => go(-1)} aria-label={t.prev}>
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+          <button className="cf-arrow cf-next" onClick={() => go(1)} aria-label={t.next}>
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
         </div>
         <div className="cf-nav">
-          <button className="cf-arrow" onClick={() => go(-1)} aria-label={t.prev}>←</button>
           <div className="cf-caption" aria-live="polite">
             <h3>{cur.title}</h3>
             {cur.result && <p>{cur.result}</p>}
@@ -137,10 +185,11 @@ export default function Projects() {
               {cur.tag && <span className="chip chip-sm chip-aqua">{cur.tag}</span>}
             </span>
           </div>
-          <button className="cf-arrow" onClick={() => go(1)} aria-label={t.next}>→</button>
         </div>
-        <div className="cf-dots" aria-hidden>
-          {items.map((p, i) => <span key={p.id} className={i === active ? "on" : ""} />)}
+        <div className="cf-dots">
+          {items.map((p, i) => (
+            <button key={p.id} className={i === active ? "on" : ""} onClick={() => setActive(i)} aria-label={p.title} />
+          ))}
         </div>
       </div>
 

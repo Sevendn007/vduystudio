@@ -5,7 +5,6 @@
 
 import Link from "next/link";
 import SplitText from "@/components/rb/SplitText/SplitText";
-import ClickSpark from "@/components/rb/ClickSpark/ClickSpark";
 import LogoSwayVideo from "@/components/brand/LogoSwayVideo";
 import Icon3D from "@/components/brand/Icon3D";
 import { useLang } from "@/lib/i18n";
@@ -43,9 +42,7 @@ export default function SiteFooter() {
         </h2>
         <p className="cta-sub">{c.cta.sub}</p>
         <div className="cta-btns">
-          <ClickSpark sparkColor="#5EF2E6" sparkCount={10} sparkRadius={22}>
-            <a className="btn btn-primary btn-lg" href={contact.zalo} target="_blank" rel="noreferrer">{c.cta.zalo}</a>
-          </ClickSpark>
+          <a className="btn btn-primary btn-lg" href={contact.zalo} target="_blank" rel="noreferrer">{c.cta.zalo}</a>
           {contact.isSet("facebook") && (
             <a className="btn btn-glass btn-lg" href={contact.facebook} target="_blank" rel="noreferrer">{c.cta.messenger}</a>
           )}

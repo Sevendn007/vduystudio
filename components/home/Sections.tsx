@@ -3,7 +3,6 @@
 // Các section giữa/cuối trang chủ (redesign_spec.md §6.3–6.9).
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import LogoLoop from "@/components/rb/LogoLoop/LogoLoop";
@@ -11,11 +10,10 @@ import ScrollReveal from "@/components/rb/ScrollReveal/ScrollReveal";
 import ScrollVelocity from "@/components/rb/ScrollVelocity/ScrollVelocity";
 import SpotlightCard from "@/components/rb/SpotlightCard/SpotlightCard";
 import SplitText from "@/components/rb/SplitText/SplitText";
-import CountUp from "@/components/rb/CountUp/CountUp";
 import Icon3D from "@/components/brand/Icon3D";
 import { PersonAvatar } from "@/components/brand";
 import { useLang } from "@/lib/i18n";
-import { BRANDS, CLIENTS, PROCESS_ICONS, SERVICES, homeCopy } from "@/lib/homeCopy";
+import { BRANDS, CLIENTS, PROCESS_ICONS, homeCopy } from "@/lib/homeCopy";
 import { getProcess } from "@/lib/services";
 import { siteText } from "@/lib/site";
 import { fetchFeedbacks, DbFeedback } from "@/lib/data";
@@ -103,47 +101,6 @@ export function Manifesto() {
   );
 }
 
-/* ---------- 6.5 Dịch vụ (bento) ---------- */
-export function Services() {
-  const { lang } = useLang();
-  const t = homeCopy(lang).services;
-  const sep = lang === "en" ? "," : ".";
-  return (
-    <section className="section container" id="services" aria-labelledby="services-title">
-      <SectionHeading id="services-title" eyebrow={t.eyebrow} a={t.h2a} b={t.h2b} />
-      <div className="bento">
-        {SERVICES(lang).map((s, i) => (
-          <SpotlightCard
-            key={s.slug}
-            className={`bento-card glass b${i + 1}`}
-            spotlightColor="rgba(94, 242, 230, 0.18)"
-            borderGlow={0.6}
-            theme="dark"
-          >
-            <Link href={`/dich-vu/${s.slug}`} className="bento-link" aria-label={`${s.name} — ${t.more}`}>
-              <span className="bento-icons" aria-hidden>
-                {s.icons.map((ic, k) => (
-                  <Icon3D key={ic} name={ic} size={i === 0 ? (k === 0 ? 132 : 56) : 84} className={`bi${k}`} />
-                ))}
-              </span>
-              <span className="bento-body">
-                <h3>{s.name}</h3>
-                <p>{s.desc}</p>
-              </span>
-              <span className="bento-foot">
-                <span className="chip chip-sm">
-                  <b><CountUp to={s.clients} separator={sep} duration={1.8} /></b>&nbsp;{t.clients}
-                </span>
-                <span className="bento-more">{t.more} <i aria-hidden>→</i></span>
-              </span>
-            </Link>
-          </SpotlightCard>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 /* ---------- 6.7 Khách hàng ---------- */
 export function Clients() {
   const { lang } = useLang();
@@ -223,6 +180,7 @@ export function Feedback() {
   const st = siteText(lang);
   const [db, setDb] = useState<DbFeedback[] | null>(null);
   const [zoom, setZoom] = useState<string | null>(null);
+  const [all, setAll] = useState(false);
 
   useEffect(() => {
     let m = true;
@@ -239,7 +197,7 @@ export function Feedback() {
     <section className="section container" id="feedback" aria-labelledby="feedback-title">
       <SectionHeading id="feedback-title" eyebrow={t.eyebrow} a={t.h2} />
       <div className="fb-grid">
-        {items.map((c, i) => (
+        {(all ? items : items.slice(0, 6)).map((c, i) => (
           <SpotlightCard key={c.id} className="fb-card glass" spotlightColor="rgba(185, 167, 255, 0.14)" theme="dark">
             <div className="fb-top">
               <span className="fb-stars" aria-label={`${c.rating ?? 5}/5`}>{"★".repeat(Math.min(5, Math.max(1, c.rating ?? 5)))}</span>
@@ -262,6 +220,13 @@ export function Feedback() {
           </SpotlightCard>
         ))}
       </div>
+      {items.length > 6 && (
+        <div className="fb-more">
+          <button type="button" className="btn btn-glass" onClick={() => setAll((v) => !v)} aria-expanded={all}>
+            {all ? (lang === "en" ? "Show less" : "Thu gọn") : (lang === "en" ? `Show all ${items.length} reviews` : `Xem tất cả ${items.length} đánh giá`)}
+          </button>
+        </div>
+      )}
       {zoom && (
         <div className="lightbox" role="dialog" aria-modal="true" onClick={() => setZoom(null)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
