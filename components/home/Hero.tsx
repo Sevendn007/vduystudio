@@ -1,11 +1,10 @@
 "use client";
 
-// HERO (redesign_spec.md §6.2): nền LightRays + Particles (WebGL), logo xoay
+// HERO (redesign_spec.md §6.2): nền tinh vân tĩnh + tia sáng CSS (không WebGL), logo xoay
 // theo cuộn (chuỗi frame), H1 SplitText + GradientText, RotatingText, CTA
 // ClickSpark, stats CountUp. Biên đạo cuộn: pin + scrub (GSAP ScrollTrigger).
 
-import { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SplitText from "@/components/rb/SplitText/SplitText";
@@ -18,13 +17,9 @@ import LogoTurnCanvas, { LogoTurnHandle } from "@/components/brand/LogoTurnCanva
 import { useLang } from "@/lib/i18n";
 import { homeCopy, STATS } from "@/lib/homeCopy";
 import { useContact } from "@/lib/useContact";
-import WebGLGuard from "@/components/brand/WebGLGuard";
 import { useCanHover, useIsMobile, useLowPower, useReducedMotion } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger);
-
-const LightRays = dynamic(() => import("@/components/rb/LightRays/LightRays"), { ssr: false });
-const Particles = dynamic(() => import("@/components/rb/Particles/Particles"), { ssr: false });
 
 export default function Hero() {
   const { lang } = useLang();
@@ -41,18 +36,7 @@ export default function Hero() {
   const statsRef = useRef<HTMLDivElement>(null);
   const slitRef = useRef<HTMLDivElement>(null);
   const turnRef = useRef<LogoTurnHandle>(null);
-  const [fxOn, setFxOn] = useState(true); // tắt WebGL khi hero ra khỏi màn hình
-
-  const showFx = !reduced && !lowPower;
-
-  // dừng WebGL khi hero ngoài viewport
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setFxOn(e.isIntersecting), { rootMargin: "200px" });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+  const glowRef = useRef<HTMLDivElement>(null);
 
   // nghiêng logo theo chuột (desktop)
   useEffect(() => {
@@ -104,9 +88,9 @@ export default function Hero() {
         },
       });
       tl.to(stats, { autoAlpha: 0, y: -24, duration: 0.2 }, 0)
-        .to(content.children, { autoAlpha: 0, y: -48, filter: "blur(8px)", stagger: 0.04, duration: 0.26 }, 0)
+        .to(content.children, { autoAlpha: 0, y: -48, stagger: 0.04, duration: 0.26 }, 0)
         .fromTo(logo, { "--s": 1 }, { "--s": 1.25, duration: 0.65 }, 0)
-        .to(logo, { "--glow": "60px", duration: 0.2 }, 0.65)
+        .to(glowRef.current, { "--glowO": 1, scale: 1.3, duration: 0.2 }, 0.65)
         .fromTo(slit, { scaleX: 0, autoAlpha: 0 }, { scaleX: 1, autoAlpha: 1, duration: 0.12 }, 0.85)
         .to(logo, { autoAlpha: 0, duration: 0.08 }, 0.9)
         .to(slit, { autoAlpha: 0, duration: 0.05 }, 0.95)
@@ -121,44 +105,23 @@ export default function Hero() {
   return (
     <section ref={sectionRef} className="hero" id="hero" aria-labelledby="hero-title">
       <div className="hero-bg" aria-hidden>
-        {showFx && fxOn && (
-          <WebGLGuard>
-            <div className="hero-particles">
-              <Particles
-                particleCount={mobile ? 80 : 180}
-                particleColors={["#5EF2E6", "#B9A7FF", "#E8F4FF"]}
-                particleSpread={10}
-                speed={0.05}
-                particleBaseSize={mobile ? 50 : 70}
-                sizeRandomness={1}
-                alphaParticles
-                moveParticlesOnHover={canHover}
-                particleHoverFactor={0.4}
-                pixelRatio={1}
-              />
-            </div>
-            <div className="hero-rays">
-              <LightRays
-                raysOrigin="top-center"
-                raysColor="#5EF2E6"
-                raysSpeed={0.6}
-                lightSpread={0.9}
-                rayLength={1.6}
-                followMouse={canHover}
-                mouseInfluence={0.08}
-                noiseAmount={0.06}
-                distortion={0.04}
-                maxDevicePixelRatio={mobile ? 1 : 1.5}
-              />
-            </div>
-          </WebGLGuard>
+        <div className="hero-nebula" />
+        {!reduced && (
+          <>
+            <div className="hero-beam" />
+            <div className="hero-beam b2" />
+            <div className="hero-stars" />
+          </>
         )}
         <div className="hero-floor" />
       </div>
 
       <div className="hero-stage">
+        <div className="hero-glow" ref={glowRef} aria-hidden />
         <div ref={logoRef} className="hero-logo">
-          <LogoTurnCanvas ref={turnRef} mobile={mobile || lowPower} alt="VDuyStudio" />
+          <div className="hero-float">
+            <LogoTurnCanvas ref={turnRef} mobile={mobile || lowPower} alt="VDuyStudio" />
+          </div>
         </div>
         <div className="hero-orbit o1" aria-hidden><i /></div>
         <div className="hero-orbit o2" aria-hidden><i /></div>

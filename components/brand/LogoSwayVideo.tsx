@@ -1,12 +1,20 @@
 "use client";
 
-// Video loop logo lắc 3D nhẹ (nền đen + mix-blend-mode:screen ở wrapper).
-// Chỉ phát khi nằm trong viewport; reduced-motion → chỉ hiện poster.
+// Video loop logo lắc 3D nhẹ — dùng bản có ALPHA thật (không còn khung đen):
+//   Safari → HEVC alpha (.mov), Chrome/Firefox/Edge → VP9 alpha (.webm).
+// Chỉ tải + phát khi gần viewport; reduced-motion → chỉ hiện poster (đã tách nền).
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+function pickSrc(): string {
+  const ua = navigator.userAgent;
+  const isSafari = /Safari\//.test(ua) && !/Chrome\/|Chromium\/|Edg\/|CriOS\/|FxiOS\//.test(ua);
+  return isSafari ? "/brand/video/logo-sway-loop-alpha-hevc.mov" : "/brand/video/logo-sway-loop-alpha.webm";
+}
 
 export default function LogoSwayVideo({ className = "" }: { className?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const [src, setSrc] = useState<string | null>(null);
 
   useEffect(() => {
     const v = ref.current;
@@ -14,29 +22,34 @@ export default function LogoSwayVideo({ className = "" }: { className?: string }
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const io = new IntersectionObserver(
       ([e]) => {
-        if (e.isIntersecting) v.play().catch(() => {});
-        else v.pause();
+        if (e.isIntersecting) {
+          setSrc((s) => s ?? pickSrc());
+          v.play().catch(() => {});
+        } else v.pause();
       },
-      { rootMargin: "120px" }
+      { rootMargin: "200px" }
     );
     io.observe(v);
     return () => io.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (src) ref.current?.play().catch(() => {});
+  }, [src]);
+
   return (
     <div className={`logo-sway ${className}`}>
       <video
         ref={ref}
+        src={src ?? undefined}
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="none"
         disablePictureInPicture
-        poster="/brand/video/logo-turn-poster.webp"
+        poster="/brand/logo/vduy-logo-3d-1024.webp"
         aria-hidden
-      >
-        <source src="/brand/video/logo-sway-loop-black.mp4" type="video/mp4" />
-      </video>
+      />
     </div>
   );
 }

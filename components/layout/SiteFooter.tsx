@@ -3,7 +3,6 @@
 
 // 6.10 CTA cuối (Orb WebGL + logo sway) + footer — dùng chung mọi trang public.
 
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import SplitText from "@/components/rb/SplitText/SplitText";
 import ClickSpark from "@/components/rb/ClickSpark/ClickSpark";
@@ -12,10 +11,7 @@ import Icon3D from "@/components/brand/Icon3D";
 import { useLang } from "@/lib/i18n";
 import { homeCopy, type Icon3DName } from "@/lib/homeCopy";
 import { useContact, type ContactKey } from "@/lib/useContact";
-import WebGLGuard from "@/components/brand/WebGLGuard";
-import { useLowPower, useReducedMotion } from "@/lib/motion";
 
-const Orb = dynamic(() => import("@/components/rb/Orb/Orb"), { ssr: false });
 
 const SOCIAL: { key: ContactKey; icon: Icon3DName; label: string }[] = [
   { key: "tiktok", icon: "tiktok", label: "TikTok" },
@@ -30,21 +26,13 @@ export default function SiteFooter() {
   const { lang } = useLang();
   const c = homeCopy(lang);
   const contact = useContact();
-  const lowPower = useLowPower();
-  const reduced = useReducedMotion();
   const socials = SOCIAL.filter((s) => contact.isSet(s.key));
 
   return (
     <footer className="footer" id="contact">
       <section className="cta container" aria-labelledby="cta-title">
         <div className="cta-visual" aria-hidden>
-          {!lowPower && !reduced && (
-            <div className="cta-orb">
-              <WebGLGuard>
-                <Orb hue={175} hoverIntensity={0.3} rotateOnHover dpr={1} />
-              </WebGLGuard>
-            </div>
-          )}
+          <div className="cta-orb" />
           <LogoSwayVideo className="cta-logo" />
         </div>
         <h2 id="cta-title" className="cta-h2" aria-label={c.cta.h2}>
