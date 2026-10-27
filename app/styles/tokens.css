@@ -2,7 +2,7 @@
    HOLO GLASS — design tokens (xem redesign_spec.md §3).
    Mọi màu / khoảng cách / motion trong UI mới phải lấy từ đây.
    ====================================================================== */
-:root {
+.holo {
   /* màu */
   --c-void: #02040a;
   --c-abyss: #050b14;

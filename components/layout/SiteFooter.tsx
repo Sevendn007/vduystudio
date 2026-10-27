@@ -10,6 +10,7 @@ import Icon3D from "@/components/brand/Icon3D";
 import { useLang } from "@/lib/i18n";
 import { homeCopy, type Icon3DName } from "@/lib/homeCopy";
 import { useContact, type ContactKey } from "@/lib/useContact";
+import { HOLO_HOME } from "@/lib/uiMode";
 
 
 const SOCIAL: { key: ContactKey; icon: Icon3DName; label: string }[] = [
@@ -50,12 +51,12 @@ export default function SiteFooter() {
       </section>
 
       <div className="footbar container">
-        <Link href="/" className="footbar-brand">
+        <Link href={HOLO_HOME} className="footbar-brand">
           <img src="/brand/logo/vduy-mark-128.png" alt="" width={32} height={32} />
           <span>VDuyStudio</span>
         </Link>
         <nav className="footbar-links" aria-label={c.footer.links}>
-          <Link href="/#services">{c.nav.services}</Link>
+          <Link href={`${HOLO_HOME}#services`}>{c.nav.services}</Link>
           <Link href="/du-an">{c.nav.projects}</Link>
           <Link href="/blog">{c.nav.blog}</Link>
         </nav>

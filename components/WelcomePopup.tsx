@@ -63,7 +63,9 @@ const TX = {
   },
 };
 
-export default function WelcomePopup() {
+// deferOpen (chỉ UI mới /v2 dùng): không che hero — mở sau 12s hoặc khi cuộn qua 50% trang.
+// Không truyền prop → giữ nguyên hành vi cũ (mở sau OPEN_DELAY).
+export default function WelcomePopup({ deferOpen = false }: { deferOpen?: boolean } = {}) {
   const { lang } = useLang();
   const contact = useContact();
   const [mounted, setMounted] = useState(false); // đã gắn vào DOM
@@ -75,11 +77,10 @@ export default function WelcomePopup() {
     // ?popup=1 để xem lại popup mà không cần xoá sessionStorage (tiện test).
     const force = new URLSearchParams(window.location.search).get("popup") === "1";
     if (!force && sessionStorage.getItem(SEEN_KEY)) return;
-    if (force) {
+    if (!deferOpen || force) {
       const id = setTimeout(() => setMounted(true), OPEN_DELAY);
       return () => clearTimeout(id);
     }
-    // Không che hero: mở sau 12s hoặc khi cuộn qua 50% trang.
     let done = false;
     const open = () => {
       if (done) return;
@@ -96,7 +97,7 @@ export default function WelcomePopup() {
       clearTimeout(id);
       window.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, [deferOpen]);
 
   const close = useCallback(() => {
     setClosing(true);

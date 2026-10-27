@@ -1,28 +1,6 @@
-import SiteNav from "@/components/layout/SiteNav";
-import SiteFooter from "@/components/layout/SiteFooter";
-import Hero from "@/components/home/Hero";
-import Projects from "@/components/home/Projects";
-import Services from "@/components/home/Services";
-import { TrustedBy, Manifesto, Clients, Process, Feedback } from "@/components/home/Sections";
-import WelcomePopup from "@/components/WelcomePopup";
+import OptionPremium from "@/components/variants/OptionPremium";
 
-// Trang chủ HOLO GLASS — xem redesign_spec.md §6.
+// Landing chính thức — bản Premium (bản Galaxy cũ đã gỡ bỏ).
 export default function Home() {
-  return (
-    <div className="holo">
-      <WelcomePopup />
-      <SiteNav />
-      <main>
-        <Hero />
-        <TrustedBy />
-        <Manifesto />
-        <Services />
-        <Projects />
-        <Clients />
-        <Process />
-        <Feedback />
-      </main>
-      <SiteFooter />
-    </div>
-  );
+  return <OptionPremium />;
 }

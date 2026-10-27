@@ -11,13 +11,14 @@ import { usePathname } from "next/navigation";
 import { useLang } from "@/lib/i18n";
 import { homeCopy } from "@/lib/homeCopy";
 import { useContact } from "@/lib/useContact";
+import { HOLO_HOME } from "@/lib/uiMode";
 
 export default function SiteNav() {
   const { lang, setLang } = useLang();
   const t = homeCopy(lang).nav;
   const contact = useContact();
   const pathname = usePathname();
-  const onHome = pathname === "/";
+  const onHome = pathname === HOLO_HOME;
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
@@ -25,10 +26,10 @@ export default function SiteNav() {
   const sheetRef = useRef<HTMLDivElement>(null);
 
   const items = [
-    { id: "services", label: t.services, href: onHome ? "#services" : "/#services" },
-    { id: "process", label: t.process, href: onHome ? "#process" : "/#process" },
+    { id: "services", label: t.services, href: onHome ? "#services" : `${HOLO_HOME}#services` },
+    { id: "process", label: t.process, href: onHome ? "#process" : `${HOLO_HOME}#process` },
     { id: "projects", label: t.projects, href: "/du-an" },
-    { id: "feedback", label: t.feedback, href: onHome ? "#feedback" : "/#feedback" },
+    { id: "feedback", label: t.feedback, href: onHome ? "#feedback" : `${HOLO_HOME}#feedback` },
     { id: "blog", label: t.blog, href: "/blog" },
   ];
 
@@ -104,7 +105,7 @@ export default function SiteNav() {
     <>
       <header className={`nav${scrolled ? " is-scrolled" : ""}${hidden && !open ? " is-hidden" : ""}`}>
         <nav className="nav-bar glass" aria-label="Main">
-          <Link href="/" className="nav-brand" aria-label="VDuyStudio — trang chủ">
+          <Link href={HOLO_HOME} className="nav-brand" aria-label="VDuyStudio — trang chủ">
             <img src="/brand/logo/vduy-mark-128.png" srcSet="/brand/logo/vduy-mark-256.png 2x" alt="" width={40} height={40} />
             <span>VDuyStudio</span>
           </Link>
