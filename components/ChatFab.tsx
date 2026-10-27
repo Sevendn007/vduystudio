@@ -4,9 +4,17 @@
 // Messenger). Không kênh nào cấu hình → ẩn hoàn toàn.
 
 import { useState, ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { useContact } from "@/lib/useContact";
 
 export default function ChatFab() {
+  const pathname = usePathname();
+  // Ẩn trên /v3: KHÔNG mount inner → useContact không chạy → 0 request Supabase.
+  if (pathname?.startsWith("/v3")) return null;
+  return <ChatFabInner />;
+}
+
+function ChatFabInner() {
   const [open, setOpen] = useState(false);
   const contact = useContact();
 

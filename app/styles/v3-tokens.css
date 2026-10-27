@@ -1,0 +1,79 @@
+/* ======================================================================
+   VDuyStudio v3 — "VERIFIED ORBIT" design tokens.
+   Mọi màu / khoảng cách / motion trong v3 lấy từ đây. Scope dưới `.v3`
+   để không rò sang `/` (Premium) hay `/v2` (Holo Glass).
+   ====================================================================== */
+.v3 {
+  /* nền */
+  --v3-void: #02040a;
+  --v3-abyss: #050b14;
+  --v3-deep: #071a22;
+  --v3-panel: #081520;
+
+  /* teal → xanh tích (câu chuyện: từ studio đến được xác minh) */
+  --v3-aqua: #5ef2e6;
+  --v3-ice: #bffcf6;
+  --v3-cyan: #22d3ee;
+  --v3-verified: #20a1ff;       /* tích xanh — giữ xanh dương, không teal hoá */
+  --v3-verified-deep: #1877f2;
+  --v3-zalo: #0068ff;
+  --v3-iris: #8ab4ff;           /* bóng sâu / sao xa (thay lilac) */
+
+  /* kim loại / chữ */
+  --v3-chrome: #e8f4ff;
+  --v3-steel: #9fb3c8;
+  --v3-pearl: #e8f4ff;
+  --v3-text: #c9d6e2;
+  --v3-muted: #7f94a8;
+  --v3-star: #fbbf24;
+  --v3-on-aqua: #03222e;
+
+  /* đường / kính */
+  --v3-line: rgba(94, 242, 230, 0.14);
+  --v3-glass: rgba(10, 22, 34, 0.72);
+  --v3-glass-2: rgba(12, 24, 34, 0.82);
+
+  /* gradient */
+  --g-verify: linear-gradient(100deg, #5ef2e6 0%, #22d3ee 45%, #20a1ff 100%);
+  --g-chrome: linear-gradient(100deg, #bffcf6 0%, #5ef2e6 40%, #e8f4ff 100%);
+  --g-border: linear-gradient(135deg, rgba(94, 242, 230, 0.55), rgba(138, 180, 255, 0.3) 50%, rgba(94, 242, 230, 0.08));
+  --g-void: radial-gradient(1200px 700px at 50% -10%, rgba(34, 211, 238, 0.16), transparent 60%),
+    radial-gradient(900px 620px at 85% 28%, rgba(32, 161, 255, 0.09), transparent 65%), #02040a;
+
+  /* typography */
+  --ff-display: var(--font-v3-display), "Archivo", system-ui, sans-serif;
+  --ff-body: var(--font-v3-body), "Be Vietnam Pro", system-ui, sans-serif;
+  --ff-mono: var(--font-v3-mono), "JetBrains Mono", ui-monospace, monospace;
+  --fs-hero: clamp(38px, 6.2vw, 92px);
+  --fs-h2: clamp(32px, 4.4vw, 64px);
+  --fs-h3: clamp(20px, 1.8vw, 28px);
+  --fs-lead: clamp(16px, 1.3vw, 20px);
+  --fs-body: 16px;
+  --fs-small: 13px;
+  --fs-eyebrow: 12px;
+  --fs-stat: clamp(32px, 3.6vw, 56px);
+  --fs-giant: clamp(56px, 13vw, 200px);
+
+  /* spacing */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px;
+  --sp-6: 32px; --sp-7: 48px; --sp-8: 64px; --sp-9: 96px; --sp-10: 144px;
+  --section-y: clamp(80px, 11vw, 160px);
+  --container: 1240px;
+  --gutter: clamp(16px, 4vw, 32px);
+
+  /* shape & effects (KHÔNG backdrop-filter — bài học v2) */
+  --r-sm: 10px; --r-md: 16px; --r-lg: 24px; --r-xl: 32px; --r-pill: 999px;
+  --glow-sm: 0 0 24px rgba(94, 242, 230, 0.25);
+  --glow-md: 0 0 48px rgba(32, 161, 255, 0.3);
+  --shadow-card: 0 30px 80px -20px rgba(0, 0, 0, 0.65);
+
+  /* motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 180ms;
+  --dur-base: 420ms;
+  --dur-slow: 900ms;
+
+  /* z-index (dưới ChatFab 9998 / popup 10000) */
+  --z-bg: 0; --z-content: 2; --z-canvas: 5; --z-rail: 45; --z-nav: 50; --z-dock: 55; --z-cursor: 9000;
+}
