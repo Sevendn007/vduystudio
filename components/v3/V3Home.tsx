@@ -1,5 +1,8 @@
 "use client";
 import { useEffect } from "react";
+import dynamic from "next/dynamic";
+import ScrollSync from "./ScrollSync";
+import { useV3 } from "./V3Context";
 import { V3Provider, type V3Data } from "./V3Context";
 import Nav3 from "./ui/Nav3";
 import Dock from "./ui/Dock";
@@ -13,6 +16,15 @@ import Feedback from "./chapters/Feedback";
 import Footer3 from "./chapters/Footer3";
 import WelcomePopup from "@/components/WelcomePopup";
 
+// Canvas kính xuyên suốt (three.js) — chỉ nạp client; T0 (không WebGL/reduced-motion) bỏ qua.
+const PrismCanvas = dynamic(() => import("./canvas/PrismCanvas"), { ssr: false });
+
+function CanvasGate() {
+  const { tier, tierReady } = useV3();
+  if (!tierReady || tier === 0) return null;
+  return <PrismCanvas />;
+}
+
 export default function V3Home(props: V3Data) {
   // Đánh dấu body để ẩn ChatFab toàn cục + chừa đất cho Dock trên mobile.
   useEffect(() => {
@@ -23,6 +35,8 @@ export default function V3Home(props: V3Data) {
   return (
     <V3Provider data={props}>
       <div className="v3">
+        <CanvasGate />
+        <ScrollSync />
         <WelcomePopup deferOpen />
         <Nav3 />
         <ProgressRail />
