@@ -1,72 +1,104 @@
 "use client";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { useFrame, useThree } from "@react-three/fiber";
-import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
-import { BADGE_PATH } from "@/lib/v3/badgePath";
+import { useFrame } from "@react-three/fiber";
+import { Environment, Lightformer } from "@react-three/drei";
 
-// Logo V-D dựng bằng hình học thật (không dùng ảnh render của v2):
-// chữ V và D bo khối, chrome bạc phản chiếu RoomEnvironment; huy hiệu
-// tích xanh cobalt extrude từ BADGE_PATH ở góc trên phải.
+// Logo V-D (ý tưởng: chữ V CHÍNH LÀ dấu tích xanh — thương hiệu = xác minh).
+// - V: dấu ✓ bo tròn, xanh verified bóng (clearcoat), nét ngắn trái / nét dài vươn lên phải.
+// - D: chữ D bo góc, chrome bạc SÁNG phản chiếu studio tự dựng (không đen).
+// Không dùng ảnh render của v2. Môi trường phản chiếu = Lightformer (không tải HDR).
 
-const EXTRUDE: THREE.ExtrudeGeometryOptions = {
-  depth: 0.34, bevelEnabled: true, bevelThickness: 0.06, bevelSize: 0.05, bevelSegments: 5, curveSegments: 28,
-};
-
-function shapeV(): THREE.Shape {
+type P = [number, number];
+const sub = (a: P, b: P): P => [a[0] - b[0], a[1] - b[1]];
+const add = (a: P, b: P): P => [a[0] + b[0], a[1] + b[1]];
+const mul = (a: P, k: number): P => [a[0] * k, a[1] * k];
+const len = (a: P) => Math.hypot(a[0], a[1]);
+const norm = (a: P): P => mul(a, 1 / len(a));
+const perp = (a: P): P => [-a[1], a[0]];
+// giao điểm 2 đường (p + t·d)
+function isect(p1: P, d1: P, p2: P, d2: P): P {
+  const den = d1[0] * d2[1] - d1[1] * d2[0];
+  if (Math.abs(den) < 1e-9) return p1;
+  const t = ((p2[0] - p1[0]) * d2[1] - (p2[1] - p1[1]) * d2[0]) / den;
+  return add(p1, mul(d1, t));
+}
+// đa giác bo góc bằng quadratic curve
+function roundedShape(pts: P[], r: number | number[]): THREE.Shape {
   const s = new THREE.Shape();
-  s.moveTo(-1.0, 1.0); s.lineTo(-0.52, 1.0); s.lineTo(0.0, -0.2); s.lineTo(0.52, 1.0); s.lineTo(1.0, 1.0);
-  s.lineTo(0.3, -1.0); s.lineTo(-0.3, -1.0); s.closePath();
+  const n = pts.length;
+  for (let i = 0; i < n; i++) {
+    const p = pts[i], prev = pts[(i - 1 + n) % n], next = pts[(i + 1) % n];
+    const v1 = sub(prev, p), v2 = sub(next, p);
+    const rr = Math.min(Array.isArray(r) ? r[i] : r, len(v1) / 2, len(v2) / 2);
+    const a = add(p, mul(norm(v1), rr));
+    const b = add(p, mul(norm(v2), rr));
+    if (i === 0) s.moveTo(a[0], a[1]); else s.lineTo(a[0], a[1]);
+    s.quadraticCurveTo(p[0], p[1], b[0], b[1]);
+  }
+  s.closePath();
   return s;
 }
+// viền ngoài của nét gấp P0→P1→P2 với bề dày w (mitre ở đỉnh)
+function strokeOutline(P0: P, P1: P, P2: P, w: number): P[] {
+  const h = w / 2;
+  const dA = norm(sub(P1, P0)), dB = norm(sub(P2, P1));
+  const nA = perp(dA), nB = perp(dB);
+  const mPlus = isect(add(P0, mul(nA, h)), dA, add(P1, mul(nB, h)), dB);
+  const mMinus = isect(add(P0, mul(nA, -h)), dA, add(P1, mul(nB, -h)), dB);
+  return [add(P0, mul(nA, h)), mPlus, add(P2, mul(nB, h)), add(P2, mul(nB, -h)), mMinus, add(P0, mul(nA, -h))];
+}
+
+function shapeCheckV(): THREE.Shape {
+  // đường tâm dấu tích: tay ngắn trái xuống đỉnh, tay dài vươn lên phải
+  const pts = strokeOutline([-1.08, 0.12], [-0.3, -0.9], [1.0, 1.05], 0.54);
+  // bo: 2 đầu tay bo tròn nhiều, góc ngoài đỉnh bo vừa, góc trong đỉnh bo ít
+  return roundedShape(pts, [0.2, 0.18, 0.2, 0.2, 0.08, 0.2]);
+}
+
 function shapeD(): THREE.Shape {
+  const r = 0.14, t = 0.5;
   const s = new THREE.Shape();
-  s.moveTo(-0.95, 1.0); s.lineTo(0.05, 1.0);
-  s.bezierCurveTo(1.15, 1.0, 1.15, -1.0, 0.05, -1.0);
-  s.lineTo(-0.95, -1.0); s.closePath();
+  s.moveTo(-0.92, 1 - r);
+  s.quadraticCurveTo(-0.92, 1, -0.92 + r, 1);
+  s.lineTo(0.02, 1);
+  s.bezierCurveTo(1.22, 1, 1.22, -1, 0.02, -1);
+  s.lineTo(-0.92 + r, -1);
+  s.quadraticCurveTo(-0.92, -1, -0.92, -1 + r);
+  s.closePath();
   const h = new THREE.Path();
-  h.moveTo(-0.47, 0.52); h.lineTo(0.02, 0.52);
-  h.bezierCurveTo(0.62, 0.52, 0.62, -0.52, 0.02, -0.52);
-  h.lineTo(-0.47, -0.52); h.closePath();
+  const ir = 0.08;
+  h.moveTo(-0.92 + t, 1 - t - ir);
+  h.quadraticCurveTo(-0.92 + t, 1 - t, -0.92 + t + ir, 1 - t);
+  h.lineTo(0.0, 1 - t);
+  h.bezierCurveTo(0.62, 1 - t, 0.62, -1 + t, 0.0, -1 + t);
+  h.lineTo(-0.92 + t + ir, -1 + t);
+  h.quadraticCurveTo(-0.92 + t, -1 + t, -0.92 + t, -1 + t + ir);
+  h.closePath();
   s.holes.push(h);
   return s;
 }
-function shapeBadge(): THREE.Shape[] {
-  const loader = new SVGLoader();
-  const data = loader.parse(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="${BADGE_PATH}"/></svg>`);
-  const shapes: THREE.Shape[] = [];
-  for (const p of data.paths) shapes.push(...SVGLoader.createShapes(p));
-  return shapes;
-}
 
-function useEnvironment() {
-  const { gl, scene } = useThree();
-  useEffect(() => {
-    const pmrem = new THREE.PMREMGenerator(gl);
-    const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-    scene.environment = env;
-    return () => { env.dispose(); pmrem.dispose(); scene.environment = null; };
-  }, [gl, scene]);
-}
+const EXTRUDE: THREE.ExtrudeGeometryOptions = {
+  depth: 0.36, bevelEnabled: true, bevelThickness: 0.07, bevelSize: 0.06, bevelSegments: 6, curveSegments: 32,
+};
 
 export default function LogoVD({ pose = false }: { pose?: boolean }) {
-  useEnvironment();
   const group = useRef<THREE.Group>(null);
   const pointer = useRef({ x: 0, y: 0 });
 
   const geo = useMemo(() => {
-    const v = new THREE.ExtrudeGeometry(shapeV(), EXTRUDE);
-    const d = new THREE.ExtrudeGeometry(shapeD(), EXTRUDE);
-    const badge = new THREE.ExtrudeGeometry(shapeBadge(), { depth: 10, bevelEnabled: true, bevelThickness: 2, bevelSize: 2, bevelSegments: 3, curveSegments: 8 });
-    badge.center();
-    v.center(); d.center();
-    return { v, d, badge };
+    const v = new THREE.ExtrudeGeometry(shapeCheckV(), EXTRUDE); v.center();
+    const d = new THREE.ExtrudeGeometry(shapeD(), EXTRUDE); d.center();
+    return { v, d };
   }, []);
 
-  const chrome = useMemo(() => new THREE.MeshStandardMaterial({ color: "#f4f6f9", metalness: 1, roughness: 0.18, envMapIntensity: 1.35 }), []);
-  const blue = useMemo(() => new THREE.MeshStandardMaterial({ color: "#1d4ed8", metalness: 0.35, roughness: 0.32, envMapIntensity: 0.9 }), []);
-  const white = useMemo(() => new THREE.MeshStandardMaterial({ color: "#ffffff", metalness: 0, roughness: 0.6 }), []);
+  const blue = useMemo(() => new THREE.MeshPhysicalMaterial({
+    color: "#1456ff", metalness: 0.05, roughness: 0.3, clearcoat: 0.8, clearcoatRoughness: 0.15, envMapIntensity: 0.5,
+  }), []);
+  const chrome = useMemo(() => new THREE.MeshStandardMaterial({
+    color: "#eef1f5", metalness: 0.95, roughness: 0.12, envMapIntensity: 1.2,
+  }), []);
 
   useEffect(() => {
     if (pose) return;
@@ -81,29 +113,31 @@ export default function LogoVD({ pose = false }: { pose?: boolean }) {
   useFrame((state) => {
     const g = group.current;
     if (!g) return;
-    if (pose) { g.rotation.set(0.08, -0.42, 0); return; }
+    if (pose) { g.rotation.set(0.1, -0.38, 0); return; }
     const t = state.clock.elapsedTime;
-    const ty = Math.sin(t * 0.45) * 0.38 + pointer.current.x * 0.28;
-    const tx = 0.06 + Math.sin(t * 0.7) * 0.04 + pointer.current.y * 0.12;
+    const ty = Math.sin(t * 0.45) * 0.34 + pointer.current.x * 0.26;
+    const tx = 0.08 + Math.sin(t * 0.7) * 0.04 + pointer.current.y * 0.1;
     g.rotation.y += (ty - g.rotation.y) * 0.06;
     g.rotation.x += (tx - g.rotation.x) * 0.06;
-    g.position.y = Math.sin(t * 1.1) * 0.05;
+    g.position.y = 0.05 + Math.sin(t * 1.1) * 0.05;
   });
 
   return (
-    <group ref={group} scale={0.66} position={[0, 0.08, 0]}>
-      <mesh geometry={geo.v} material={chrome} position={[-0.72, 0, 0]} castShadow />
-      <mesh geometry={geo.d} material={chrome} position={[0.62, 0, 0.1]} castShadow />
-      <group position={[1.42, 1.02, 0.42]} scale={0.0078}>
-        <mesh geometry={geo.badge} material={blue} />
-        {/* dấu check: 2 thanh trắng */}
-        <mesh material={white} position={[-9, -4, 8]} rotation={[0, 0, Math.PI / 4]}>
-          <boxGeometry args={[18, 6, 4]} />
-        </mesh>
-        <mesh material={white} position={[7, 3, 8]} rotation={[0, 0, -Math.PI / 4]}>
-          <boxGeometry args={[32, 6, 4]} />
-        </mesh>
+    <>
+      {/* Studio sáng tự dựng → chrome bạc sáng + highlight xanh nhẹ, không tải HDR */}
+      <Environment resolution={256} frames={1}>
+        {/* nền xám trung tính + dải sáng trên / dải tối dưới → chrome bạc có tương phản, không đen */}
+        <color attach="background" args={["#8b909a"]} />
+        <Lightformer intensity={3} position={[0, 4.5, 0]} rotation-x={Math.PI / 2} scale={[10, 3, 1]} color="#ffffff" />
+        <Lightformer intensity={1.6} position={[-5, 1.5, 2]} rotation-y={Math.PI / 2} scale={[6, 1.4, 1]} color="#ffffff" />
+        <Lightformer intensity={1.4} position={[5, 1.5, 2]} rotation-y={-Math.PI / 2} scale={[6, 1.4, 1]} color="#dbe7ff" />
+        <Lightformer intensity={0.9} position={[0, 0.2, -5]} scale={[10, 1.2, 1]} color="#ffffff" />
+        <Lightformer intensity={0.35} position={[0, -3.5, 3]} rotation-x={-Math.PI / 2} scale={[8, 2.5, 1]} color="#1f232a" />
+      </Environment>
+      <group ref={group} scale={0.64}>
+        <mesh geometry={geo.v} material={blue} position={[-0.86, -0.02, 0.16]} />
+        <mesh geometry={geo.d} material={chrome} position={[0.58, 0, 0]} />
       </group>
-    </group>
+    </>
   );
 }
