@@ -1,15 +1,23 @@
 "use client";
-import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useLang } from "@/lib/i18n";
 import { homeCopy, STATS } from "@/lib/homeCopy";
 import { v3Copy } from "@/lib/v3/copy";
 import { useV3 } from "../V3Context";
 import CountUp from "../ui/CountUp";
 import RotatingText from "../ui/RotatingText";
+import Icon3D from "@/components/brand/Icon3D";
+
+// Logo V-D 3D thật (three.js) — chỉ nạp ở T2 (desktop có WebGL); T0/T1 dùng ảnh PNG
+// render sẵn từ chính cảnh 3D này (public/brand/v3/logo-vd-3d.png).
+const LogoCanvas = dynamic(() => import("../canvas/V3LogoCanvas"), { ssr: false });
 
 const PLACEHOLDER_PRICE = /^(li[eê]n h[eệ] b[aá]o gi[aá]|contact for quote|)$/i;
 
-function priceAnchor(rows: { service: string; duration: string | null; warranty: string | null; price: string | null }[] | null, lang: "vi" | "en"): string | null {
+function priceAnchor(
+  rows: { service: string; duration: string | null; warranty: string | null; price: string | null }[] | null,
+  lang: "vi" | "en"
+): string | null {
   if (!rows || rows.length === 0) return null;
   const row = rows.find((r) => /t[ií]ch xanh|verif|badge/i.test(r.service)) ?? rows[0];
   const parts = [row.service];
@@ -23,101 +31,62 @@ export default function Hero() {
   const { lang } = useLang();
   const t = homeCopy(lang).hero;
   const c = v3Copy(lang);
-  const { contact, pricing } = useV3();
+  const { contact, pricing, tier, tierReady } = useV3();
   const stats = STATS(lang);
   const sep = lang === "en" ? "," : ".";
-
-  const DEFAULT_HANDLE = "yourbrand";
-  const [handle, setHandle] = useState(DEFAULT_HANDLE);
-  const [editing, setEditing] = useState(false);
-  const verified = handle.trim().length > 0;
   const anchor = priceAnchor(pricing["tiktok"], lang) ?? c.priceAnchorFallback;
-  const cta1 = handle !== DEFAULT_HANDLE && handle.trim() ? c.ctaHandle(handle.trim()) : t.cta1;
+  const useCanvas = tierReady && tier >= 2;
 
   return (
     <section id="hero" className="v3-hero v3-station" aria-labelledby="v3-hero-title">
-      <div className="v3-hero-bg" aria-hidden>
-        <div className="v3-nebula" />
-        <div className="v3-stars" />
-        <div className="v3-stars v3-stars-2" />
-      </div>
-
       <span className="v3-giant-word" aria-hidden>VDUYSTUDIO</span>
 
-      <div className="v3-hero-stage" aria-hidden>
-        {/* Poster logo — canvas WebGL (M1) sẽ vẽ đè đúng vị trí này; poster không bao giờ fade. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="v3-hero-logo" src="/brand/video/logo-turn-poster.webp" alt="" width={960} height={864} fetchPriority="high" decoding="async" />
-        <span className="v3-hero-glow" />
-      </div>
-
-      <div className="v3-hero-content v3-container">
-        <p className="v3-chip">{c.heroTag}</p>
-        <h1 id="v3-hero-title" className="v3-hero-h1">
-          {t.h1a} {t.h1b} <span className="v3-accent">{t.accent}</span>
-        </h1>
-        <p className="v3-hero-sub">
-          {t.sub} <RotatingText texts={t.rotating} />
-        </p>
-
-        <p className="v3-anchor">{anchor}</p>
-
-        <div className="v3-ctas">
-          <a className="v3-btn v3-btn-primary v3-btn-lg" href={contact.zalo} target="_blank" rel="noreferrer">
-            {cta1}
-          </a>
-          <a className="v3-btn v3-btn-glass v3-btn-lg" href="#pricing" onClick={(e) => { e.preventDefault(); document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" }); }}>
-            {c.viewPricing}
-          </a>
-        </div>
-
-        <div className="v3-stats">
-          {stats.map((s, i) => (
-            <div className="v3-stat" key={i}>
-              <b><CountUp to={s.to} decimals={s.decimals} separator={sep} suffix={s.suffix} /></b>
-              <span>{s.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Hồ sơ mô phỏng — lễ trao tích (CSS) + @handle cá nhân hoá */}
-      <aside className={`v3-profile${verified ? " is-verified" : ""}`} aria-label={c.simulate}>
-        <div className="v3-profile-top">
-          <span className="v3-profile-avatar" aria-hidden>{handle.trim().charAt(0).toUpperCase() || "V"}</span>
-          <div className="v3-profile-id">
-            <b className="v3-profile-name">
-              @{handle.trim() || DEFAULT_HANDLE}
-              <span className="v3-profile-check" aria-hidden>✓</span>
-            </b>
-            <span className="v3-profile-sub">{c.profileFollowers}</span>
+      <div className="v3-container v3-hero-grid">
+        <div className="v3-hero-copy">
+          <p className="v3-eyebrow">{c.tagline} · {c.heroTag}</p>
+          <h1 id="v3-hero-title" className="v3-hero-h1">
+            {t.h1a}<br />{t.h1b}<br /><em className="v3-blue">{t.accent}</em>
+          </h1>
+          <p className="v3-hero-sub">
+            {t.sub} <RotatingText texts={t.rotating} />
+          </p>
+          <p className="v3-anchor">{anchor}</p>
+          <div className="v3-ctas">
+            <a className="v3-btn v3-btn-primary v3-btn-lg" href={contact.zalo} target="_blank" rel="noreferrer">
+              {t.cta1}
+            </a>
+            <a
+              className="v3-btn v3-btn-outline v3-btn-lg"
+              href="#pricing"
+              onClick={(e) => { e.preventDefault(); document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" }); }}
+            >
+              {c.viewPricing}
+            </a>
           </div>
         </div>
-        <ol className="v3-profile-steps">
-          <li>{homeCopy(lang).services.step1}</li>
-          <li>{homeCopy(lang).services.step2}</li>
-          <li className="is-done">{homeCopy(lang).services.step3}</li>
-        </ol>
-        <button className="v3-profile-try" onClick={() => setEditing((v) => !v)}>
-          {c.tryName}
-        </button>
-        {editing && (
-          <input
-            className="v3-profile-input"
-            value={handle}
-            maxLength={24}
-            placeholder={c.handlePlaceholder}
-            onChange={(e) => setHandle(e.target.value.replace(/[^\w.]/g, "").slice(0, 24))}
-            autoFocus
-            aria-label={c.handlePlaceholder}
-          />
-        )}
-        <span className="v3-profile-note">{c.simulate}</span>
-      </aside>
 
-      <a className="v3-scroll-hint" href="#services" onClick={(e) => { e.preventDefault(); document.getElementById("services")?.scrollIntoView({ behavior: "smooth" }); }}>
-        {c.scrollHint} ↓
-      </a>
+        <div className="v3-hero-stage" aria-hidden>
+          {useCanvas ? (
+            <LogoCanvas />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className="v3-hero-logo-img" src="/brand/v3/logo-vd-3d.png" alt="" width={1024} height={1024} fetchPriority="high" decoding="async" />
+          )}
+          <Icon3D name="verify" size={96} className="v3-hero-ic i1" />
+          <Icon3D name="tiktok" size={96} className="v3-hero-ic i2" />
+          <Icon3D name="facebook" size={96} className="v3-hero-ic i3" />
+          <Icon3D name="instagram" size={96} className="v3-hero-ic i4" />
+        </div>
+      </div>
+
+      <div className="v3-container v3-rules">
+        {stats.map((s, i) => (
+          <div className="v3-rule" key={i}>
+            <b><CountUp to={s.to} decimals={s.decimals} separator={sep} suffix={s.suffix} /></b>
+            <span>{s.label}</span>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

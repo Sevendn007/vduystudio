@@ -11,7 +11,7 @@ export type V3Data = {
   pricing: Record<string, DbPriceRow[] | null>;
 };
 
-type V3Ctx = V3Data & { contact: V3Contact; tier: Tier };
+type V3Ctx = V3Data & { contact: V3Contact; tier: Tier; tierReady: boolean };
 
 const Ctx = createContext<V3Ctx | null>(null);
 
@@ -19,10 +19,12 @@ export function V3Provider({ data, children }: { data: V3Data; children: React.R
   const contact = useMemo(() => makeContact(data.settings), [data.settings]);
   // SSR = 2 (desktop giả định); client resolve thật sau mount → tránh hydration mismatch
   const [tier, setTier] = useState<Tier>(2);
+  const [tierReady, setTierReady] = useState(false);
   useEffect(() => {
     setTier(resolveTier());
+    setTierReady(true);
   }, []);
-  const value = useMemo<V3Ctx>(() => ({ ...data, contact, tier }), [data, contact, tier]);
+  const value = useMemo<V3Ctx>(() => ({ ...data, contact, tier, tierReady }), [data, contact, tier, tierReady]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
