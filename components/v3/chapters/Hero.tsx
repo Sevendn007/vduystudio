@@ -1,71 +1,108 @@
 "use client";
+import { useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { useLang } from "@/lib/i18n";
 import { homeCopy, STATS } from "@/lib/homeCopy";
 import { v3Copy } from "@/lib/v3/copy";
 import { useV3 } from "../V3Context";
-import { isTermWarranty } from "@/lib/v3/format";
 import CountUp from "../ui/CountUp";
 import RotatingText from "../ui/RotatingText";
-import HeroArt from "../ui/HeroArt";
+import LiquidCanvas from "../canvas/LiquidCanvas";
+import Seal from "../ui/Seal";
 
-// Hero: chữ cột trái, logo (3D trên desktop / phẳng trên mobile) cột phải, dải số liệu bên dưới.
-// Reveal bằng CSS animation lúc tải — không phụ thuộc canvas (trước đây chữ ẩn tới 2.5s).
+gsap.registerPlugin(ScrollTrigger);
+
+/** Tách chữ thành từng ký tự để chạy hiệu ứng "trồi lên" (giữ nguyên từ không bị ngắt giữa chừng). */
+function Chars({ text, base = 0 }: { text: string; base?: number }) {
+  let i = base;
+  return (
+    <>
+      {text.split(" ").map((word, w, arr) => (
+        <span className="v3-word" key={w}>
+          {Array.from(word.normalize("NFC")).map((ch, k) => (
+            <span className="v3-ch" key={k} style={{ ["--i" as string]: i++ }}>{ch}</span>
+          ))}
+          {w < arr.length - 1 ? "\u00a0" : null}
+        </span>
+      ))}
+    </>
+  );
+}
+
+// HERO "LIQUID COBALT": chrome lỏng full-bleed + tiêu đề khổng lồ. Khi cuộn, cả khung
+// thu lại thành một tấm thẻ bo góc rồi trôi lên, để lộ trang kem bên dưới.
 export default function Hero() {
   const { lang } = useLang();
   const t = homeCopy(lang).hero;
   const c = v3Copy(lang);
-  const { contact, pricing } = useV3();
+  const { contact } = useV3();
   const stats = STATS(lang);
   const sep = lang === "en" ? "," : ".";
+  const root = useRef<HTMLElement>(null);
 
-  // "… booking báo chí cho" + chữ xoay: giữ "cho" dính với chữ xoay, không mồ côi cuối dòng.
+  const big = t.h1a.replace(/[,.]$/, "").toLocaleUpperCase(lang === "en" ? "en" : "vi");
   const subWords = t.sub.split(" ");
   const subLast = subWords.pop();
-  // Chip lấy từ dòng "tích xanh" THẬT trong bảng giá (DB) → không mâu thuẫn với bảng giá; copy chỉ là dự phòng.
-  const tick = (pricing["tiktok"] ?? []).find((r) => /t[ií]ch xanh|verif|badge/i.test(r.service));
-  const parts = c.priceAnchorFallback.split(" · ");
-  const cap = (x: string) => x.charAt(0).toLocaleUpperCase("vi") + x.slice(1);
-  const wLabel = lang === "en" ? "warranty" : "bảo hành";
-  const dbBits = tick ? [tick.duration, isTermWarranty(tick.warranty) ? `${wLabel} ${tick.warranty}` : null].filter(Boolean) as string[] : [];
-  const chips: [string, string] | null = tick
-    ? (dbBits.length ? [parts[0], cap(dbBits.join(" · "))] : null)
-    : (parts.length >= 2 ? [parts[0], cap(parts.slice(1).join(" · "))] : null);
+
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.timeline({
+        scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
+        defaults: { ease: "none" },
+      })
+        .to(".v3-hero-stage", { clipPath: "inset(5% 2.5% 0% 2.5% round 40px)" }, 0)
+        .to(".v3-hero-inner", { yPercent: -14, opacity: 0.25 }, 0)
+        .to(".v3-liquid", { scale: 1.12 }, 0);
+    });
+    return () => mm.revert();
+  }, { scope: root });
 
   return (
-    <section id="hero" className="v3-hero v3-station" aria-labelledby="v3-hero-title">
-      <div className="v3-container v3-hero-grid">
-        <div className="v3-hero-copy">
-          <p className="v3-eyebrow v3-kicker v3-fade"><i aria-hidden /> VDuyStudio · {c.tagline}</p>
-          <h1 id="v3-hero-title" className="v3-hero-h1">
-            <span className="v3-line"><span>{t.h1a}</span></span>
-            <span className="v3-line"><span>{t.h1b}</span></span>
-            <span className="v3-line"><span className="v3-accent">{t.accent}</span></span>
-          </h1>
-          <p className="v3-hero-sub v3-fade v3-d1">
-            {subWords.join(" ")} <span className="v3-nowrap">{subLast} <RotatingText texts={t.rotating} /></span>
+    <section id="hero" ref={root} className="v3-hero v3-station" aria-labelledby="v3-hero-title">
+      <div className="v3-hero-stage">
+        <LiquidCanvas />
+        <div className="v3-hero-shade" aria-hidden />
+        <div className="v3-hero-inner">
+          <p className="v3-hero-kicker v3-rise" style={{ ["--d" as string]: "0.05s" }}>
+            <span className="v3-dot" aria-hidden /> VDuyStudio — {c.tagline}
           </p>
-          <div className="v3-ctas v3-fade v3-d2">
-            <a className="v3-btn v3-btn-primary v3-btn-lg" href={contact.zalo} target="_blank" rel="noreferrer">{t.cta1}</a>
-            <a
-              className="v3-btn v3-btn-outline v3-btn-lg" href="#pricing"
-              onClick={(e) => { e.preventDefault(); document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" }); }}
-            >
-              {c.viewPricing}
-            </a>
-          </div>
-        </div>
-        <HeroArt chips={chips} />
-      </div>
 
-      <div className="v3-container">
-        <ul className="v3-hero-stats v3-fade v3-d3">
-          {stats.map((s, i) => (
-            <li key={i}>
-              <b><CountUp to={s.to} decimals={s.decimals} separator={sep} suffix={s.suffix} /></b>
-              <span>{s.label}</span>
-            </li>
-          ))}
-        </ul>
+          <h1 id="v3-hero-title" className="v3-hero-h1" aria-label={`${t.h1a} ${t.h1b} ${t.accent}`}>
+            <span className="v3-hero-big" aria-hidden><Chars text={big} /></span>
+            <span className="v3-hero-line2" aria-hidden>
+              <span className="v3-hero-small"><Chars text={t.h1b} base={10} /></span>{" "}
+              <em className="v3-serif"><Chars text={t.accent} base={20} /></em>
+            </span>
+          </h1>
+
+          <div className="v3-hero-foot">
+            <p className="v3-hero-sub v3-rise" style={{ ["--d" as string]: "0.9s" }}>
+              {subWords.join(" ")} <span className="v3-nowrap">{subLast} <RotatingText texts={t.rotating} /></span>
+            </p>
+            <div className="v3-hero-ctas v3-rise" style={{ ["--d" as string]: "1.05s" }}>
+              <a className="v3-btn v3-btn-white v3-btn-lg" href={contact.zalo} target="_blank" rel="noreferrer">{t.cta1}</a>
+              <a
+                className="v3-btn v3-btn-glass v3-btn-lg" href="#pricing"
+                onClick={(e) => { e.preventDefault(); document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" }); }}
+              >
+                {c.viewPricing}
+              </a>
+            </div>
+          </div>
+
+          <ul className="v3-hero-stats v3-rise" style={{ ["--d" as string]: "1.2s" }}>
+            {stats.map((s, i) => (
+              <li key={i}>
+                <b><CountUp to={s.to} decimals={s.decimals} separator={sep} suffix={s.suffix} /></b>
+                <span>{s.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <Seal className="v3-hero-seal" text={lang === "en" ? "OFFICIAL BADGE · VERIFIED · VDUYSTUDIO · " : "TÍCH XANH CHÍNH CHỦ · ĐÃ XÁC MINH · VDUYSTUDIO · "} />
       </div>
     </section>
   );

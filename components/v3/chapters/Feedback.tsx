@@ -7,6 +7,7 @@ import { v3Copy } from "@/lib/v3/copy";
 import { stripNo, tidy } from "@/lib/v3/format";
 import { useV3 } from "../V3Context";
 
+// FEEDBACK: tường masonry, mỗi thẻ có dấu ngoặc serif cobalt khổng lồ; thẻ thứ 2 đảo màu cobalt.
 export default function Feedback() {
   const { lang } = useLang();
   const t = homeCopy(lang).feedback;
@@ -20,28 +21,38 @@ export default function Feedback() {
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const shown = expanded ? list : list.slice(0, 6);
   const more = lang === "en" ? ["Read more", "Show less"] : ["Đọc thêm", "Thu gọn"];
+  const avg = (list.reduce((a, f) => a + Math.min(5, Math.max(1, f.rating ?? 5)), 0) / list.length).toFixed(1);
 
   return (
-    <section id="feedback" className="v3-section v3-station">
+    <section id="feedback" className="v3-fbk v3-station">
       <div className="v3-container">
-        <p className="v3-eyebrow">{c.stations.feedback.no} — {stripNo(t.eyebrow)}</p>
-        <h2 className="v3-h2">{t.h2}</h2>
-        <div className="v3-fb-grid">
-          {shown.map((f) => {
+        <div className="v3-fbk-head">
+          <div>
+            <p className="v3-eyebrow">{stripNo(t.eyebrow)}</p>
+            <h2 className="v3-xl">{t.h2}<em className="v3-serif">{lang === "en" ? "." : "?"}</em></h2>
+          </div>
+          <div className="v3-fbk-score" aria-label={`${avg}/5`}>
+            <b>{lang === "en" ? avg : avg.replace(".", ",")}</b>
+            <span><i aria-hidden>★★★★★</i>{list.length} {lang === "en" ? "reviews" : "đánh giá"}</span>
+          </div>
+        </div>
+        <div className="v3-fbk-grid">
+          {shown.map((f, idx) => {
             const stars = Math.min(5, Math.max(1, f.rating ?? 5));
             const long = (f.quote?.length ?? 0) > 260;
             const isOpen = Boolean(open[f.id]);
             return (
-              <figure className="v3-fb v3-card" key={f.id}>
-                <div className="v3-fb-stars" role="img" aria-label={`${stars}/5`}>{"★".repeat(stars)}</div>
-                <blockquote className={long && !isOpen ? "v3-fb-clamp" : undefined}>“{f.quote}”</blockquote>
+              <figure className={`v3-q${idx === 1 ? " is-blue" : ""}`} key={f.id}>
+                <span className="v3-q-mark" aria-hidden>“</span>
+                <div className="v3-q-stars" role="img" aria-label={`${stars}/5`}>{"★".repeat(stars)}</div>
+                <blockquote className={long && !isOpen ? "v3-q-clamp" : undefined}>{f.quote}</blockquote>
                 {long && (
-                  <button className="v3-link v3-fb-toggle" onClick={() => setOpen((o) => ({ ...o, [f.id]: !isOpen }))} aria-expanded={isOpen}>
+                  <button className="v3-q-toggle" onClick={() => setOpen((o) => ({ ...o, [f.id]: !isOpen }))} aria-expanded={isOpen}>
                     {isOpen ? more[1] : more[0]}
                   </button>
                 )}
-                <figcaption className="v3-fb-person">
-                  <span className="v3-fb-avatar" aria-hidden>
+                <figcaption>
+                  <span className="v3-q-avatar" aria-hidden>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {f.image_url ? <img src={f.image_url} alt="" loading="lazy" /> : (f.name?.charAt(0) ?? "?")}
                   </span>
@@ -55,9 +66,11 @@ export default function Feedback() {
           })}
         </div>
         {list.length > 6 && (
-          <button className="v3-btn v3-btn-ghost v3-fb-more" onClick={() => setExpanded((v) => !v)}>
-            {expanded ? c.collapse : c.allReviews(list.length)}
-          </button>
+          <div className="v3-fbk-more">
+            <button className="v3-btn v3-btn-ink" onClick={() => setExpanded((v) => !v)}>
+              {expanded ? c.collapse : c.allReviews(list.length)}
+            </button>
+          </div>
         )}
       </div>
     </section>

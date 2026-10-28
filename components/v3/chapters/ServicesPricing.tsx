@@ -19,6 +19,8 @@ function rowsFor(slug: string, db: DbPriceRow[] | null, lang: "vi" | "en"): Row[
   return fb.map((r) => ({ service: r.service, duration: r.duration, warranty: r.warranty, price: r.price }));
 }
 
+// DỊCH VỤ: "mục lục biên tập" trên nền mực — tên nền tảng chữ nén khổng lồ, rê chuột thì
+// vệt cobalt quét lên từ đáy, sticker icon bật ra. Bảng giá nhanh ngay bên dưới, 1 CTA duy nhất.
 export default function ServicesPricing() {
   const { lang } = useLang();
   const s = homeCopy(lang).services;
@@ -29,11 +31,8 @@ export default function ServicesPricing() {
 
   const tabRows = rowsFor(tab, pricing[tab] ?? null, lang);
   const showPrice = tabRows.some((r) => realPrice(r.price));
-  const L = lang === "en"
-    ? { time: "Time", warranty: "Warranty", from: "Price" }
-    : { time: "Thời gian", warranty: "Bảo hành", from: "Giá" };
+  const L = lang === "en" ? { time: "Time", warranty: "Warranty", from: "Price" } : { time: "Thời gian", warranty: "Bảo hành", from: "Giá" };
 
-  // Tóm tắt trên thẻ: chỉ hiện thông tin rõ nghĩa (thời gian, bảo hành dạng thời hạn, giá đã công bố).
   const metaFor = (slug: string) => {
     const rows = rowsFor(slug, pricing[slug] ?? null, lang);
     const row = rows.find((r) => /t[ií]ch xanh|verif|badge/i.test(r.service)) ?? rows[0];
@@ -46,55 +45,45 @@ export default function ServicesPricing() {
   };
 
   return (
-    <section id="services" className="v3-section v3-station">
-      <span id="pm-services" aria-hidden style={{ position: "absolute", marginTop: -90 }} />
+    <section id="services" className="v3-svc v3-station v3-dark">
       <div className="v3-container">
-        <p className="v3-eyebrow">{c.stations.services.no} — {stripNo(s.eyebrow)}</p>
-        <h2 className="v3-h2">{s.h2a} <span className="v3-accent">{s.h2b}</span></h2>
-        <p className="v3-lead">{s.lead}</p>
-
-        <div className="v3-kpis">
-          <div><b>{fmtNum(8980, lang)}+</b><span>{c.kpiRequests}</span></div>
-          <div><b>5</b><span>{s.kpi2}</span></div>
-          <div><b>100%</b><span>{s.kpi3}</span></div>
+        <div className="v3-svc-head">
+          <p className="v3-eyebrow">{stripNo(s.eyebrow)} · {fmtNum(8980, lang)}+ {c.kpiRequests}</p>
+          <h2 className="v3-xl">{s.h2a} <em className="v3-serif">{s.h2b}</em></h2>
+          <p className="v3-lead">{s.lead}</p>
         </div>
 
-        <div className="v3-svc-grid">
-          {services.map((svc, i) => (
-            <article className="v3-svc v3-card" key={svc.slug}>
-              <div className="v3-svc-top">
-                <span className="v3-svc-ic"><Icon3 name={svc.icons[0]} size={26} /></span>
-                {svc.slug === "tiktok"
-                  ? <span className="v3-svc-pop">{s.popular}</span>
-                  : <span className="v3-svc-no" aria-hidden>0{i + 1}</span>}
-              </div>
-              <h3 className="v3-h3">{svc.name}</h3>
-              <p className="v3-svc-desc">{svc.desc}</p>
-              <div className="v3-svc-meta">
-                {metaFor(svc.slug).map(([k, v]) => <span key={k}>{k}: <b>{v}</b></span>)}
-                <span><b>{fmtNum(svc.clients, lang)}</b> {s.clients}</span>
-              </div>
-              <div className="v3-svc-foot">
-                <Link className="v3-link" href={href(`/dich-vu/${svc.slug}`)}>{s.more} →</Link>
-              </div>
-            </article>
-          ))}
+        <ol className="v3-index">
+          {services.map((svc, i) => {
+            const meta = metaFor(svc.slug);
+            return (
+              <li key={svc.slug} className="v3-index-row">
+                <Link href={href(`/dich-vu/${svc.slug}`)} className="v3-index-link" aria-label={`${svc.name} — ${s.more}`}>
+                  <span className="v3-index-no">0{i + 1}</span>
+                  <span className="v3-index-name">
+                    {svc.name}
+                    <span className="v3-index-pop" aria-hidden><Icon3 name={svc.icons[0]} size={28} /></span>
+                  </span>
+                  <span className="v3-index-info">
+                    <span className="v3-index-desc">{svc.desc}</span>
+                    <span className="v3-index-meta">
+                      {meta.map(([k, v]) => <span key={k}>{k} <b>{v}</b></span>)}
+                      <span><b>{fmtNum(svc.clients, lang)}</b> {s.clients}</span>
+                    </span>
+                  </span>
+                  <span className="v3-index-go" aria-hidden>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17 17 7M9 7h8v8" /></svg>
+                  </span>
+                  {svc.slug === "tiktok" && <span className="v3-index-hot">{s.popular}</span>}
+                </Link>
+              </li>
+            );
+          })}
+        </ol>
 
-          <article className="v3-svc v3-svc-cta v3-card">
-            <span className="v3-svc-ic"><Icon3 name="chat" size={26} /></span>
-            <h3 className="v3-h3">{s.ctaTitle}</h3>
-            <p className="v3-svc-desc">{s.ctaDesc}</p>
-            <div className="v3-svc-foot">
-              <a className="v3-btn v3-btn-light" href={contact.zalo} target="_blank" rel="noreferrer">{s.ctaBtn}</a>
-              <a className="v3-link" href="#process" onClick={(e) => { e.preventDefault(); document.getElementById("process")?.scrollIntoView({ behavior: "smooth" }); }}>{s.ctaBtn2} →</a>
-            </div>
-          </article>
-        </div>
-
-        {/* Bảng giá nhanh — 1 CTA duy nhất dưới bảng (không nút Zalo mỗi dòng) */}
-        <div id="pricing" className="v3-pricing v3-card">
+        <div id="pricing" className="v3-pricing">
           <div className="v3-pricing-head">
-            <h3 className="v3-h3">{c.pricingTitle}</h3>
+            <h3 className="v3-pricing-title">{c.pricingTitle}</h3>
             <div className="v3-pricing-tabs" role="tablist" aria-label={c.pricingTitle}>
               {services.map((svc) => (
                 <button key={svc.slug} role="tab" aria-selected={tab === svc.slug} className={tab === svc.slug ? "is-active" : ""} onClick={() => setTab(svc.slug)}>
@@ -119,7 +108,7 @@ export default function ServicesPricing() {
                   <td data-label={c.pricingCols.duration}>{r.duration || "—"}</td>
                   <td data-label={c.pricingCols.warranty}>{r.warranty || "—"}</td>
                   {showPrice && (
-                    <td data-label={c.pricingCols.price} className={realPrice(r.price) ? "v3-price" : undefined}>
+                    <td data-label={c.pricingCols.price} className={realPrice(r.price) ? "v3-price" : "v3-price-na"}>
                       {realPrice(r.price) ? fmtPrice(r.price!, lang) : c.priceContact}
                     </td>
                   )}
@@ -128,8 +117,8 @@ export default function ServicesPricing() {
             </tbody>
           </table>
           <div className="v3-pricing-foot">
-            <p className="v3-pricing-note">{c.pricingNote}</p>
-            <a className="v3-btn v3-btn-primary" href={contact.zalo} target="_blank" rel="noreferrer">{c.quoteZalo} →</a>
+            <p>{c.pricingNote}</p>
+            <a className="v3-btn v3-btn-blue v3-btn-lg" href={contact.zalo} target="_blank" rel="noreferrer">{c.quoteZalo} →</a>
           </div>
         </div>
       </div>

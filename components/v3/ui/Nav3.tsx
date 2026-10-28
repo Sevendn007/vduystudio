@@ -13,10 +13,11 @@ export default function Nav3() {
   const nav = homeCopy(lang).nav;
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("hero");
+  const [tone, setTone] = useState<"light" | "solid">("light");
 
   // Tô sáng mục đang xem — quan sát MỌI section có trên menu (kể cả Dự án).
   useEffect(() => {
-    const ids = ["hero", "services", "trust", "projects", "process", "feedback", "contact"];
+    const ids = ["hero", "process", "services", "trust", "projects", "feedback", "contact"];
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) if (e.isIntersecting) setActive(e.target.id);
@@ -30,6 +31,25 @@ export default function Nav3() {
     return () => io.disconnect();
   }, []);
 
+  // Nền trong suốt + chữ trắng khi nằm trên khối chrome lỏng (hero / footer CTA), còn lại nền kem.
+  useEffect(() => {
+    const dark = [".v3-hero-stage", ".v3-foot-stage"];
+    const onScroll = () => {
+      const y = 40;
+      const over = dark.some((sel) => {
+        const el = document.querySelector(sel);
+        if (!el) return false;
+        const r = el.getBoundingClientRect();
+        return r.top <= y && r.bottom - 60 > y;
+      });
+      setTone(over ? "light" : "solid");
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
@@ -38,9 +58,9 @@ export default function Nav3() {
   }, [open]);
 
   const items = [
+    { k: "process", label: nav.process, href: hash("process") },
     { k: "services", label: nav.services, href: hash("services") },
     { k: "projects", label: nav.projects, href: hash("projects") },
-    { k: "process", label: nav.process, href: hash("process") },
     { k: "feedback", label: nav.feedback, href: hash("feedback") },
     { k: "blog", label: nav.blog, href: href("/blog") },
   ];
@@ -53,7 +73,7 @@ export default function Nav3() {
     );
 
   return (
-    <header className="v3-nav">
+    <header className={`v3-nav is-${tone}`}>
       <div className="v3-nav-bar">
         <a href={hash("hero")} className="v3-brand" aria-label="VDuyStudio — về đầu trang">
           <Logo3 size={30} />
@@ -65,7 +85,7 @@ export default function Nav3() {
 
         <div className="v3-nav-right">
           <LangToggle compact />
-          <a className="v3-btn v3-btn-primary v3-nav-cta" href={contact.zalo} target="_blank" rel="noreferrer">Chat Zalo</a>
+          <a className="v3-btn v3-nav-cta" href={contact.zalo} target="_blank" rel="noreferrer">Chat Zalo</a>
           <button className="v3-burger" aria-label={nav.menu} aria-expanded={open} onClick={() => setOpen(true)}>
             <span /><span /><span />
           </button>
@@ -79,7 +99,7 @@ export default function Nav3() {
           </button>
           <div className="v3-nav-sheet-inner">
             {items.map((it) => render(it, () => setOpen(false)))}
-            <a className="v3-btn v3-btn-primary v3-btn-lg" href={contact.zalo} target="_blank" rel="noreferrer">Chat Zalo</a>
+            <a className="v3-btn v3-btn-blue v3-btn-lg" href={contact.zalo} target="_blank" rel="noreferrer">Chat Zalo</a>
           </div>
         </div>
       )}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
+import { Archivo, Be_Vietnam_Pro, JetBrains_Mono, Playfair_Display } from "next/font/google";
 import "../styles/v3-tokens.css";
 import "../styles/v3.css";
 import SmoothScroll from "@/components/layout/SmoothScroll";
@@ -20,6 +20,14 @@ const body = Be_Vietnam_Pro({
   variable: "--font-v3-body",
   display: "swap",
 });
+// Serif nghiêng cho chữ nhấn "dấu tích xanh." (Instrument Serif không có dấu tiếng Việt).
+const serif = Playfair_Display({
+  subsets: ["latin", "vietnamese"],
+  weight: ["500"],
+  style: ["italic"],
+  variable: "--font-v3-serif",
+  display: "swap",
+});
 const mono = JetBrains_Mono({
   subsets: ["latin", "vietnamese"],
   weight: ["500"],
@@ -38,7 +46,7 @@ export const metadata: Metadata = {
 
 export default function V3Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <div className={`${display.variable} ${body.variable} ${mono.variable} ${serif.variable}`}>
       <SmoothScroll />
       {children}
     </div>

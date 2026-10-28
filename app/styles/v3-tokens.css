@@ -1,65 +1,71 @@
 /* ======================================================================
-   VDuyStudio v3 — "CREAM STUDIO" design tokens (chủ site chọn 2026-10-27).
-   Nền kem sáng · chữ đen · xanh cobalt làm nhấn · vật thể 3D chỉ ở hero.
+   VDuyStudio v3 — "LIQUID COBALT × LIVE VERIFICATION" (2026-10-28, bản làm lại).
+   Kem biên tập · mực · cobalt điện · chrome lỏng ở hai đầu trang.
    Scope dưới `.v3` để không rò sang `/` hay `/v2`.
 
-   Quy tắc (sau review 2026-10-28):
-   - CHỈ 8 cỡ chữ (dưới đây). Không viết px lẻ trong v3.css.
-   - Palette: kem · mực · cobalt + 1 xám chữ phụ (tương phản ≥ 4.5:1).
-   - Mono + IN HOA chỉ dùng cho eyebrow.
+   Quy tắc:
+   - Cỡ chữ chỉ dùng token dưới đây (5 cỡ trình bày + 6 cỡ nội dung). Không viết px lẻ.
+   - Không chữ nào < 12px. Tương phản chữ nội dung ≥ 4.5:1.
+   - KHÔNG backdrop-filter, KHÔNG tween filter.
    ====================================================================== */
 .v3 {
   /* nền & bề mặt */
-  --v3-bg: #f3efe6;
-  --v3-bg-2: #ebe6da;
-  --v3-card: #fbf9f4;
-  --v3-card-2: #ffffff;
+  --v3-bg: #f1ede3;
+  --v3-bg-2: #e8e2d4;
+  --v3-paper: #faf8f3;
+  --v3-night: #05081f;
 
   /* mực */
-  --v3-ink: #111111;
-  --v3-ink-2: #5b5a55;      /* 6.1:1 trên kem */
-  --v3-line: rgba(17, 17, 17, 0.14);
-  --v3-line-2: rgba(17, 17, 17, 0.08);
+  --v3-ink: #0c0c10;
+  --v3-ink-2: #55534c;             /* 6.5:1 trên kem */
+  --v3-line: rgba(12, 12, 16, 0.14);
+  --v3-line-2: rgba(12, 12, 16, 0.08);
+  --v3-on-dark: #f1ede3;
+  --v3-on-dark-2: rgba(241, 237, 227, 0.7);
+  --v3-line-dark: rgba(241, 237, 227, 0.16);
 
-  /* nhấn: xanh tích */
-  --v3-blue: #1d4ed8;
-  --v3-blue-ink: #1e3fae;   /* hover / chữ cobalt cỡ nhỏ */
-  --v3-blue-soft: rgba(29, 78, 216, 0.09);
-  --v3-star: #b45309;       /* sao đánh giá: 4.8:1 */
+  /* nhấn */
+  --v3-blue: #2140f0;              /* 6.9:1 với chữ trắng */
+  --v3-blue-ink: #1a33c4;
+  --v3-blue-lite: #9fb0ff;         /* cobalt trên nền tối */
+  --v3-blue-soft: rgba(33, 64, 240, 0.1);
+  --v3-star: #92400e;
 
-  /* typography — 3 họ, 8 cỡ */
+  /* typography */
   --ff-display: var(--font-v3-display), "Archivo", system-ui, sans-serif;
   --ff-body: var(--font-v3-body), "Be Vietnam Pro", system-ui, sans-serif;
   --ff-mono: var(--font-v3-mono), "JetBrains Mono", ui-monospace, monospace;
-  --fs-h1: clamp(44px, 5.4vw, 80px);
-  --fs-h2: clamp(34px, 3.9vw, 56px);
-  --fs-stat: clamp(32px, 3.2vw, 48px);
+  --ff-serif: var(--font-v3-serif), "Playfair Display", Georgia, serif;
+
+  /* cỡ trình bày (display) */
+  --fs-mega: clamp(40px, 12.4vw, 216px);   /* "UY TÍN SỐ" — chữ rộng 125% */
+  --fs-giant: clamp(44px, 6.6vw, 112px);   /* tên dịch vụ, chữ nén 62% */
+  --fs-xl: clamp(44px, 6.2vw, 104px);      /* tiêu đề chương, chữ nén */
+  --fs-h1b: clamp(30px, 5.2vw, 88px);      /* dòng 2 hero */
+  --fs-mf: clamp(30px, 4.4vw, 72px);       /* tuyên ngôn */
+  /* cỡ nội dung */
+  --fs-h2: clamp(30px, 3.2vw, 48px);
   --fs-h3: clamp(20px, 1.6vw, 24px);
   --fs-lead: clamp(17px, 1.3vw, 20px);
   --fs-body: 16px;
   --fs-meta: 14px;
   --fs-eyebrow: 12px;
-  --display-stretch: 112%;
 
   /* spacing */
-  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px;
-  --sp-6: 32px; --sp-7: 48px; --sp-8: 64px; --sp-9: 96px; --sp-10: 144px;
-  --section-y: clamp(64px, 7vw, 112px);
-  --container: 1280px;
-  --gutter: clamp(20px, 3.5vw, 44px);
+  --section-y: clamp(80px, 9vw, 144px);
+  --container: 1320px;
+  --gutter: clamp(20px, 3.5vw, 48px);
   --tap: 44px;
 
-  /* shape & effects (KHÔNG backdrop-filter) */
-  --r-sm: 10px; --r-md: 16px; --r-lg: 24px; --r-pill: 999px;
-  --shadow-soft: 0 24px 60px -28px rgba(17, 17, 17, 0.28);
-  --shadow-card: 0 14px 40px -22px rgba(17, 17, 17, 0.2);
-  --shadow-blue: 0 16px 40px -14px rgba(29, 78, 216, 0.5);
+  /* shape */
+  --r-md: 16px; --r-lg: 24px; --r-xl: 32px; --r-pill: 999px;
+  --shadow-card: 0 18px 50px -26px rgba(12, 12, 16, 0.35);
+  --shadow-pop: 0 30px 70px -30px rgba(12, 12, 16, 0.55);
 
   /* motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
-  --dur-fast: 180ms; --dur-base: 420ms; --dur-slow: 900ms;
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 180ms; --dur-base: 450ms;
 
-  /* z-index (dưới popup 10000) */
-  --z-content: 2; --z-rail: 45; --z-nav: 50; --z-dock: 55;
+  --z-content: 2; --z-nav: 50; --z-dock: 55;
 }
