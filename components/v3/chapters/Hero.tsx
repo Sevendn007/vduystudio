@@ -3,6 +3,7 @@ import { useLang } from "@/lib/i18n";
 import { homeCopy, STATS } from "@/lib/homeCopy";
 import { v3Copy } from "@/lib/v3/copy";
 import { useV3 } from "../V3Context";
+import { isTermWarranty } from "@/lib/v3/format";
 import CountUp from "../ui/CountUp";
 import RotatingText from "../ui/RotatingText";
 import HeroArt from "../ui/HeroArt";
@@ -13,16 +14,22 @@ export default function Hero() {
   const { lang } = useLang();
   const t = homeCopy(lang).hero;
   const c = v3Copy(lang);
-  const { contact } = useV3();
+  const { contact, pricing } = useV3();
   const stats = STATS(lang);
   const sep = lang === "en" ? "," : ".";
 
   // "… booking báo chí cho" + chữ xoay: giữ "cho" dính với chữ xoay, không mồ côi cuối dòng.
   const subWords = t.sub.split(" ");
   const subLast = subWords.pop();
+  // Chip lấy từ dòng "tích xanh" THẬT trong bảng giá (DB) → không mâu thuẫn với bảng giá; copy chỉ là dự phòng.
+  const tick = (pricing["tiktok"] ?? []).find((r) => /t[ií]ch xanh|verif|badge/i.test(r.service));
   const parts = c.priceAnchorFallback.split(" · ");
   const cap = (x: string) => x.charAt(0).toLocaleUpperCase("vi") + x.slice(1);
-  const chips: [string, string] | null = parts.length >= 2 ? [parts[0], cap(parts.slice(1).join(" · "))] : null;
+  const wLabel = lang === "en" ? "warranty" : "bảo hành";
+  const dbBits = tick ? [tick.duration, isTermWarranty(tick.warranty) ? `${wLabel} ${tick.warranty}` : null].filter(Boolean) as string[] : [];
+  const chips: [string, string] | null = tick
+    ? (dbBits.length ? [parts[0], cap(dbBits.join(" · "))] : null)
+    : (parts.length >= 2 ? [parts[0], cap(parts.slice(1).join(" · "))] : null);
 
   return (
     <section id="hero" className="v3-hero v3-station" aria-labelledby="v3-hero-title">
