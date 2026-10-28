@@ -4,14 +4,12 @@ import Link from "next/link";
 import { useLang } from "@/lib/i18n";
 import { homeCopy, SERVICES } from "@/lib/homeCopy";
 import { getPlatform, type PriceRow } from "@/lib/services";
-import { v3Copy, V3_ACCENT } from "@/lib/v3/copy";
+import { v3Copy } from "@/lib/v3/copy";
 import { href } from "@/lib/v3/routes";
+import { fmtNum, fmtPrice, isTermWarranty, realPrice, stripNo } from "@/lib/v3/format";
 import { useV3 } from "../V3Context";
-import Icon3D from "@/components/brand/Icon3D";
+import Icon3 from "../ui/Icon3";
 import type { DbPriceRow } from "@/lib/data";
-
-const PLACEHOLDER = /^(li[eê]n h[eệ] b[aá]o gi[aá]|contact for quote|)$/i;
-const real = (p?: string | null) => Boolean(p && !PLACEHOLDER.test(p.trim()));
 
 type Row = { service: string; duration: string | null; warranty: string | null; price: string | null };
 
@@ -30,68 +28,80 @@ export default function ServicesPricing() {
   const [tab, setTab] = useState(services[0].slug);
 
   const tabRows = rowsFor(tab, pricing[tab] ?? null, lang);
-  const showPrice = tabRows.some((r) => real(r.price));
+  const showPrice = tabRows.some((r) => realPrice(r.price));
+  const L = lang === "en"
+    ? { time: "Time", warranty: "Warranty", from: "Price" }
+    : { time: "Thời gian", warranty: "Bảo hành", from: "Giá" };
 
-  const miniFor = (slug: string): string => {
+  // Tóm tắt trên thẻ: chỉ hiện thông tin rõ nghĩa (thời gian, bảo hành dạng thời hạn, giá đã công bố).
+  const metaFor = (slug: string) => {
     const rows = rowsFor(slug, pricing[slug] ?? null, lang);
     const row = rows.find((r) => /t[ií]ch xanh|verif|badge/i.test(r.service)) ?? rows[0];
-    if (!row) return c.priceContact;
-    const bits = [row.duration, row.warranty && ((lang === "en" ? "warranty " : "BH ") + row.warranty)].filter(Boolean);
-    if (real(row.price)) bits.push(row.price!);
-    else bits.push(c.priceContact);
-    return bits.join(" · ");
+    if (!row) return [];
+    const out: [string, string][] = [];
+    if (row.duration) out.push([L.time, row.duration]);
+    if (isTermWarranty(row.warranty)) out.push([L.warranty, row.warranty!]);
+    if (realPrice(row.price)) out.push([L.from, fmtPrice(row.price!, lang)]);
+    return out;
   };
 
   return (
     <section id="services" className="v3-section v3-station">
       <span id="pm-services" aria-hidden style={{ position: "absolute", marginTop: -90 }} />
       <div className="v3-container">
-        <p className="v3-eyebrow">{s.eyebrow}</p>
+        <p className="v3-eyebrow">{c.stations.services.no} — {stripNo(s.eyebrow)}</p>
         <h2 className="v3-h2">{s.h2a} <span className="v3-accent">{s.h2b}</span></h2>
         <p className="v3-lead">{s.lead}</p>
 
         <div className="v3-kpis">
-          <div><b>8.980+</b><span>{c.kpiRequests}</span></div>
+          <div><b>{fmtNum(8980, lang)}+</b><span>{c.kpiRequests}</span></div>
           <div><b>5</b><span>{s.kpi2}</span></div>
           <div><b>100%</b><span>{s.kpi3}</span></div>
         </div>
 
         <div className="v3-svc-grid">
           {services.map((svc, i) => (
-            <article className="v3-svc v3-glass" key={svc.slug} style={{ ["--accent" as string]: V3_ACCENT[svc.slug] ?? "#5ef2e6" }}>
-              <span className="v3-svc-no" aria-hidden>0{i + 1}</span>
-              {svc.slug === "tiktok" && <span className="v3-svc-pop">{s.popular}</span>}
-              <Icon3D name={svc.icons[0]} size={56} className="v3-svc-ic" />
-              <h3>{svc.name}</h3>
+            <article className="v3-svc v3-card" key={svc.slug}>
+              <div className="v3-svc-top">
+                <span className="v3-svc-ic"><Icon3 name={svc.icons[0]} size={26} /></span>
+                {svc.slug === "tiktok"
+                  ? <span className="v3-svc-pop">{s.popular}</span>
+                  : <span className="v3-svc-no" aria-hidden>0{i + 1}</span>}
+              </div>
+              <h3 className="v3-h3">{svc.name}</h3>
               <p className="v3-svc-desc">{svc.desc}</p>
-              <p className="v3-svc-mini">{miniFor(svc.slug)}</p>
-              <p className="v3-svc-clients"><b>{svc.clients.toLocaleString()}</b> {s.clients}</p>
-              <div className="v3-svc-actions">
-                <a className="v3-btn v3-btn-primary v3-btn-sm" href={contact.zalo} target="_blank" rel="noreferrer">{c.quoteZalo}</a>
-                <Link className="v3-svc-more" href={href(`/dich-vu/${svc.slug}`)}>{s.more} →</Link>
+              <div className="v3-svc-meta">
+                {metaFor(svc.slug).map(([k, v]) => <span key={k}>{k}: <b>{v}</b></span>)}
+                <span><b>{fmtNum(svc.clients, lang)}</b> {s.clients}</span>
+              </div>
+              <div className="v3-svc-foot">
+                <Link className="v3-link" href={href(`/dich-vu/${svc.slug}`)}>{s.more} →</Link>
               </div>
             </article>
           ))}
 
-          <article className="v3-svc v3-svc-cta v3-glass">
-            <h3>{s.ctaTitle}</h3>
+          <article className="v3-svc v3-svc-cta v3-card">
+            <span className="v3-svc-ic"><Icon3 name="chat" size={26} /></span>
+            <h3 className="v3-h3">{s.ctaTitle}</h3>
             <p className="v3-svc-desc">{s.ctaDesc}</p>
-            <div className="v3-svc-actions">
-              <a className="v3-btn v3-btn-primary v3-btn-sm" href={contact.zalo} target="_blank" rel="noreferrer">{s.ctaBtn}</a>
-              <a className="v3-svc-more" href="#process" onClick={(e) => { e.preventDefault(); document.getElementById("process")?.scrollIntoView({ behavior: "smooth" }); }}>{s.ctaBtn2} →</a>
+            <div className="v3-svc-foot">
+              <a className="v3-btn v3-btn-light" href={contact.zalo} target="_blank" rel="noreferrer">{s.ctaBtn}</a>
+              <a className="v3-link" href="#process" onClick={(e) => { e.preventDefault(); document.getElementById("process")?.scrollIntoView({ behavior: "smooth" }); }}>{s.ctaBtn2} →</a>
             </div>
           </article>
         </div>
 
-        {/* Bảng giá nhanh */}
-        <div id="pricing" className="v3-pricing">
-          <h3 className="v3-pricing-title">{c.pricingTitle}</h3>
-          <div className="v3-pricing-tabs" role="tablist">
-            {services.map((svc) => (
-              <button key={svc.slug} role="tab" aria-selected={tab === svc.slug} className={tab === svc.slug ? "is-active" : ""} onClick={() => setTab(svc.slug)}>
-                {svc.name}
-              </button>
-            ))}
+        {/* Bảng giá nhanh — 1 CTA duy nhất dưới bảng (không nút Zalo mỗi dòng) */}
+        <div id="pricing" className="v3-pricing v3-card">
+          <div className="v3-pricing-head">
+            <h3 className="v3-h3">{c.pricingTitle}</h3>
+            <div className="v3-pricing-tabs" role="tablist" aria-label={c.pricingTitle}>
+              {services.map((svc) => (
+                <button key={svc.slug} role="tab" aria-selected={tab === svc.slug} className={tab === svc.slug ? "is-active" : ""} onClick={() => setTab(svc.slug)}>
+                  {svc.name}
+                </button>
+              ))}
+            </div>
           </div>
           <table className="v3-pricing-table">
             <thead>
@@ -100,24 +110,27 @@ export default function ServicesPricing() {
                 <th>{c.pricingCols.duration}</th>
                 <th>{c.pricingCols.warranty}</th>
                 {showPrice && <th>{c.pricingCols.price}</th>}
-                <th aria-label="CTA" />
               </tr>
             </thead>
             <tbody>
               {tabRows.map((r, i) => (
                 <tr key={i}>
                   <td data-label={c.pricingCols.service}>{r.service}</td>
-                  <td data-label={c.pricingCols.duration}>{r.duration ?? "—"}</td>
-                  <td data-label={c.pricingCols.warranty}>{r.warranty ?? "—"}</td>
-                  {showPrice && <td data-label={c.pricingCols.price}>{real(r.price) ? r.price : c.priceContact}</td>}
-                  <td>
-                    <a className="v3-btn v3-btn-glass v3-btn-sm" href={contact.zalo} target="_blank" rel="noreferrer">{c.quoteZalo}</a>
-                  </td>
+                  <td data-label={c.pricingCols.duration}>{r.duration || "—"}</td>
+                  <td data-label={c.pricingCols.warranty}>{r.warranty || "—"}</td>
+                  {showPrice && (
+                    <td data-label={c.pricingCols.price} className={realPrice(r.price) ? "v3-price" : undefined}>
+                      {realPrice(r.price) ? fmtPrice(r.price!, lang) : c.priceContact}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
           </table>
-          <p className="v3-pricing-note">{c.pricingNote}</p>
+          <div className="v3-pricing-foot">
+            <p className="v3-pricing-note">{c.pricingNote}</p>
+            <a className="v3-btn v3-btn-primary" href={contact.zalo} target="_blank" rel="noreferrer">{c.quoteZalo} →</a>
+          </div>
         </div>
       </div>
     </section>

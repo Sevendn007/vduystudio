@@ -45,7 +45,7 @@ const vi: V3Copy = {
   profileFollowers: "2.1Tr theo dõi · 48.6Tr thích",
   priceAnchorFallback: "Tích xanh chính thống · 7–15 ngày · bảo hành 12 tháng",
   priceContact: "Báo giá trong giờ làm việc",
-  quoteZalo: "Báo giá Zalo",
+  quoteZalo: "Nhận báo giá qua Zalo",
   viewPricing: "Xem bảng giá ↓",
   scrollHint: "Cuộn để bay vào studio",
   skip: "Bỏ qua",
@@ -82,7 +82,7 @@ const en: V3Copy = {
   profileFollowers: "2.1M followers · 48.6M likes",
   priceAnchorFallback: "Official verification · 7–15 days · 12-month warranty",
   priceContact: "Quote within business hours",
-  quoteZalo: "Get a quote",
+  quoteZalo: "Get a quote on Zalo",
   viewPricing: "See pricing ↓",
   scrollHint: "Scroll to enter the studio",
   skip: "Skip",
@@ -112,12 +112,3 @@ const en: V3Copy = {
 export function v3Copy(lang: Lang): V3Copy {
   return lang === "en" ? en : vi;
 }
-
-// Accent nền tảng cho thẻ dịch vụ: #8b5cf6 (Website, tím) → iris xanh trong v3.
-export const V3_ACCENT: Record<string, string> = {
-  tiktok: "#5ef2e6",
-  facebook: "#6096ff",
-  "instagram-threads": "#ec78c8",
-  "bao-chi": "#ffbe5c",
-  website: "#8ab4ff",
-};

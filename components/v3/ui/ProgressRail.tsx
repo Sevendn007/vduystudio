@@ -40,9 +40,7 @@ export default function ProgressRail() {
               }}
             >
               <i className="v3-rail-dot" aria-hidden />
-              <span className="v3-rail-label">
-                <b>{stations[id].no}</b> {stations[id].nav}
-              </span>
+              <span className="v3-rail-label">{stations[id].no} · {stations[id].nav}</span>
             </a>
           </li>
         ))}

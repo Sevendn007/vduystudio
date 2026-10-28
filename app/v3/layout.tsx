@@ -16,7 +16,7 @@ const display = Archivo({
 });
 const body = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-v3-body",
   display: "swap",
 });

@@ -1,7 +1,12 @@
 /* ======================================================================
    VDuyStudio v3 — "CREAM STUDIO" design tokens (chủ site chọn 2026-10-27).
-   Nền kem sáng · chữ đen rộng · xanh cobalt làm nhấn · vật thể 3D nổi bóng mềm.
+   Nền kem sáng · chữ đen · xanh cobalt làm nhấn · vật thể 3D chỉ ở hero.
    Scope dưới `.v3` để không rò sang `/` hay `/v2`.
+
+   Quy tắc (sau review 2026-10-28):
+   - CHỈ 8 cỡ chữ (dưới đây). Không viết px lẻ trong v3.css.
+   - Palette: kem · mực · cobalt + 1 xám chữ phụ (tương phản ≥ 4.5:1).
+   - Mono + IN HOA chỉ dùng cho eyebrow.
    ====================================================================== */
 .v3 {
   /* nền & bề mặt */
@@ -12,50 +17,49 @@
 
   /* mực */
   --v3-ink: #111111;
-  --v3-ink-2: #4b4a46;
-  --v3-ink-3: #8a877f;
-  --v3-line: rgba(17, 17, 17, 0.16);
+  --v3-ink-2: #5b5a55;      /* 6.1:1 trên kem */
+  --v3-line: rgba(17, 17, 17, 0.14);
   --v3-line-2: rgba(17, 17, 17, 0.08);
 
   /* nhấn: xanh tích */
   --v3-blue: #1d4ed8;
-  --v3-blue-2: #20a1ff;
-  --v3-blue-soft: rgba(29, 78, 216, 0.1);
-  --v3-amber: #d97706;
-  --v3-zalo: #0068ff;
-  --g-verify: linear-gradient(100deg, #1d4ed8 0%, #20a1ff 100%);
+  --v3-blue-ink: #1e3fae;   /* hover / chữ cobalt cỡ nhỏ */
+  --v3-blue-soft: rgba(29, 78, 216, 0.09);
+  --v3-star: #b45309;       /* sao đánh giá: 4.8:1 */
 
-  /* typography */
+  /* typography — 3 họ, 8 cỡ */
   --ff-display: var(--font-v3-display), "Archivo", system-ui, sans-serif;
   --ff-body: var(--font-v3-body), "Be Vietnam Pro", system-ui, sans-serif;
   --ff-mono: var(--font-v3-mono), "JetBrains Mono", ui-monospace, monospace;
-  --fs-hero: clamp(44px, 6.6vw, 104px);
-  --fs-h2: clamp(34px, 4.6vw, 68px);
-  --fs-h3: clamp(20px, 1.8vw, 28px);
-  --fs-lead: clamp(16px, 1.25vw, 19px);
+  --fs-h1: clamp(44px, 5.4vw, 80px);
+  --fs-h2: clamp(34px, 3.9vw, 56px);
+  --fs-stat: clamp(32px, 3.2vw, 48px);
+  --fs-h3: clamp(20px, 1.6vw, 24px);
+  --fs-lead: clamp(17px, 1.3vw, 20px);
   --fs-body: 16px;
-  --fs-small: 13px;
-  --fs-eyebrow: 11px;
-  --fs-stat: clamp(30px, 3.4vw, 52px);
-  --fs-giant: clamp(80px, 18vw, 300px);
+  --fs-meta: 14px;
+  --fs-eyebrow: 12px;
+  --display-stretch: 112%;
 
   /* spacing */
   --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px;
   --sp-6: 32px; --sp-7: 48px; --sp-8: 64px; --sp-9: 96px; --sp-10: 144px;
-  --section-y: clamp(80px, 10vw, 150px);
+  --section-y: clamp(64px, 7vw, 112px);
   --container: 1280px;
-  --gutter: clamp(16px, 3.5vw, 44px);
+  --gutter: clamp(20px, 3.5vw, 44px);
+  --tap: 44px;
 
   /* shape & effects (KHÔNG backdrop-filter) */
   --r-sm: 10px; --r-md: 16px; --r-lg: 24px; --r-pill: 999px;
   --shadow-soft: 0 24px 60px -28px rgba(17, 17, 17, 0.28);
-  --shadow-card: 0 14px 40px -20px rgba(17, 17, 17, 0.22);
+  --shadow-card: 0 14px 40px -22px rgba(17, 17, 17, 0.2);
+  --shadow-blue: 0 16px 40px -14px rgba(29, 78, 216, 0.5);
 
   /* motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
   --dur-fast: 180ms; --dur-base: 420ms; --dur-slow: 900ms;
 
-  /* z-index (dưới ChatFab 9998 / popup 10000) */
-  --z-bg: 0; --z-content: 2; --z-canvas: 5; --z-rail: 45; --z-nav: 50; --z-dock: 55; --z-cursor: 9000;
+  /* z-index (dưới popup 10000) */
+  --z-content: 2; --z-rail: 45; --z-nav: 50; --z-dock: 55;
 }
