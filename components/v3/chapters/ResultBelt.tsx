@@ -1,120 +1,193 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
-import NextImage from "next/image";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
 import { useLang } from "@/lib/i18n";
-import { homeCopy, CLIENTS } from "@/lib/homeCopy";
+import { homeCopy, CLIENTS, PLATFORM_NAME } from "@/lib/homeCopy";
 import { DEFAULT_PROJECTS } from "@/components/premiumKit";
 import { href } from "@/lib/v3/routes";
 import { stripNo, tidy } from "@/lib/v3/format";
 import { useV3 } from "../V3Context";
 
-gsap.registerPlugin(ScrollTrigger);
-
-// DỰ ÁN: desktop (chuột) → ghim section, cuộn dọc = trượt ngang cả dải thẻ.
-// Cảm ứng / màn hẹp → vuốt ngang native + nút trước/sau. Khách hàng: sticker xoay lệch.
+// DỰ ÁN — coverflow 3D như v2 (chủ site chọn 2026-10-29), phối lại theo palette kem/mực/cobalt.
+// CSS transform (không WebGL), chạy cả desktop & mobile: vuốt/kéo, phím ←/→, tự chạy 4.5s
+// (dừng khi rê chuột/tab ẩn/reduced-motion), bấm thẻ giữa → lightbox. Dữ liệu: server (useV3).
 export default function ResultBelt() {
   const { lang } = useLang();
   const t = homeCopy(lang);
-  const { projects } = useV3();
-  const items = (projects && projects.length ? projects : DEFAULT_PROJECTS).slice(0, 8);
-  const root = useRef<HTMLElement>(null);
-  const track = useRef<HTMLDivElement>(null);
-  const [edge, setEdge] = useState({ start: true, end: false });
+  const p = t.projects;
+  const { projects, contact } = useV3();
+  const items = projects && projects.length ? projects : DEFAULT_PROJECTS;
+  const n = items.length;
+  const [active, setActive] = useState(0);
+  const [open, setOpen] = useState<(typeof items)[number] | null>(null);
+  const [paused, setPaused] = useState(false);
+  const [reduced, setReduced] = useState(false);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ x: number; dx: number; moved: boolean; id: number } | null>(null);
+  const wheelLock = useRef(0);
 
-  const measure = useCallback(() => {
-    const el = track.current;
-    if (!el) return;
-    setEdge({ start: el.scrollLeft <= 4, end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4 });
-  }, []);
+  const go = useCallback((d: number) => setActive((a) => (a + d + n) % n), [n]);
+
   useEffect(() => {
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [measure]);
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+  }, []);
 
-  const step = (dir: 1 | -1) => {
-    const el = track.current;
-    const card = el?.querySelector<HTMLElement>(".v3-work");
-    if (!el || !card) return;
-    el.scrollBy({ left: dir * (card.offsetWidth + 24), behavior: "smooth" });
+  useEffect(() => {
+    if (reduced || paused || open || n < 2) return;
+    const id = window.setInterval(() => !document.hidden && go(1), 4500);
+    return () => window.clearInterval(id);
+  }, [reduced, paused, open, n, go]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(null);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  const fallback = (i: number) => DEFAULT_PROJECTS[i % DEFAULT_PROJECTS.length].image_url || `/images/d${(i % 4) + 1}.webp`;
+
+  // Kéo/vuốt: thẻ chạy theo tay (CSS var --drag, không re-render), thả ra thì bắt về thẻ gần nhất.
+  const cardStep = () => (trackRef.current?.querySelector<HTMLElement>(".v3-cf-card")?.offsetWidth ?? 240) * 0.78;
+  const setDrag = (v: number, dragging: boolean) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.style.setProperty("--drag", v.toFixed(3));
+    el.classList.toggle("is-dragging", dragging);
+  };
+  const onDown = (e: React.PointerEvent) => {
+    if (e.button !== 0) return;
+    drag.current = { x: e.clientX, dx: 0, moved: false, id: e.pointerId };
+  };
+  useEffect(() => {
+    const move = (e: PointerEvent) => {
+      const d = drag.current;
+      if (!d || e.pointerId !== d.id) return;
+      d.dx = e.clientX - d.x;
+      if (Math.abs(d.dx) > 6) d.moved = true;
+      if (d.moved) setDrag(d.dx / cardStep(), true);
+    };
+    const up = (e: PointerEvent) => {
+      const d = drag.current;
+      if (!d || e.pointerId !== d.id) return;
+      const steps = Math.round(-d.dx / cardStep());
+      const flick = steps === 0 && Math.abs(d.dx) > 30 ? (d.dx < 0 ? 1 : -1) : steps;
+      setDrag(0, false);
+      if (d.moved && flick) go(flick);
+      setTimeout(() => (drag.current = null), 0);
+    };
+    window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+    return () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+    };
+  }, [go]);
+  const onWheel = (e: React.WheelEvent) => {
+    if (Math.abs(e.deltaX) < Math.abs(e.deltaY) || Math.abs(e.deltaX) < 12) return;
+    const now = Date.now();
+    if (now - wheelLock.current < 450) return;
+    wheelLock.current = now;
+    go(e.deltaX > 0 ? 1 : -1);
   };
 
-  useGSAP(() => {
-    const el = root.current!;
-    const mm = gsap.matchMedia();
-    mm.add("(min-width: 1024px) and (hover: hover) and (prefers-reduced-motion: no-preference)", () => {
-      el.classList.add("is-pinned");
-      const tr = track.current!;
-      const dist = () => Math.max(0, tr.scrollWidth - tr.clientWidth);
-      const tw = gsap.to(tr, {
-        x: () => -dist(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: el.querySelector(".v3-works-pin"),
-          start: "top top",
-          end: () => `+=${dist()}`,
-          pin: true,
-          scrub: 0.5,
-          invalidateOnRefresh: true,
-          onUpdate: (st) => el.style.setProperty("--wp", st.progress.toFixed(3)),
-        },
-      });
-      gsap.fromTo(".v3-work", { rotate: (i) => (i % 2 ? 3 : -3) }, { rotate: 0, ease: "none", scrollTrigger: { trigger: el, start: "top 80%", end: "top top", scrub: true } });
-      return () => { tw.scrollTrigger?.kill(); el.classList.remove("is-pinned"); gsap.set(tr, { clearProps: "x" }); };
-    });
-    const id = window.setTimeout(() => ScrollTrigger.refresh(), 800);
-    return () => { window.clearTimeout(id); mm.revert(); };
-  }, { scope: root });
-
-  const prev = lang === "en" ? "Previous" : "Trước";
-  const next = lang === "en" ? "Next" : "Sau";
+  const cur = items[active];
+  const curTitle = tidy(cur.title);
+  const curResult = tidy(cur.result);
 
   return (
-    <section id="projects" ref={root} className="v3-works v3-station">
-      <div className="v3-works-pin">
-        <div className="v3-container v3-works-head">
-          <div>
-            <p className="v3-eyebrow">{stripNo(t.projects.eyebrow)}</p>
-            <h2 className="v3-xl">{t.projects.h2a} <em className="v3-serif">{t.projects.h2b}</em></h2>
-          </div>
-          <div className="v3-works-tools">
-            <div className="v3-arrows">
-              <button className="v3-arrow" onClick={() => step(-1)} disabled={edge.start} aria-label={prev}>
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M15 6l-6 6 6 6" /></svg>
-              </button>
-              <button className="v3-arrow" onClick={() => step(1)} disabled={edge.end} aria-label={next}>
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M9 6l6 6-6 6" /></svg>
-              </button>
-            </div>
-            <Link className="v3-link" href={href("/du-an")}>{t.projects.all}</Link>
-          </div>
+    <section id="projects" className="v3-works v3-station">
+      <div className="v3-container v3-works-head">
+        <div>
+          <p className="v3-eyebrow">{stripNo(p.eyebrow)}</p>
+          <h2 className="v3-xl">{p.h2a} <em className="v3-serif">{p.h2b}</em></h2>
         </div>
+        <Link className="v3-link" href={href("/du-an")}>{p.all}</Link>
+      </div>
 
-        <div className="v3-works-track" ref={track} onScroll={measure}>
-          {items.map((p, i) => {
-            const img = p.image_url || `/images/d${(i % 4) + 1}.webp`;
-            const title = tidy(p.title);
-            const result = tidy(p.result);
+      <div
+        className="v3-cf"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label={stripNo(p.eyebrow)}
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowRight") go(1);
+          if (e.key === "ArrowLeft") go(-1);
+        }}
+        onPointerEnter={() => setPaused(true)}
+        onPointerLeave={() => setPaused(false)}
+        onWheel={onWheel}
+      >
+        <div className="v3-cf-ring" aria-hidden />
+        <div ref={trackRef} className="v3-cf-track" onPointerDown={onDown}>
+          {items.map((it, i) => {
+            let off = i - active;
+            if (off > n / 2) off -= n;
+            if (off < -n / 2) off += n;
+            const abs = Math.abs(off);
+            const title = tidy(it.title);
             return (
-              <figure className="v3-work" key={p.id || i}>
-                <div className="v3-work-img">
-                  <NextImage src={img} alt={title} fill sizes="(max-width:760px) 72vw, 320px" style={{ objectFit: "cover" }} />
-                  <span className="v3-work-no" aria-hidden>{String(i + 1).padStart(2, "0")}</span>
-                  {p.tag && <span className="v3-work-tag">{tidy(p.tag)}</span>}
-                </div>
-                <figcaption>
-                  <b>{title}</b>
-                  {result && result !== title && <span>{result}</span>}
-                </figcaption>
-              </figure>
+              <button
+                key={it.id || i}
+                className={`v3-cf-card${off === 0 ? " is-active" : ""}`}
+                style={{
+                  ["--off" as string]: off,
+                  ["--abs" as string]: abs,
+                  zIndex: 20 - abs,
+                  opacity: abs > 2 ? 0 : 1,
+                  pointerEvents: abs > 2 ? "none" : undefined,
+                }}
+                aria-label={title}
+                aria-current={off === 0}
+                tabIndex={off === 0 ? 0 : -1}
+                onClick={() => {
+                  if (drag.current?.moved) return;
+                  if (off === 0) setOpen(it);
+                  else setActive(i);
+                }}
+              >
+                <span className="v3-cf-phone">
+                  <span className="v3-cf-island" />
+                  <img
+                    src={it.image_url || fallback(i)}
+                    alt={title}
+                    loading={abs <= 1 ? "eager" : "lazy"}
+                    draggable={false}
+                    onError={(e) => ((e.currentTarget as HTMLImageElement).src = fallback(i))}
+                  />
+                  <span className="v3-cf-dim" aria-hidden />
+                </span>
+              </button>
             );
           })}
+          <button className="v3-cf-arrow v3-cf-prev" onClick={() => go(-1)} aria-label={p.prev}>
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+          <button className="v3-cf-arrow v3-cf-next" onClick={() => go(1)} aria-label={p.next}>
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
         </div>
-        <div className="v3-container"><div className="v3-works-progress" aria-hidden><i /></div></div>
+
+        <div className="v3-cf-caption" aria-live="polite">
+          <span className="v3-cf-count">{String(active + 1).padStart(2, "0")}<small>/{String(n).padStart(2, "0")}</small></span>
+          <h3>{curTitle}</h3>
+          {curResult && curResult !== curTitle && <p>{curResult}</p>}
+          <span className="v3-cf-chips">
+            {cur.platform && <span className="v3-chip">{PLATFORM_NAME[cur.platform] ?? cur.platform}</span>}
+            {cur.tag && <span className="v3-chip v3-chip-blue">{tidy(cur.tag)}</span>}
+          </span>
+        </div>
+        <div className="v3-cf-dots">
+          {items.map((it, i) => (
+            <button key={it.id || i} className={i === active ? "on" : ""} onClick={() => setActive(i)} aria-label={tidy(it.title)}><i /></button>
+          ))}
+        </div>
       </div>
 
       <div id="clients" className="v3-container v3-clients">
@@ -124,6 +197,21 @@ export default function ResultBelt() {
           {CLIENTS.map((cl, i) => <li key={cl} className={`v3-stk v3-stk-${i % 4}`} style={{ ["--r" as string]: `${[-4, 3, -2, 5, -5, 2, 4, -3, 1][i % 9]}deg` }}>{cl}</li>)}
         </ul>
       </div>
+
+      {open && createPortal(
+        <div className="v3-lightbox" role="dialog" aria-modal="true" aria-label={tidy(open.title)} onClick={() => setOpen(null)}>
+          <div className="v3-lightbox-card" onClick={(e) => e.stopPropagation()}>
+            <img src={open.image_url || fallback(active)} alt={tidy(open.title)} />
+            <div className="v3-lightbox-info">
+              <h3>{tidy(open.title)}</h3>
+              {open.result && <p>{tidy(open.result)}</p>}
+              <a className="v3-btn v3-btn-blue v3-btn-lg" href={contact.zalo} target="_blank" rel="noreferrer">{p.similar}</a>
+              <button className="v3-btn v3-btn-ink v3-btn-lg" onClick={() => setOpen(null)}>{p.close}</button>
+            </div>
+          </div>
+        </div>,
+        document.querySelector(".v3") ?? document.body
+      )}
     </section>
   );
 }
