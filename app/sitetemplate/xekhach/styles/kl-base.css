@@ -1,0 +1,426 @@
+/* =============================================================================
+   KIM LÝ — nền chung cho cả 2 bản demo.
+   Nhiệm vụ: gỡ các rule toàn cục của app/globals.css (nền tối, overflow-x:hidden
+   phá sticky/pin, scroll-behavior:smooth đá nhau với Lenis) chỉ trong phạm vi
+   template, không đụng tới trang chủ VDuyStudio.
+   ============================================================================= */
+
+html:has(.kl-root),
+body:has(.kl-root),
+html:has(body.kl-page),
+body.kl-page {
+  overflow-x: clip;
+  max-width: none;
+  scroll-behavior: auto;
+}
+
+body:has(.kl-classic),
+body.kl-classic-page {
+  background: #f1ede3;
+}
+
+body:has(.kl-future),
+body.kl-future-page {
+  background: #030611;
+}
+
+/* Lenis (gói không tự chèn CSS) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Reset đặt trong cascade layer: rule nhắm phần tử (.kl-root button) có
+   specificity cao hơn class của component (.kl-c-btn-red) nên nếu để ngoài layer
+   nó sẽ nuốt mất nền/màu chữ của nút. Rule trong layer luôn thua rule thường. */
+@layer kl-reset {
+  .kl-root {
+    font-family: var(--kl-ff-body), system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .kl-root *,
+  .kl-root *::before,
+  .kl-root *::after {
+    box-sizing: border-box;
+  }
+  .kl-root img {
+    display: block;
+    max-width: 100%;
+  }
+  .kl-root button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+    text-align: inherit;
+  }
+  .kl-root input,
+  .kl-root select,
+  .kl-root textarea {
+    font: inherit;
+    color: inherit;
+  }
+  .kl-root a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .kl-root :focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+/* Chỉ đọc bởi screen reader */
+.kl-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =============================================================================
+   BẢNG LIÊN HỆ ĐẶT CHỖ — dùng chung 2 bản demo, có 2 "da": sáng (classic) và
+   kính tối (future). Form chỉ là UI: kết thúc bằng gọi / SMS / Zalo.
+   ============================================================================= */
+.kl-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(8, 12, 24, 0.55);
+  animation: kl-fade 0.25s ease;
+}
+@keyframes kl-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes kl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+}
+.kl-sheet {
+  width: min(100%, 560px);
+  max-height: min(92svh, 760px);
+  overflow-y: auto;
+  border-radius: 18px;
+  background: #fff;
+  color: #171b26;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.35);
+  animation: kl-rise 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.kl-sheet-glass {
+  background: rgba(11, 20, 44, 0.92);
+  color: #e8f1ff;
+  border: 1px solid rgba(57, 208, 255, 0.28);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.kl-sheet-hd {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px 22px 14px;
+  border-bottom: 1px solid rgba(23, 27, 38, 0.1);
+}
+.kl-sheet-glass .kl-sheet-hd {
+  border-color: rgba(57, 208, 255, 0.2);
+}
+.kl-sheet-hd h3 {
+  flex: 1;
+  font-family: var(--kl-ff-display), sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.kl-sheet-glass .kl-sheet-hd h3 {
+  font-family: var(--kl-ff-tech), sans-serif;
+}
+.kl-sheet-hd p {
+  font-size: 13px;
+  opacity: 0.65;
+  margin-top: 4px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.kl-sheet-x {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(23, 27, 38, 0.06);
+  transition: background 0.2s;
+}
+.kl-sheet-glass .kl-sheet-x {
+  background: rgba(255, 255, 255, 0.08);
+}
+.kl-sheet-x:hover {
+  background: rgba(23, 27, 38, 0.14);
+}
+.kl-sheet-body {
+  padding: 18px 22px 22px;
+}
+.kl-sheet-sum {
+  border-radius: 13px;
+  background: #f6f7fb;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  display: grid;
+  gap: 9px;
+}
+.kl-sheet-glass .kl-sheet-sum {
+  background: rgba(57, 208, 255, 0.08);
+  border: 1px solid rgba(57, 208, 255, 0.18);
+}
+.kl-sheet-sum div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 14px;
+}
+.kl-sheet-sum span {
+  opacity: 0.6;
+}
+.kl-sheet-sum b {
+  font-weight: 600;
+  text-align: right;
+}
+.kl-sheet-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.kl-sheet-grid label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+.kl-sheet-grid input,
+.kl-sheet-grid textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
+  border-radius: 11px;
+  border: 1.5px solid rgba(23, 27, 38, 0.14);
+  background: #fff;
+  font-size: 15px;
+  resize: vertical;
+}
+.kl-sheet-glass .kl-sheet-grid input,
+.kl-sheet-glass .kl-sheet-grid textarea {
+  background: rgba(3, 9, 22, 0.6);
+  border-color: rgba(57, 208, 255, 0.26);
+  color: #e8f1ff;
+}
+.kl-sheet-grid input:focus,
+.kl-sheet-grid textarea:focus {
+  outline: none;
+  border-color: #f26a1b;
+  box-shadow: 0 0 0 4px rgba(242, 106, 27, 0.14);
+}
+.kl-sheet-glass .kl-sheet-grid input:focus,
+.kl-sheet-glass .kl-sheet-grid textarea:focus {
+  border-color: #39d0ff;
+  box-shadow: 0 0 0 4px rgba(57, 208, 255, 0.16);
+}
+.kl-sheet-full {
+  grid-column: 1 / -1;
+}
+.kl-sheet-acts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.kl-sheet-act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 50px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.2s;
+}
+.kl-sheet-act:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+.kl-sheet-call {
+  grid-column: 1 / -1;
+  background: #d71920;
+  color: #fff;
+}
+.kl-sheet-glass .kl-sheet-call {
+  background: #39d0ff;
+  color: #04121c;
+}
+.kl-sheet-sms {
+  background: #15338c;
+  color: #fff;
+}
+.kl-sheet-zalo {
+  background: #0068ff;
+  color: #fff;
+}
+.kl-sheet-hint {
+  margin-top: 14px;
+  font-size: 12.5px;
+  opacity: 0.6;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.kl-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  z-index: 300;
+  background: #171b26;
+  color: #fff;
+  padding: 13px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  animation: kl-rise 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (max-width: 520px) {
+  .kl-sheet-grid,
+  .kl-sheet-acts {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =============================================================================
+   NÚT ĐỔI PHONG CÁCH — nổi cố định, có mặt ở cả hai bản demo.
+   ============================================================================= */
+.kl-switch {
+  position: fixed;
+  right: clamp(14px, 2.2vw, 28px);
+  bottom: calc(clamp(14px, 2vw, 24px) + env(safe-area-inset-bottom));
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px 7px 15px;
+  border-radius: 999px;
+  font-family: var(--kl-ff-body), sans-serif;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.kl-switch:hover {
+  transform: translateY(-2px);
+}
+.kl-switch[data-theme="dark"] {
+  background: rgba(8, 18, 40, 0.78);
+  border: 1px solid rgba(57, 208, 255, 0.3);
+  color: #e8f1ff;
+}
+.kl-switch[data-theme="light"] {
+  background: rgba(250, 248, 243, 0.94);
+  border: 1px solid rgba(12, 12, 16, 0.14);
+  color: #0c0c10;
+}
+.kl-switch-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  white-space: nowrap;
+}
+.kl-switch-track {
+  position: relative;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(127, 127, 127, 0.18);
+}
+.kl-switch-track button {
+  position: relative;
+  z-index: 1;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: inherit;
+  opacity: 0.6;
+  transition: opacity 0.25s, color 0.25s;
+}
+.kl-switch-track button[aria-pressed="true"] {
+  opacity: 1;
+}
+.kl-switch[data-theme="dark"] .kl-switch-track button[aria-pressed="true"] {
+  color: #04121c;
+}
+.kl-switch[data-theme="light"] .kl-switch-track button[aria-pressed="true"] {
+  color: #faf8f3;
+}
+/* con trượt chạy dưới nút đang chọn */
+.kl-switch-thumb {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border-radius: 999px;
+  transition: left 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.kl-switch[data-theme="dark"] .kl-switch-thumb {
+  background: linear-gradient(100deg, #39d0ff, #2f6bff);
+  box-shadow: 0 4px 16px rgba(57, 208, 255, 0.4);
+}
+.kl-switch[data-theme="light"] .kl-switch-thumb {
+  background: #0c0c10;
+}
+@media (max-width: 620px) {
+  .kl-switch {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    padding: 6px 7px;
+  }
+  .kl-switch:hover {
+    transform: translateX(-50%) translateY(-2px);
+  }
+  .kl-switch-label {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kl-switch,
+  .kl-switch-thumb {
+    transition: none;
+  }
+}

@@ -9,8 +9,8 @@ import { useContact } from "@/lib/useContact";
 
 export default function ChatFab() {
   const pathname = usePathname();
-  // Ẩn trên trang chủ và /v3: giao diện v3 đã có Dock và CTA Zalo tích hợp sẵn
-  if (pathname === "/" || pathname?.startsWith("/v3")) return null;
+  // Ẩn trên trang chủ, /v3 và /sitetemplate (demo cho khách có CTA liên hệ riêng)
+  if (pathname === "/" || pathname?.startsWith("/v3") || pathname?.startsWith("/sitetemplate")) return null;
   return <ChatFabInner />;
 }
 

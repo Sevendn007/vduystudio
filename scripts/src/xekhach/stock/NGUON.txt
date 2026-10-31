@@ -1,0 +1,16 @@
+Ảnh dùng cho bản demo lấy từ chính website hiện tại của nhà xe:
+https://xekhachsaoviet.com (nhà xe đang đổi tên thành Kim Lý).
+
+fleet-night  ← /media/img/1781777941_nha-xe-sao-viet-01.jpg   (2560×1097) đội xe đen–đỏ
+fleet-rose   ← /media/img/1781777957_nha-xe-sao-viet-03.jpg   (2560×1097) đội xe hồng
+fleet-road   ← /media/img/1781777973_nha-xe-sao-viet-05.jpg   (1680×720)  xe cam dưới hàng cây
+cabin-amber  ← /media/product/7/xe-giuong-cabin-sao-viet-di-sapa-07.jpg  lối đi khoang cabin
+cabin-bx2    ← /media/product/7/xe-giuong-cabin-sao-viet-di-sapa-11.jpg  một cabin đôi
+cabin-blue   ← /media/product/7/xe-giuong-cabin-sao-viet-di-sapa-09.jpg
+berth-night  ← /media/product/14/xe-giuong-nam-ha-noi-lao-cai-sao-viet-04.jpg  khoang giường ban đêm
+berth-aisle  ← /media/product/14/xe-giuong-nam-ha-noi-lao-cai-sao-viet-05.jpg
+berth-wide   ← /media/product/14/xe-giuong-nam-ha-noi-lao-cai-sao-viet-08.jpg
+office-1..3  ← /media/img/van-phong-789-giai-phong-0{2,3,5}.jpg  văn phòng
+
+Ảnh thuộc về nhà xe. Khi lên bản thật nên dùng bộ ảnh gốc độ phân giải cao của
+nhà xe và chụp bổ sung theo nhận diện Kim Lý mới.

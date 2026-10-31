@@ -1,0 +1,974 @@
+/* =============================================================================
+   KIM LÝ 2100 — một canvas WebGL phủ màn hình, chữ nằm ở lớp overlay HTML.
+   Cuộn trang = camera bay qua 6 chương; mỗi chương có biến --c0..--c5 (0→1) do
+   ScrollDriver ghi vào, CSS chỉ việc đọc. Mọi selector dùng tiền tố .kl-f-*.
+   ============================================================================= */
+
+.kl-future {
+  --f-bg: #030611;
+  --f-ink: #e8f1ff;
+  --f-dim: rgba(232, 241, 255, 0.62);
+  --f-cyan: #39d0ff;
+  --f-blue: #2f6bff;
+  --f-red: #ff3b4e;
+  --f-amber: #ffb547;
+  --f-glass: rgba(10, 20, 44, 0.52);
+  --f-edge: rgba(57, 208, 255, 0.3);
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  position: relative;
+  background: var(--f-bg);
+  color: var(--f-ink);
+  font-family: var(--kl-ff-body), sans-serif;
+}
+
+.kl-future .kl-f-canvas {
+  position: fixed !important;
+  inset: 0;
+  z-index: 0;
+}
+
+/* đường ray cuộn — chiều cao quyết định độ dài "chuyến bay" */
+.kl-future .kl-f-track {
+  position: relative;
+  height: 720vh;
+  pointer-events: none;
+}
+
+.kl-future .kl-f-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.kl-future .kl-f-ch {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  padding: clamp(20px, 5vw, 76px);
+  padding-top: clamp(84px, 12vh, 150px);
+  padding-bottom: clamp(104px, 14vh, 150px);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+/* ::before là phần tử ĐƯỢC ĐỊNH VỊ nên nó vẽ sau mọi con không định vị —
+   không nâng các con lên thì lớp phủ tối sẽ che mất chữ. */
+.kl-future .kl-f-ch > * {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+}
+/* vệt tối phía sau cột chữ để đọc được khi cảnh 3D sáng */
+.kl-future .kl-f-ch[data-chapter="0"]::before,
+.kl-future .kl-f-ch[data-chapter="1"]::before,
+.kl-future .kl-f-ch[data-chapter="2"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(100deg, rgba(3, 6, 17, 0.94) 0%, rgba(3, 6, 17, 0.8) 26%, transparent 54%);
+  pointer-events: none;
+}
+.kl-future .kl-f-ch[data-chapter="0"] > div {
+  max-width: min(100%, 520px);
+}
+.kl-future .kl-f-ch[data-chapter="0"] .kl-f-sub {
+  max-width: 34ch;
+}
+.kl-future .kl-f-ch[data-on="0"] {
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* vùng tối quanh rìa màn hình — chữ luôn tách khỏi cảnh 3D phía sau */
+.kl-future .kl-f-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(118% 92% at 50% 42%, transparent 34%, rgba(3, 6, 17, 0.5) 78%, rgba(3, 6, 17, 0.82) 100%),
+    linear-gradient(to top, rgba(3, 6, 17, 0.8) 0%, transparent 22%);
+}
+
+/* ------------------------------------------------------------------ BOOT --- */
+.kl-future .kl-f-boot {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #01030a;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.kl-future .kl-f-boot-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--f-cyan), transparent);
+  box-shadow: 0 0 26px 3px rgba(57, 208, 255, 0.55);
+}
+.kl-future .kl-f-boot-ring {
+  position: absolute;
+  width: min(44vmin, 420px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgba(57, 208, 255, 0.55);
+  box-shadow: 0 0 60px rgba(57, 208, 255, 0.28), inset 0 0 60px rgba(57, 208, 255, 0.18);
+  opacity: 0;
+}
+.kl-future .kl-f-boot-line {
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: clamp(10px, 1.1vw, 13px);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--f-cyan);
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 2px solid var(--f-cyan);
+  padding-right: 4px;
+}
+.kl-future .kl-f-boot-line > span {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+/* ----------------------------------------------------------------- ẢNH ---- */
+.kl-future .kl-f-photo-panel {
+  display: grid;
+  gap: 16px;
+}
+.kl-future .kl-f-photo {
+  position: relative;
+  margin: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--f-edge);
+  aspect-ratio: 16 / 10;
+}
+.kl-future .kl-f-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Không đặt filter lên chính thẻ ảnh: filter tạo một lớp hợp thành riêng và
+     có môi trường (khung xem trước nhúng) không vẽ lớp đó ra, ảnh biến mất hẳn.
+     Chỉnh màu bằng lớp phủ ::after bên dưới thay vì bằng filter. */
+}
+.kl-future .kl-f-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(195deg, rgba(20, 50, 120, 0.3) 0%, rgba(8, 20, 50, 0.12) 34%, rgba(3, 9, 24, 0.62) 100%);
+}
+.kl-future .kl-f-photo figcaption {
+  position: absolute;
+  left: 12px;
+  bottom: 11px;
+  z-index: 2;
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(232, 241, 255, 0.85);
+  background: rgba(3, 9, 24, 0.6);
+  border: 1px solid var(--f-edge);
+  padding: 5px 11px;
+  border-radius: 999px;
+}
+
+/* ------------------------------------------------------------------- HUD --- */
+.kl-future .kl-f-hud {
+  position: fixed;
+  z-index: 6;
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(232, 241, 255, 0.5);
+  pointer-events: none;
+}
+.kl-future .kl-f-hud-tl {
+  top: 22px;
+  left: clamp(18px, 4vw, 44px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+}
+.kl-future .kl-f-hud-tl b {
+  font-family: var(--kl-ff-tech), sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.22em;
+  color: var(--f-ink);
+}
+.kl-future .kl-f-hud-tr {
+  top: 26px;
+  right: clamp(18px, 4vw, 44px);
+  text-align: right;
+}
+.kl-future .kl-f-hud-bl {
+  bottom: 24px;
+  left: clamp(18px, 4vw, 44px);
+}
+.kl-future .kl-f-hud-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--f-cyan);
+  box-shadow: 0 0 10px var(--f-cyan);
+  animation: kl-f-pulse 2.2s ease-in-out infinite;
+}
+@keyframes kl-f-pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* ---------------------------------------------------------------- CHỮ TO --- */
+/* Khoá thương hiệu: monogram đứng ngay trước tên, giống lockup VD VDUYSTUDIO
+   trên trang chủ VDuyStudio. */
+.kl-future .kl-f-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.13em;
+  font-family: var(--kl-ff-brand), sans-serif;
+  font-stretch: 125%;
+  font-weight: 900;
+  font-size: clamp(44px, 10.5vw, 158px);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+}
+.kl-future .kl-f-mark {
+  width: 0.84em;
+  height: 0.84em;
+  flex-shrink: 0;
+  vertical-align: -0.04em;
+  filter: drop-shadow(0 6px 30px rgba(57, 208, 255, 0.5));
+}
+.kl-future .kl-f-brand-name {
+  background: linear-gradient(170deg, #ffffff 0%, #cfe2ff 55%, #8fb6ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.kl-future .kl-f-route-line {
+  font-family: var(--kl-ff-brand), sans-serif;
+  font-stretch: 100%;
+  font-weight: 300;
+  font-size: clamp(20px, 3.1vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin-top: 0.12em;
+  color: var(--f-ink);
+}
+.kl-future .kl-f-route-line strong {
+  font-weight: 700;
+  font-stretch: 112%;
+  color: var(--f-cyan);
+}
+.kl-future .kl-f-eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--f-cyan);
+  box-shadow: 0 0 10px var(--f-cyan);
+}
+.kl-future .kl-f-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--f-cyan);
+  border: 1px solid var(--f-edge);
+  border-radius: 999px;
+  padding: 7px 15px;
+  margin-bottom: 20px;
+  background: rgba(5, 14, 32, 0.5);
+}
+.kl-future .kl-f-title {
+  font-family: var(--kl-ff-tech), sans-serif;
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  font-size: clamp(44px, 10vw, 150px);
+  position: relative;
+}
+/* tách sắc nhẹ cho chữ lớn */
+.kl-future .kl-f-title[data-split="1"] {
+  text-shadow: 0.055em 0 0 rgba(255, 59, 78, 0.5), -0.055em 0 0 rgba(57, 208, 255, 0.5);
+}
+.kl-future .kl-f-sub {
+  font-size: clamp(15px, 1.4vw, 19px);
+  color: var(--f-dim);
+  max-width: 52ch;
+  margin-top: 18px;
+}
+.kl-future .kl-f-h2 {
+  font-family: var(--kl-ff-tech), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  font-size: clamp(28px, 4.4vw, 60px);
+  margin-bottom: 14px;
+}
+.kl-future .kl-f-h2 em {
+  font-style: normal;
+  color: var(--f-cyan);
+}
+
+/* ----------------------------------------------------------- TẤM KÍNH ------ */
+.kl-future .kl-f-glass {
+  background: var(--f-glass);
+  border: 1px solid var(--f-edge);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  padding: clamp(16px, 2vw, 24px);
+}
+
+.kl-future .kl-f-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  margin-top: 26px;
+}
+.kl-future .kl-f-tags li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13.5px;
+  padding: 9px 15px;
+  border-radius: 999px;
+  background: rgba(10, 20, 44, 0.6);
+  border: 1px solid var(--f-edge);
+}
+.kl-future .kl-f-tags svg {
+  color: var(--f-cyan);
+}
+
+.kl-future .kl-f-scrollhint {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(232, 241, 255, 0.45);
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+.kl-future .kl-f-scrollhint i {
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(var(--f-cyan), transparent);
+  animation: kl-f-drop 1.8s ease-in-out infinite;
+}
+@keyframes kl-f-drop {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  51% {
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+/* ------------------------------------------------- CHƯƠNG: KHOANG XE ------ */
+.kl-future .kl-f-veh {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+}
+.kl-future .kl-f-veh h4 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.kl-future .kl-f-veh h4 span {
+  font-weight: 400;
+  font-size: 13px;
+  opacity: 0.55;
+}
+.kl-future .kl-f-veh ul {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px 14px;
+}
+.kl-future .kl-f-veh li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  color: var(--f-dim);
+}
+.kl-future .kl-f-veh svg {
+  color: var(--f-cyan);
+  flex: none;
+}
+.kl-future .kl-f-photo-pair {
+  display: grid;
+  gap: 14px;
+}
+.kl-future .kl-f-photo-pair .kl-f-photo:nth-child(2) {
+  aspect-ratio: 21 / 9;
+}
+
+/* --------------------------------------------------- CHƯƠNG: DỊCH VỤ ------- */
+.kl-future .kl-f-services {
+  width: min(100%, 1280px);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(12px, 1.6vw, 18px);
+}
+.kl-future .kl-f-service {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.3s, transform 0.3s var(--ease);
+}
+.kl-future .kl-f-service:hover {
+  border-color: var(--f-cyan);
+  transform: translateY(-4px);
+}
+.kl-future .kl-f-service h4 {
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.kl-future .kl-f-service ul {
+  list-style: none;
+  display: grid;
+  gap: 7px;
+  flex: 1;
+}
+.kl-future .kl-f-service li {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--f-dim);
+  line-height: 1.45;
+}
+.kl-future .kl-f-service li svg {
+  color: var(--f-cyan);
+  flex: none;
+  margin-top: 3px;
+}
+.kl-future .kl-f-service-price {
+  font-family: var(--kl-ff-tech), sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--f-cyan);
+}
+.kl-future .kl-f-service-price small {
+  font-family: var(--kl-ff-body), sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--f-dim);
+}
+.kl-future .kl-f-note {
+  width: min(100%, 1280px);
+  margin: 18px auto 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12.5px;
+  color: var(--f-dim);
+}
+
+/* ------------------------------------------------------ CHƯƠNG: TUYẾN ------ */
+.kl-future .kl-f-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: clamp(20px, 4vw, 60px);
+  align-items: center;
+  width: min(100%, 1280px);
+  margin-inline: auto;
+}
+.kl-future .kl-f-nodes {
+  list-style: none;
+  display: grid;
+  gap: 1px;
+  background: var(--f-edge);
+  border: 1px solid var(--f-edge);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.kl-future .kl-f-nodes li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 18px;
+  background: rgba(6, 14, 34, 0.78);
+  font-size: 14.5px;
+}
+.kl-future .kl-f-nodes i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--f-cyan);
+  box-shadow: 0 0 12px var(--f-cyan);
+  flex: none;
+}
+.kl-future .kl-f-nodes span {
+  margin-left: auto;
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: 12px;
+  color: var(--f-dim);
+}
+
+/* ------------------------------------------------- CHƯƠNG: BẢNG GIỜ -------- */
+/* chương này nhiều dòng nhất — thu tiêu đề và lề để không tràn lên HUD */
+.kl-future .kl-f-ch[data-chapter="3"],
+.kl-future .kl-f-ch[data-chapter="4"] {
+  padding-top: clamp(68px, 9vh, 104px);
+  padding-bottom: clamp(88px, 11vh, 118px);
+}
+.kl-future .kl-f-ch[data-chapter="3"] .kl-f-h2,
+.kl-future .kl-f-ch[data-chapter="4"] .kl-f-h2 {
+  font-size: clamp(22px, 3vw, 40px);
+  margin-bottom: 6px;
+}
+.kl-future .kl-f-ch[data-chapter="3"] .kl-f-eyebrow {
+  margin-bottom: 10px;
+}
+.kl-future .kl-f-board {
+  width: min(100%, 1340px);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 5vw, 80px);
+  perspective: 1400px;
+}
+.kl-future .kl-f-board-col {
+  transform-style: preserve-3d;
+}
+.kl-future .kl-f-board-hd {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-family: var(--kl-ff-tech), sans-serif;
+  font-size: clamp(15px, 1.6vw, 19px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.kl-future .kl-f-board-hd small {
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--f-dim);
+  font-weight: 400;
+  margin-left: auto;
+}
+.kl-future .kl-f-bar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 14px;
+  margin-bottom: 5px;
+  border-radius: 11px;
+  background: linear-gradient(100deg, rgba(10, 22, 48, 0.82), rgba(8, 16, 36, 0.58));
+  border: 1px solid var(--f-edge);
+  transform: rotateX(calc((var(--i) - var(--mid)) * -3.4deg)) translateZ(calc(var(--z) * 1px));
+  transition: transform 0.4s var(--ease), border-color 0.3s, box-shadow 0.3s;
+}
+.kl-future .kl-f-bar:hover {
+  border-color: var(--f-cyan);
+  box-shadow: 0 0 0 1px var(--f-cyan), 0 14px 40px rgba(57, 208, 255, 0.22);
+  transform: rotateX(0deg) translateZ(40px);
+}
+.kl-future .kl-f-bar-time {
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: clamp(17px, 1.7vw, 22px);
+  font-weight: 700;
+  color: var(--f-cyan);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 18px rgba(57, 208, 255, 0.5);
+}
+.kl-future .kl-f-bar-meta b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.kl-future .kl-f-bar-meta span {
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: 11.5px;
+  color: var(--f-dim);
+}
+.kl-future .kl-f-bar-call {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--f-edge);
+  color: var(--f-ink);
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+.kl-future .kl-f-bar-call:hover {
+  background: var(--f-cyan);
+  color: #04121c;
+}
+.kl-future .kl-f-chip-lim {
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(255, 181, 71, 0.16);
+  color: var(--f-amber);
+  margin-left: 8px;
+  vertical-align: 2px;
+}
+
+/* --------------------------------------------- CHƯƠNG: BUỒNG LÁI ----------- */
+.kl-future .kl-f-cockpit {
+  width: min(100%, 1180px);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(20px, 3vw, 44px);
+  align-items: center;
+}
+.kl-future .kl-f-form {
+  display: grid;
+  gap: 14px;
+}
+.kl-future .kl-f-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.kl-future .kl-f-field {
+  min-width: 0;
+}
+.kl-future .kl-f-field label {
+  display: block;
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--f-dim);
+  margin-bottom: 7px;
+}
+.kl-future .kl-f-field select,
+.kl-future .kl-f-field input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 11px;
+  border: 1px solid var(--f-edge);
+  background: rgba(3, 9, 22, 0.72);
+  color: var(--f-ink);
+  font-size: 15px;
+  appearance: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.kl-future .kl-f-field select {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2339d0ff' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 38px;
+}
+.kl-future .kl-f-field select:focus,
+.kl-future .kl-f-field input:focus {
+  outline: none;
+  border-color: var(--f-cyan);
+  box-shadow: 0 0 0 4px rgba(57, 208, 255, 0.16);
+}
+.kl-future .kl-f-field input[type="date"] {
+  color-scheme: dark;
+}
+.kl-future .kl-f-go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 54px;
+  border-radius: 12px;
+  background: linear-gradient(100deg, var(--f-cyan), var(--f-blue));
+  color: #03121f;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 16px 44px rgba(57, 208, 255, 0.28);
+  transition: transform 0.25s var(--ease), filter 0.25s;
+}
+.kl-future .kl-f-go:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+/* sơ đồ chỗ nằm */
+.kl-future .kl-f-seats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+  gap: 7px;
+  margin-top: 14px;
+}
+.kl-future .kl-f-seat {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  border: 1px solid var(--f-edge);
+  background: rgba(10, 22, 48, 0.6);
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: 10.5px;
+  color: var(--f-dim);
+  display: grid;
+  place-items: center;
+  transition: background 0.2s, color 0.2s, transform 0.2s var(--ease), box-shadow 0.2s;
+}
+.kl-future .kl-f-seat:hover {
+  transform: translateY(-2px);
+  border-color: var(--f-cyan);
+}
+.kl-future .kl-f-seat[data-sel="true"] {
+  background: var(--f-cyan);
+  color: #03121f;
+  font-weight: 700;
+  box-shadow: 0 0 18px rgba(57, 208, 255, 0.5);
+}
+.kl-future .kl-f-seat[data-busy="true"] {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ------------------------------------------------- CHƯƠNG: LIÊN HỆ --------- */
+.kl-future .kl-f-contact {
+  width: min(100%, 1240px);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: clamp(14px, 2vw, 22px);
+}
+.kl-future .kl-f-card h4 {
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--f-cyan);
+  margin-bottom: 12px;
+}
+.kl-future .kl-f-card ul {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  font-size: 14px;
+}
+.kl-future .kl-f-card li b {
+  display: block;
+  font-weight: 600;
+}
+.kl-future .kl-f-card li span {
+  color: var(--f-dim);
+  font-size: 13px;
+}
+.kl-future .kl-f-big-call {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  font-family: var(--kl-ff-tech), sans-serif;
+  font-size: clamp(20px, 2.6vw, 32px);
+  font-weight: 700;
+  color: var(--f-cyan);
+  text-shadow: 0 0 24px rgba(57, 208, 255, 0.45);
+}
+
+/* ------------------------------------------------------- ĐIỀU HƯỚNG -------- */
+.kl-future .kl-f-nav {
+  position: fixed;
+  right: clamp(14px, 2.4vw, 30px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 7;
+  display: grid;
+  gap: 14px;
+}
+.kl-future .kl-f-nav button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+  color: rgba(232, 241, 255, 0.45);
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: color 0.25s;
+}
+.kl-future .kl-f-nav button i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  transition: background 0.25s, box-shadow 0.25s, transform 0.25s var(--ease);
+}
+.kl-future .kl-f-nav button span {
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity 0.25s, transform 0.25s var(--ease);
+}
+.kl-future .kl-f-nav button:hover span {
+  opacity: 1;
+  transform: none;
+}
+.kl-future .kl-f-nav button[aria-current="true"] {
+  color: var(--f-cyan);
+}
+.kl-future .kl-f-nav button[aria-current="true"] i {
+  background: var(--f-cyan);
+  box-shadow: 0 0 14px var(--f-cyan);
+  transform: scale(1.3);
+}
+.kl-future .kl-f-nav button[aria-current="true"] span {
+  opacity: 1;
+  transform: none;
+}
+
+.kl-future .kl-f-dock {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  z-index: 7;
+  display: flex;
+  gap: 10px;
+}
+.kl-future .kl-f-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: rgba(8, 18, 40, 0.75);
+  border: 1px solid var(--f-edge);
+  color: var(--f-ink);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: transform 0.25s var(--ease), border-color 0.25s, background 0.25s;
+}
+.kl-future .kl-f-pill:hover {
+  transform: translateY(-2px);
+  border-color: var(--f-cyan);
+}
+.kl-future .kl-f-pill-go {
+  background: linear-gradient(100deg, var(--f-cyan), var(--f-blue));
+  color: #03121f;
+  border-color: transparent;
+}
+
+/* --------------------------------------------------------- POSTER T0 ------ */
+.kl-future .kl-f-poster {
+  position: relative;
+  z-index: 2;
+  min-height: 100svh;
+  display: grid;
+  gap: clamp(28px, 5vw, 64px);
+  padding: clamp(24px, 5vw, 72px);
+  padding-bottom: clamp(104px, 12vw, 132px);
+  background: radial-gradient(70% 55% at 70% 8%, rgba(47, 107, 255, 0.28), transparent 65%),
+    radial-gradient(60% 50% at 10% 90%, rgba(57, 208, 255, 0.18), transparent 65%), var(--f-bg);
+}
+.kl-future .kl-f-poster-hero {
+  display: grid;
+  gap: 18px;
+  align-content: center;
+  min-height: 62svh;
+}
+.kl-future .kl-f-poster section {
+  display: grid;
+  gap: 16px;
+}
+
+/* ------------------------------------------------------------ RESPONSIVE --- */
+@media (max-width: 1000px) {
+  /* màn hẹp: chữ nằm trên cảnh 3D nên vệt tối phải chạy từ trên xuống */
+  .kl-future .kl-f-ch[data-chapter="0"]::before,
+  .kl-future .kl-f-ch[data-chapter="1"]::before,
+  .kl-future .kl-f-ch[data-chapter="2"]::before {
+    background: linear-gradient(180deg, rgba(3, 6, 17, 0.96) 0%, rgba(3, 6, 17, 0.86) 42%, rgba(3, 6, 17, 0.4) 72%, transparent 100%);
+  }
+  .kl-future .kl-f-split,
+  .kl-future .kl-f-cockpit,
+  .kl-future .kl-f-board {
+    grid-template-columns: 1fr;
+  }
+  .kl-future .kl-f-services {
+    grid-template-columns: 1fr 1fr;
+  }
+  .kl-future .kl-f-photo-pair .kl-f-photo:nth-child(2) {
+    display: none;
+  }
+  .kl-future .kl-f-veh ul {
+    grid-template-columns: 1fr;
+  }
+  .kl-future .kl-f-board {
+    perspective: none;
+    gap: 22px;
+  }
+  .kl-future .kl-f-bar {
+    transform: none;
+  }
+  .kl-future .kl-f-nav {
+    display: none;
+  }
+  .kl-future .kl-f-ch {
+    align-content: start;
+    overflow-y: auto;
+    padding-bottom: 96px;
+  }
+}
+@media (max-width: 620px) {
+  .kl-future .kl-f-row,
+  .kl-future .kl-f-services {
+    grid-template-columns: 1fr;
+  }
+  .kl-future .kl-f-dock {
+    width: calc(100% - 28px);
+  }
+  .kl-future .kl-f-pill {
+    flex: 1;
+    justify-content: center;
+    padding: 12px 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kl-future .kl-f-hud-dot,
+  .kl-future .kl-f-scrollhint i {
+    animation: none;
+  }
+}

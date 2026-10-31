@@ -1,0 +1,1263 @@
+/* =============================================================================
+   KIM LÝ CLASSIC — giữ bố cục website nhà xe quen thuộc (header trắng + thanh
+   cam, slider, thanh đặt vé, bảng giá, card thuê xe, footer cam) nhưng dựng lại
+   bằng chất liệu hiện đại. Mọi selector dùng tiền tố .kl-c-*.
+   ============================================================================= */
+
+.kl-classic {
+  /* Cùng hệ màu với trang chủ VDuyStudio: nền kem, chữ mực, nhấn cobalt.
+     Đỏ Kim Lý giữ lại làm màu thương hiệu cho nút và con số. */
+  --c-red: #d71920;
+  --c-red-deep: #a8111a;
+  --c-cobalt: #2140f0;
+  --c-cobalt-ink: #1a33c4;
+  --c-cobalt-lite: #9fb0ff;
+  --c-blue: #1a33c4;
+  --c-blue-lite: #9fb0ff;
+  --c-cyan: #1aa39f;
+  --c-gold: #e0a106;
+  --c-ink: #0c0c10;
+  --c-ink-2: #55534c;
+  --c-night: #05081f;
+  --c-line: rgba(12, 12, 16, 0.13);
+  --c-paper: #faf8f3;
+  --c-wash: #f1ede3;
+  --c-shadow: 0 18px 48px rgba(12, 12, 16, 0.12);
+  --c-radius: 16px;
+  --c-container: 1240px;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  color: var(--c-ink);
+  background: var(--c-wash);
+}
+
+.kl-classic .kl-c-wrap {
+  width: min(100% - 32px, var(--c-container));
+  margin-inline: auto;
+}
+
+.kl-classic .kl-c-sec {
+  padding: clamp(48px, 6vw, 86px) 0;
+}
+.kl-classic .kl-c-sec {
+  background: var(--c-paper);
+}
+.kl-classic .kl-c-sec-wash {
+  background: var(--c-wash);
+}
+
+.kl-classic .kl-c-head {
+  margin-bottom: clamp(24px, 3vw, 40px);
+}
+.kl-classic .kl-c-head span {
+  display: inline-block;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-cobalt);
+  margin-bottom: 10px;
+}
+.kl-classic .kl-c-head h2 {
+  font-family: var(--kl-ff-display), sans-serif;
+  font-size: clamp(26px, 3.4vw, 42px);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+}
+.kl-classic .kl-c-head h2 em {
+  font-style: normal;
+  color: var(--c-red);
+}
+.kl-classic .kl-c-head p {
+  margin-top: 10px;
+  max-width: 62ch;
+  color: var(--c-ink-2);
+  font-size: 15px;
+}
+
+.kl-classic .kl-c-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15px;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), background 0.2s;
+  white-space: nowrap;
+}
+.kl-classic .kl-c-btn-red {
+  background: var(--c-red);
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(215, 25, 32, 0.28);
+}
+.kl-classic .kl-c-btn-red:hover {
+  background: var(--c-red-deep);
+  transform: translateY(-2px);
+}
+.kl-classic .kl-c-btn-ghost {
+  border: 1.5px solid currentColor;
+  color: var(--c-ink);
+}
+.kl-classic .kl-c-btn-ghost:hover {
+  background: var(--c-ink);
+  color: #fff;
+}
+.kl-classic .kl-c-btn-orange {
+  background: var(--c-cobalt);
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(33, 64, 240, 0.28);
+}
+.kl-classic .kl-c-btn-orange:hover {
+  background: var(--c-cobalt-ink);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------- HEADER --- */
+.kl-classic .kl-c-topbar {
+  background: #fff;
+  border-bottom: 1px solid var(--c-line);
+}
+.kl-classic .kl-c-topbar-in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px 0;
+  transition: padding 0.3s var(--ease);
+}
+.kl-classic .kl-c-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.kl-classic .kl-c-brand svg {
+  flex: none;
+  transition: width 0.3s var(--ease), height 0.3s var(--ease);
+}
+.kl-classic .kl-c-brand-tx b {
+  display: block;
+  font-family: var(--kl-ff-display), sans-serif;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  color: var(--c-red);
+  text-transform: uppercase;
+}
+.kl-classic .kl-c-brand-tx span {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--c-blue);
+  font-weight: 600;
+}
+.kl-classic .kl-c-top-info {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+.kl-classic .kl-c-top-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.kl-classic .kl-c-top-item svg {
+  color: var(--c-cobalt);
+  flex: none;
+}
+.kl-classic .kl-c-top-item span {
+  display: block;
+  font-size: 11px;
+  color: var(--c-ink-2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.kl-classic .kl-c-top-item b {
+  display: block;
+  font-size: 16px;
+  color: var(--c-ink);
+  font-weight: 700;
+}
+.kl-classic .kl-c-top-soc {
+  display: flex;
+  gap: 8px;
+}
+.kl-classic .kl-c-top-soc a {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--c-wash);
+  color: var(--c-blue);
+  transition: background 0.2s, color 0.2s, transform 0.2s var(--ease);
+}
+.kl-classic .kl-c-top-soc a:hover {
+  background: var(--c-blue);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.kl-classic .kl-c-nav {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: var(--c-ink);
+  box-shadow: 0 6px 24px rgba(12, 12, 16, 0.22);
+}
+.kl-classic .kl-c-nav-in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 52px;
+}
+.kl-classic .kl-c-nav ul {
+  display: flex;
+  list-style: none;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+.kl-classic .kl-c-nav a {
+  display: block;
+  padding: 15px 16px;
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  position: relative;
+  transition: background 0.2s;
+}
+.kl-classic .kl-c-nav a:hover,
+.kl-classic .kl-c-nav a[data-active="true"] {
+  background: rgba(0, 0, 0, 0.14);
+}
+.kl-classic .kl-c-nav .kl-c-nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  color: var(--c-red);
+  font-weight: 700;
+  font-size: 14.5px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: transform 0.2s var(--ease);
+}
+.kl-classic .kl-c-nav .kl-c-nav-cta:hover {
+  transform: translateY(-2px);
+}
+.kl-classic .kl-c-burger {
+  display: none;
+  width: 44px;
+  height: 44px;
+  color: #fff;
+}
+
+/* ----------------------------------------------------------------- HERO --- */
+/* Dựng theo hero của trang chủ VDuyStudio: canvas chrome lỏng cobalt phủ kín,
+   lớp mực chỉ đậm ở mép trên và mép dưới, chữ khổng lồ nằm sát đáy. */
+.kl-classic .kl-c-hero {
+  position: relative;
+  height: min(96svh, 900px);
+  min-height: 600px;
+}
+.kl-classic .kl-c-hero-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  color: #fff;
+  background: #071667;
+}
+.kl-classic .kl-c-liquid {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 70% 20%, #3b62ff 0%, #1638c8 35%, #071667 70%, #030a35 100%);
+}
+.kl-classic .kl-c-liquid canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.kl-classic .kl-c-liquid .v3-liquid-fallback {
+  position: absolute;
+  inset: 0;
+}
+.kl-classic .kl-c-hero-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(2, 6, 40, 0.5) 0%, rgba(2, 6, 40, 0) 24%, rgba(2, 6, 40, 0) 44%, rgba(2, 6, 40, 0.82) 100%);
+}
+.kl-classic .kl-c-hero-inner {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  width: min(100% - 32px, var(--c-container));
+  margin: 0 auto;
+  padding: clamp(84px, 11vh, 124px) 0 clamp(22px, 3vh, 34px);
+  display: flex;
+  flex-direction: column;
+}
+.kl-classic .kl-c-hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--kl-ff-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+}
+.kl-classic .kl-c-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
+  animation: klPing 2.2s var(--ease) infinite;
+}
+@keyframes klPing {
+  70% {
+    box-shadow: 0 0 0 12px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.kl-classic .kl-c-hero-h1 {
+  margin-top: auto;
+  font-weight: 900;
+  text-shadow: 0 6px 40px rgba(2, 6, 40, 0.35);
+}
+.kl-classic .kl-c-hero-big {
+  display: block;
+  font-family: var(--kl-ff-brand), sans-serif;
+  font-stretch: 125%;
+  font-weight: 900;
+  font-size: clamp(42px, 10.5vw, 168px);
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+.kl-classic .kl-c-hero-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.14em;
+}
+.kl-classic .kl-c-hero-mark {
+  width: 0.84em;
+  height: 0.84em;
+  flex-shrink: 0;
+  filter: drop-shadow(0 6px 24px rgba(33, 64, 240, 0.55));
+  vertical-align: -0.04em;
+}
+.kl-classic .kl-c-hero-line2 {
+  display: block;
+  font-family: var(--kl-ff-brand), sans-serif;
+  font-size: clamp(24px, 3.6vw, 52px);
+  line-height: 1.08;
+  margin-top: 0.14em;
+  font-weight: 300;
+  font-stretch: 100%;
+  letter-spacing: -0.03em;
+}
+.kl-classic .kl-c-hero-line2 em {
+  font-family: var(--kl-ff-serif), Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+}
+.kl-classic .kl-c-hero-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  margin-top: clamp(22px, 3vh, 36px);
+  flex-wrap: wrap;
+}
+.kl-classic .kl-c-hero-sub {
+  font-size: clamp(15px, 1.2vw, 17.5px);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 46ch;
+}
+.kl-classic .kl-c-hero-ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.kl-classic .kl-c-hero .kl-c-btn-ghost {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+.kl-classic .kl-c-hero .kl-c-btn-ghost:hover {
+  background: #fff;
+  color: var(--c-ink);
+}
+.kl-classic .kl-c-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: clamp(20px, 3vh, 38px);
+  border-top: 1px solid rgba(255, 255, 255, 0.26);
+  list-style: none;
+}
+.kl-classic .kl-c-hero-stats > li {
+  padding: 16px 16px 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.kl-classic .kl-c-hero-stats b {
+  font-family: var(--kl-ff-brand), sans-serif;
+  font-stretch: 110%;
+  font-size: clamp(22px, 2.4vw, 34px);
+  font-weight: 700;
+  line-height: 1;
+}
+.kl-classic .kl-c-hero-stats span {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+/* --------------------------------------------------------- DẢI ẢNH XE ----- */
+.kl-classic .kl-c-head-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.kl-classic .kl-c-arrows-static {
+  position: static;
+  display: flex;
+  gap: 8px;
+}
+.kl-classic .kl-c-arrows-static button {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid var(--c-line);
+  color: var(--c-ink);
+  display: grid;
+  place-items: center;
+  transition: background 0.2s, color 0.2s, transform 0.2s var(--ease);
+}
+.kl-classic .kl-c-arrows-static button:hover {
+  background: var(--c-ink);
+  color: #fff;
+  transform: translateY(-2px);
+}
+.kl-classic .kl-c-wall {
+  display: flex;
+  gap: clamp(12px, 1.4vw, 18px);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 4px clamp(16px, calc((100vw - var(--c-container)) / 2 + 16px), 50vw) 18px;
+  scrollbar-width: none;
+}
+.kl-classic .kl-c-wall::-webkit-scrollbar {
+  display: none;
+}
+.kl-classic .kl-c-wall-item {
+  position: relative;
+  flex: 0 0 clamp(250px, 30vw, 400px);
+  aspect-ratio: 16 / 10;
+  border-radius: 14px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  border: 1px solid var(--c-line);
+  background: #e7e3d9;
+  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+}
+.kl-classic .kl-c-wall-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s var(--ease);
+}
+.kl-classic .kl-c-wall-item:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--c-shadow);
+}
+.kl-classic .kl-c-wall-item:hover img {
+  transform: scale(1.05);
+}
+.kl-classic .kl-c-wall-item span {
+  position: absolute;
+  left: 12px;
+  bottom: 11px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(5, 8, 31, 0.6);
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+.kl-classic .kl-c-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(5, 8, 31, 0.9);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  animation: klFade 0.25s ease;
+}
+@keyframes klFade {
+  from {
+    opacity: 0;
+  }
+}
+.kl-classic .kl-c-lightbox figure {
+  max-width: min(1200px, 94vw);
+  margin: 0;
+}
+.kl-classic .kl-c-lightbox img {
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+}
+.kl-classic .kl-c-lightbox figcaption {
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  text-align: center;
+}
+.kl-classic .kl-c-lightbox-x {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+
+/* ---------------------------------------------------------- BOOKING BAR --- */
+.kl-classic .kl-c-booking {
+  position: relative;
+  z-index: 20;
+  margin-top: 0;
+  padding-top: clamp(26px, 3.4vw, 42px);
+}
+.kl-classic .kl-c-booking-card {
+  background: #fff;
+  border-radius: var(--c-radius);
+  box-shadow: 0 24px 60px rgba(23, 27, 38, 0.16);
+  border-top: 4px solid var(--c-cobalt);
+  padding: clamp(18px, 2.2vw, 26px);
+}
+.kl-classic .kl-c-booking-top {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.kl-classic .kl-c-booking-top h3 {
+  font-family: var(--kl-ff-display), sans-serif;
+  font-size: 19px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-right: auto;
+}
+.kl-classic .kl-c-radio {
+  display: inline-flex;
+  background: var(--c-wash);
+  border-radius: 999px;
+  padding: 4px;
+  gap: 2px;
+}
+.kl-classic .kl-c-radio button {
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-ink-2);
+  transition: background 0.25s var(--ease), color 0.25s;
+}
+.kl-classic .kl-c-radio button[aria-pressed="true"] {
+  background: #fff;
+  color: var(--c-red);
+  box-shadow: 0 3px 10px rgba(23, 27, 38, 0.12);
+}
+.kl-classic .kl-c-fields {
+  display: grid;
+  grid-template-columns: 1.5fr 1.3fr 0.7fr 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+/* ô lưới mặc định min-width:auto → select có nội dung dài làm tràn ngang */
+.kl-classic .kl-c-field {
+  min-width: 0;
+}
+.kl-classic .kl-c-field label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-ink-2);
+  margin-bottom: 6px;
+}
+.kl-classic .kl-c-field select,
+.kl-classic .kl-c-field input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 11px;
+  border: 1.5px solid var(--c-line);
+  background: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+}
+.kl-classic .kl-c-field select {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%235c6274' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 38px;
+}
+.kl-classic .kl-c-field select:focus,
+.kl-classic .kl-c-field input:focus {
+  outline: none;
+  border-color: var(--c-cobalt);
+  box-shadow: 0 0 0 4px rgba(33, 64, 240, 0.14);
+}
+.kl-classic .kl-c-field input:disabled {
+  background: var(--c-wash);
+  color: #9aa0b0;
+  cursor: not-allowed;
+}
+.kl-classic .kl-c-fields .kl-c-btn {
+  min-height: 48px;
+  padding: 0 28px;
+}
+.kl-classic .kl-c-booking-note {
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--c-ink-2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.kl-classic .kl-c-booking-note svg {
+  color: var(--c-cobalt);
+  flex: none;
+}
+
+/* ------------------------------------------------------------ SCHEDULE --- */
+.kl-classic .kl-c-sched {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: clamp(16px, 2vw, 26px);
+}
+.kl-classic .kl-c-sched-tabs {
+  display: none;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.kl-classic .kl-c-sched-tabs button {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-height: 46px;
+  border-radius: 11px;
+  background: var(--c-wash);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--c-ink-2);
+}
+.kl-classic .kl-c-sched-tabs button[aria-pressed="true"] {
+  background: var(--c-ink);
+  color: #fff;
+}
+.kl-classic .kl-c-sched-col {
+  background: #fff;
+  border-radius: var(--c-radius);
+  border: 1px solid var(--c-line);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(23, 27, 38, 0.06);
+}
+.kl-classic .kl-c-sched-hd {
+  background: linear-gradient(135deg, var(--c-cobalt) 0%, var(--c-cobalt-ink) 100%);
+  color: #fff;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.kl-classic .kl-c-sched-hd svg {
+  flex: none;
+}
+.kl-classic .kl-c-sched-hd b {
+  font-family: var(--kl-ff-display), sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  display: block;
+}
+.kl-classic .kl-c-sched-hd span {
+  font-size: 12px;
+  opacity: 0.9;
+}
+.kl-classic .kl-c-trip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 20px;
+  border-top: 1px solid var(--c-line);
+  transition: background 0.2s;
+}
+.kl-classic .kl-c-trip:hover {
+  background: #fffaf5;
+}
+.kl-classic .kl-c-trip-time {
+  font-family: var(--kl-ff-display), sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--c-ink);
+  min-width: 68px;
+  font-variant-numeric: tabular-nums;
+}
+.kl-classic .kl-c-trip-meta b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.kl-classic .kl-c-trip-meta span {
+  font-size: 12.5px;
+  color: var(--c-ink-2);
+  font-family: var(--kl-ff-mono), monospace;
+}
+.kl-classic .kl-c-trip-call {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--c-blue);
+  padding: 8px 13px;
+  border-radius: 999px;
+  background: rgba(47, 107, 255, 0.09);
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+.kl-classic .kl-c-trip-call:hover {
+  background: var(--c-blue);
+  color: #fff;
+}
+.kl-classic .kl-c-tag {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 5px;
+  margin-left: 7px;
+  vertical-align: 2px;
+}
+.kl-classic .kl-c-tag-lim {
+  background: rgba(21, 51, 140, 0.1);
+  color: var(--c-blue);
+}
+.kl-classic .kl-c-sched-ft {
+  padding: 13px 20px;
+  background: var(--c-wash);
+  border-top: 1px solid var(--c-line);
+  font-size: 13px;
+  color: var(--c-ink-2);
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+.kl-classic .kl-c-sched-ft svg {
+  color: var(--c-cobalt);
+  flex: none;
+  margin-top: 2px;
+}
+
+/* -------------------------------------------------------------- PRICES --- */
+.kl-classic .kl-c-price-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(16px, 2vw, 26px);
+}
+.kl-classic .kl-c-price-card {
+  background: #fff;
+  border-radius: var(--c-radius);
+  border: 1px solid var(--c-line);
+  overflow: hidden;
+}
+.kl-classic .kl-c-price-hd {
+  padding: 16px 20px;
+  background: var(--c-blue);
+  color: #fff;
+  font-family: var(--kl-ff-display), sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.kl-classic .kl-c-price-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--c-line);
+}
+.kl-classic .kl-c-price-row:first-of-type {
+  border-top: none;
+}
+.kl-classic .kl-c-price-row > div {
+  flex: 1;
+  min-width: 0;
+}
+.kl-classic .kl-c-price-row b {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+}
+.kl-classic .kl-c-price-row span {
+  font-size: 12.5px;
+  color: var(--c-ink-2);
+}
+.kl-classic .kl-c-price-val {
+  font-family: var(--kl-ff-display), sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--c-red);
+  white-space: nowrap;
+}
+.kl-classic .kl-c-price-row .kl-c-btn {
+  min-height: 40px;
+  padding: 0 18px;
+  font-size: 14px;
+}
+.kl-classic .kl-c-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-cobalt-ink);
+  background: rgba(33, 64, 240, 0.1);
+  padding: 5px 11px;
+  border-radius: 999px;
+}
+
+/* ------------------------------------------------------------- RENTALS --- */
+.kl-classic .kl-c-rent {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(14px, 1.8vw, 22px);
+}
+.kl-classic .kl-c-rent-card {
+  background: #fff;
+  border-radius: var(--c-radius);
+  border: 1px solid var(--c-line);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s;
+}
+.kl-classic .kl-c-rent-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--c-shadow);
+  border-color: rgba(33, 64, 240, 0.4);
+}
+.kl-classic .kl-c-rent-pic {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: linear-gradient(160deg, #eef2fb, #e3e9f6);
+  overflow: hidden;
+}
+.kl-classic .kl-c-rent-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease);
+}
+.kl-classic .kl-c-rent-card:hover .kl-c-rent-pic img {
+  transform: scale(1.06);
+}
+.kl-classic .kl-c-rent-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 12px;
+}
+.kl-classic .kl-c-rent-body h3 {
+  font-size: 16.5px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.kl-classic .kl-c-rent-body ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 13.5px;
+  color: var(--c-ink-2);
+  flex: 1;
+}
+.kl-classic .kl-c-rent-body li {
+  display: flex;
+  gap: 8px;
+}
+.kl-classic .kl-c-rent-body li svg {
+  color: var(--c-cyan);
+  flex: none;
+  margin-top: 3px;
+}
+.kl-classic .kl-c-rent-price {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--kl-ff-display), sans-serif;
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--c-red);
+}
+.kl-classic .kl-c-rent-price small {
+  font-family: var(--kl-ff-body), sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--c-ink-2);
+}
+
+/* ------------------------------------------------------------ BAC NAM ---- */
+.kl-classic .kl-c-bacnam {
+  background: linear-gradient(140deg, #0f2362 0%, #15338c 55%, #1b2a6b 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.kl-classic .kl-c-bacnam::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 80% at 85% 20%, rgba(47, 107, 255, 0.4), transparent 70%);
+}
+.kl-classic .kl-c-bacnam > * {
+  position: relative;
+}
+.kl-classic .kl-c-bacnam .kl-c-head h2 {
+  color: #fff;
+}
+.kl-classic .kl-c-bacnam .kl-c-head span {
+  color: var(--c-gold);
+}
+.kl-classic .kl-c-bacnam .kl-c-head p {
+  color: rgba(255, 255, 255, 0.7);
+}
+.kl-classic .kl-c-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 26px 0;
+}
+.kl-classic .kl-c-stop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 17px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 14px;
+  font-weight: 500;
+}
+.kl-classic .kl-c-stop i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c-gold);
+  flex: none;
+}
+.kl-classic .kl-c-line-arrow {
+  color: rgba(255, 255, 255, 0.4);
+}
+.kl-classic .kl-c-bacnam-call {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.kl-classic .kl-c-bacnam-call > span {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ------------------------------------------------------------ PROMISES --- */
+.kl-classic .kl-c-promise {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(14px, 1.8vw, 22px);
+}
+.kl-classic .kl-c-promise-item {
+  background: #fff;
+  border-radius: var(--c-radius);
+  padding: 24px;
+  border: 1px solid var(--c-line);
+  position: relative;
+  overflow: hidden;
+}
+.kl-classic .kl-c-promise-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--c-cobalt), var(--c-red));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease);
+}
+.kl-classic .kl-c-promise-item:hover::after {
+  transform: scaleX(1);
+}
+.kl-classic .kl-c-promise-ico {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: rgba(33, 64, 240, 0.1);
+  color: var(--c-cobalt-ink);
+  margin-bottom: 14px;
+}
+.kl-classic .kl-c-promise-item h3 {
+  font-size: 16.5px;
+  font-weight: 700;
+  margin-bottom: 7px;
+}
+.kl-classic .kl-c-promise-item p {
+  font-size: 13.5px;
+  color: var(--c-ink-2);
+}
+
+/* -------------------------------------------------------------- FOOTER --- */
+.kl-classic .kl-c-footer {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--c-night);
+  color: #fff;
+  padding-top: clamp(44px, 5vw, 70px);
+}
+/* cùng canvas chrome lỏng với hero, để chìm hơn */
+.kl-classic .kl-c-footer-liquid {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  opacity: 0.85;
+}
+.kl-classic .kl-c-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(5, 8, 31, 0.72) 0%, rgba(5, 8, 31, 0.9) 60%, rgba(5, 8, 31, 0.96) 100%);
+}
+.kl-classic .kl-c-footer-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr 1fr;
+  gap: clamp(22px, 3vw, 40px);
+  padding-bottom: clamp(30px, 4vw, 48px);
+}
+.kl-classic .kl-c-footer h4 {
+  font-family: var(--kl-ff-display), sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+  color: rgba(255, 255, 255, 0.95);
+}
+.kl-classic .kl-c-footer ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  font-size: 13.8px;
+}
+.kl-classic .kl-c-footer li {
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.5;
+}
+.kl-classic .kl-c-footer li b {
+  display: block;
+  color: #fff;
+  font-weight: 600;
+}
+.kl-classic .kl-c-footer a:hover {
+  text-decoration: underline;
+}
+.kl-classic .kl-c-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.kl-classic .kl-c-footer-brand b {
+  font-family: var(--kl-ff-display), sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.kl-classic .kl-c-footer-slogan {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+  font-style: italic;
+  max-width: 34ch;
+  margin-bottom: 18px;
+}
+.kl-classic .kl-c-footer-bar {
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  /* chừa chỗ cho nút đổi phong cách nổi ở góc dưới */
+  padding: 16px 0 clamp(62px, 7vw, 78px);
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12.8px;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* ---------------------------------------------------------- RESPONSIVE --- */
+@media (max-width: 1080px) {
+  .kl-classic .kl-c-rent,
+  .kl-classic .kl-c-promise {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .kl-classic .kl-c-footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .kl-classic .kl-c-fields {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .kl-classic .kl-c-fields .kl-c-btn {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 900px) {
+  .kl-classic .kl-c-top-info {
+    display: none;
+  }
+  .kl-classic .kl-c-nav ul {
+    display: none;
+  }
+  .kl-classic .kl-c-nav ul[data-open="true"] {
+    display: flex;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    flex-direction: column;
+    background: var(--c-ink);
+    padding: 8px 0;
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
+  }
+  .kl-classic .kl-c-burger {
+    display: grid;
+    place-items: center;
+  }
+  /* màn hẹp: ảnh lên trên, chữ xuống dưới (mọi slide chồng cùng một ô) */
+  .kl-classic .kl-c-stage {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding-bottom: clamp(62px, 9vw, 86px);
+  }
+  .kl-classic .kl-c-visual {
+    grid-area: 1 / 1;
+  }
+  .kl-classic .kl-c-slide-tx {
+    grid-area: 2 / 1;
+  }
+  .kl-classic .kl-c-sched {
+    grid-template-columns: 1fr;
+  }
+  .kl-classic .kl-c-sched-tabs {
+    display: flex;
+  }
+  .kl-classic .kl-c-sched-col[data-hidden="true"] {
+    display: none;
+  }
+  .kl-classic .kl-c-price-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 620px) {
+  .kl-classic .kl-c-rent,
+  .kl-classic .kl-c-promise,
+  .kl-classic .kl-c-footer-grid {
+    grid-template-columns: 1fr;
+  }
+  .kl-classic .kl-c-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+  .kl-classic .kl-c-booking {
+    margin-top: 18px;
+  }
+  .kl-classic .kl-c-stage {
+    min-height: 0;
+  }
+  /* chừa chỗ cho nút đổi phong cách nổi ở đáy màn hình */
+  .kl-classic .kl-c-hero-inner {
+    padding-bottom: 92px;
+  }
+  .kl-classic .kl-c-hero-stats {
+    display: none;
+  }
+  /* dòng giá: xuống hàng thay vì bóp chữ thành 3 dòng */
+  .kl-classic .kl-c-price-row {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+  .kl-classic .kl-c-price-row > div {
+    flex: 1 1 100%;
+  }
+  .kl-classic .kl-c-price-val {
+    margin-right: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kl-classic *,
+  .kl-classic *::before,
+  .kl-classic *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
