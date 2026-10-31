@@ -41,11 +41,13 @@ const TX = {
   },
 };
 
-export default function SubFooter3({ backHref = "/v3" }: { backHref?: string }) {
+export default function SubFooter3({ backHref = "/" }: { backHref?: string }) {
   const { lang } = useLang();
   const contact = useContact();
   const t = TX[lang];
   const social = SOCIAL.filter((k) => contact.isSet(k));
+  const servicesHref = backHref === "/" ? "/#services" : `${backHref}#services`;
+  const pricingHref = backHref === "/" ? "/#pricing" : `${backHref}#pricing`;
 
   return (
     <footer className="v3-sub-foot">
@@ -87,8 +89,8 @@ export default function SubFooter3({ backHref = "/v3" }: { backHref?: string }) 
           <div className="v3-sub-foot-col">
             <h4>{t.links}</h4>
             <Link href={backHref}>{t.home}</Link>
-            <Link href={`${backHref}#services`}>{t.services}</Link>
-            <Link href={`${backHref}#pricing`}>{t.pricing}</Link>
+            <Link href={servicesHref}>{t.services}</Link>
+            <Link href={pricingHref}>{t.pricing}</Link>
             <Link href="/du-an">{t.projects}</Link>
             <Link href="/blog">{t.blog}</Link>
           </div>

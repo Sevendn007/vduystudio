@@ -9,8 +9,8 @@ import { useContact } from "@/lib/useContact";
 
 export default function ChatFab() {
   const pathname = usePathname();
-  // Ẩn trên /v3: KHÔNG mount inner → useContact không chạy → 0 request Supabase.
-  if (pathname?.startsWith("/v3")) return null;
+  // Ẩn trên trang chủ và /v3: giao diện v3 đã có Dock và CTA Zalo tích hợp sẵn
+  if (pathname === "/" || pathname?.startsWith("/v3")) return null;
   return <ChatFabInner />;
 }
 

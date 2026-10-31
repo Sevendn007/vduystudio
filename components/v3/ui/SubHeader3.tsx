@@ -24,10 +24,12 @@ const TX = {
   },
 };
 
-export default function SubHeader3({ backHref = "/v3" }: { backHref?: string }) {
+export default function SubHeader3({ backHref = "/" }: { backHref?: string }) {
   const { lang } = useLang();
   const contact = useContact();
   const t = TX[lang];
+  const servicesHref = backHref === "/" ? "/#services" : `${backHref}#services`;
+  const pricingHref = backHref === "/" ? "/#pricing" : `${backHref}#pricing`;
 
   return (
     <header className="v3-sub-nav">
@@ -38,8 +40,8 @@ export default function SubHeader3({ backHref = "/v3" }: { backHref?: string }) 
 
         <nav className="v3-sub-nav-links">
           <Link href={backHref} className="v3-sub-nav-link">{t.home}</Link>
-          <Link href={`${backHref}#services`} className="v3-sub-nav-link">{t.services}</Link>
-          <Link href={`${backHref}#pricing`} className="v3-sub-nav-link">{t.pricing}</Link>
+          <Link href={servicesHref} className="v3-sub-nav-link">{t.services}</Link>
+          <Link href={pricingHref} className="v3-sub-nav-link">{t.pricing}</Link>
           <Link href="/du-an" className="v3-sub-nav-link">{t.projects}</Link>
           <Link href="/blog" className="v3-sub-nav-link">{t.blog}</Link>
         </nav>
