@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getPlatform, getPlatforms, PriceRow } from "@/lib/services";
 import { site } from "@/lib/site";
-import { Mark3D, Wordmark, IPhone, DEFAULT_PROJECTS } from "@/components/premiumKit";
-import { PremiumFooter } from "@/components/PremiumFooter";
+import { IPhone, DEFAULT_PROJECTS } from "@/components/premiumKit";
+import SubHeader3 from "@/components/v3/ui/SubHeader3";
+import SubFooter3 from "@/components/v3/ui/SubFooter3";
+import "@/app/styles/v3-sub.css";
 import { useLang, LangToggle } from "@/lib/i18n";
 import { fetchPricing, fetchProjects, DbProject } from "@/lib/data";
 import { useContact } from "@/lib/useContact";
@@ -115,26 +117,8 @@ export default function ServiceDetail({ slug }: { slug: string }) {
   }, [slug, lang]);
 
   return (
-    <div className="sd-root" style={{ ["--accent" as string]: platform.accent }}>
-      <div className="sd-space" aria-hidden>
-        <div className="sd-stars" />
-        <div className="sd-nebula" />
-      </div>
-      <nav className="sd-nav">
-        <Link href="/" className="sd-back" style={{ display: "flex", alignItems: "center", gap: 11 }}>
-          <span style={{ display: "block", width: 42, height: 35, perspective: 420 }}>
-            <Mark3D layers={8} className="nav" alt="VDuyStudio" />
-          </span>
-          <Wordmark className="nav" />
-        </Link>
-        <div className="sd-nav-links">
-          <Link href="/">{t.home}</Link>
-          <LangToggle compact />
-          <a href={contact.zalo} target="_blank" rel="noreferrer" className="sd-nav-cta">
-            {t.contactCta}
-          </a>
-        </div>
-      </nav>
+    <div className="v3-sub-page sd-root" style={{ ["--accent" as string]: platform.accent }}>
+      <SubHeader3 />
 
       {/* HERO */}
       <header className="sd-hero">
@@ -267,10 +251,10 @@ export default function ServiceDetail({ slug }: { slug: string }) {
         </div>
       </section>
 
-      <PremiumFooter />
+      <SubFooter3 />
 
       <style>{`
-.sd-root{--fg:#e6f0f2;--muted:#8fadb5;--line:rgba(94,209,214,.16);--panel:rgba(45,212,191,.05);--cyan:#2dd4bf;--bg:#02090c;font-family:var(--font-grotesk),var(--font-inter),system-ui,sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;position:relative;overflow-x:hidden;padding-bottom:calc(24px + env(safe-area-inset-bottom));}
+.sd-root{--fg:#f8fafc;--muted:#94a3b8;--line:rgba(255,255,255,.08);--panel:rgba(255,255,255,.03);--cyan:#2140f0;--bg:#0c0d14;font-family:var(--font-inter),system-ui,sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;position:relative;overflow-x:hidden;}
 .sd-root *{box-sizing:border-box;}
 .sd-space{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
 .sd-stars{position:absolute;inset:-100px;background-image:
@@ -292,14 +276,15 @@ export default function ServiceDetail({ slug }: { slug: string }) {
 .sd-hero{max-width:900px;margin:0 auto;padding:64px clamp(16px,4vw,40px) 46px;text-align:center;}
 .sd-crumb{color:var(--muted);font-size:13px;font-weight:600;display:inline-block;margin-bottom:22px;}
 .sd-crumb:hover{color:var(--fg);}
-.sd-hero-badge{display:inline-block;color:#04101a;font-weight:700;font-size:13px;padding:6px 16px;border-radius:100px;margin-bottom:18px;box-shadow:0 0 30px color-mix(in srgb,var(--accent) 45%,transparent);}
-.sd-hero h1{font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-1.5px;margin:0 0 16px;}
-.sd-hero p{color:var(--muted);font-size:18px;max-width:560px;margin:0 auto 28px;line-height:1.6;}
+.sd-hero-badge{display:inline-block;color:#fff;background:linear-gradient(135deg,#2547f4,#1732c5);font-weight:700;font-size:13px;padding:6px 16px;border-radius:100px;margin-bottom:18px;box-shadow:0 4px 20px rgba(37,71,244,.4);}
+.sd-hero h1{font-size:clamp(32px,5vw,52px);font-weight:900;letter-spacing:-1.5px;margin:0 0 16px;color:#fff;}
+.sd-hero p{color:var(--muted);font-size:17px;max-width:560px;margin:0 auto 28px;line-height:1.6;}
 .sd-hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-.sd-btn{display:inline-block;background:var(--accent);color:#04101a;padding:14px 26px;border-radius:100px;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 10px 30px color-mix(in srgb,var(--accent) 30%,transparent);}
-.sd-btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line);box-shadow:none;}
-.sd-btn.ghost:hover{border-color:var(--accent);color:var(--accent);}
-.sd-btn.light{background:#fff;color:#04101a;}
+.sd-btn{display:inline-block;background:linear-gradient(135deg,#2547f4 0%,#1732c5 100%);color:#fff;padding:14px 28px;border-radius:100px;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 4px 20px rgba(37,71,244,.4);transition:transform .2s,box-shadow .2s;}
+.sd-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(37,71,244,.6);}
+.sd-btn.ghost{background:rgba(255,255,255,.05);color:#fff;border:1px solid rgba(255,255,255,.15);box-shadow:none;}
+.sd-btn.ghost:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.1);}
+.sd-btn.light{background:#fff;color:#0c0d14;}
 .sd-btn.ghost-light{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);}
 
 .sd-section{max-width:1080px;margin:0 auto;padding:52px clamp(16px,4vw,40px);border-top:1px solid var(--line);}
@@ -329,12 +314,12 @@ export default function ServiceDetail({ slug }: { slug: string }) {
 .sd-projects{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
 .sd-project{display:flex;flex-direction:column;align-items:center;gap:16px;background:var(--panel);
  border:1px solid var(--line);border-radius:20px;padding:26px 16px 22px;transition:.25s;}
-.sd-project:hover{border-color:rgba(45,212,191,.5);transform:translateY(-4px);}
+.sd-project:hover{border-color:rgba(33,64,240,.6);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.6);}
 .sd-project-body{text-align:center;padding:0;}
 .sd-project-body h4{margin:0 0 6px;font-size:16px;font-weight:700;}
 .sd-project-body p{margin:0;color:var(--muted);font-size:13.5px;}
 .sd-project-tag{display:inline-block;margin-top:10px;font-size:10.5px;font-weight:800;letter-spacing:1px;
- text-transform:uppercase;color:#03222e;background:linear-gradient(90deg,#5eead4,#22d3ee);
+ text-transform:uppercase;color:#fff;background:linear-gradient(135deg,#2547f4,#1732c5);
  padding:4px 12px;border-radius:100px;}
 
 .sd-faq{display:grid;grid-template-columns:1fr 1fr;gap:14px;}

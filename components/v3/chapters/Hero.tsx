@@ -11,6 +11,7 @@ import CountUp from "../ui/CountUp";
 import RotatingText from "../ui/RotatingText";
 import LiquidCanvas from "../canvas/LiquidCanvas";
 import Seal from "../ui/Seal";
+import { Mark3 } from "../ui/Logo3";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -70,11 +71,16 @@ export default function Hero() {
             <span className="v3-dot" aria-hidden /> VDuyStudio — {c.tagline}
           </p>
 
-          <h1 id="v3-hero-title" className="v3-hero-h1" aria-label={`${t.h1a} ${t.h1b} ${t.accent}`}>
-            <span className="v3-hero-big" aria-hidden><Chars text={big} /></span>
+          <h1 id="v3-hero-title" className="v3-hero-h1" aria-label={`VDuyStudio ${t.h1b} ${t.accent}`}>
+            <span className="v3-hero-big" aria-hidden>
+              <span className="v3-hero-brand-wrap">
+                <Mark3 className="v3-hero-mark" size={88} />
+                <span className="v3-hero-brand-name"><Chars text="VDUYSTUDIO" /></span>
+              </span>
+            </span>
             <span className="v3-hero-line2" aria-hidden>
-              <span className="v3-hero-small"><Chars text={t.h1b} base={10} /></span>{" "}
-              <em className="v3-serif"><Chars text={t.accent} base={20} /></em>
+              <span className="v3-hero-small"><Chars text={t.h1b} base={12} /></span>{" "}
+              <em className="v3-serif"><Chars text={t.accent} base={22} /></em>
             </span>
           </h1>
 

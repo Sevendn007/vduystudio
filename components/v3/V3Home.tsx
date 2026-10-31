@@ -10,7 +10,7 @@ import Trust from "./chapters/Trust";
 import ResultBelt from "./chapters/ResultBelt";
 import Feedback from "./chapters/Feedback";
 import Footer3 from "./chapters/Footer3";
-import WelcomePopup from "@/components/WelcomePopup";
+import WelcomePopup3 from "./ui/WelcomePopup3";
 
 // v3 "LIQUID COBALT × LIVE VERIFICATION":
 //   Hero chrome lỏng → câu chuyện ghim (4 bước + đóng dấu tích) → mục lục dịch vụ nền mực
@@ -24,7 +24,7 @@ export default function V3Home(props: V3Data) {
   return (
     <V3Provider data={props}>
       <div className="v3">
-        <WelcomePopup deferOpen />
+        <WelcomePopup3 deferOpen={false} />
         <Nav3 />
         <main>
           <Hero />

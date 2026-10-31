@@ -6,9 +6,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PlatformIcon, Platform } from "@/components/brand";
-import { Mark3D, Wordmark, IPhone, DEFAULT_PROJECTS } from "@/components/premiumKit";
-import { PremiumFooter } from "@/components/PremiumFooter";
-import { useLang, LangToggle } from "@/lib/i18n";
+import { IPhone, DEFAULT_PROJECTS } from "@/components/premiumKit";
+import SubHeader3 from "@/components/v3/ui/SubHeader3";
+import SubFooter3 from "@/components/v3/ui/SubFooter3";
+import "@/app/styles/v3-sub.css";
+import { useLang } from "@/lib/i18n";
 import { fetchAllProjects, DbProject } from "@/lib/data";
 import { useContact } from "@/lib/useContact";
 
@@ -47,19 +49,8 @@ export default function AllProjectsPage() {
   const projects = dbProjects && dbProjects.length > 0 ? dbProjects : DEFAULT_PROJECTS;
 
   return (
-    <div className="pj-root">
-      <nav className="pj-nav">
-        <Link href="/" className="pj-brand">
-          <span className="pj-brand-spin">
-            <Mark3D layers={8} className="nav" alt="VDuyStudio" />
-          </span>
-          <Wordmark className="nav" />
-        </Link>
-        <div className="pj-nav-right">
-          <Link href="/" className="pj-back">{t.back}</Link>
-          <LangToggle compact />
-        </div>
-      </nav>
+    <div className="v3-sub-page pj-root">
+      <SubHeader3 />
 
       <header className="pj-head">
         <h1>{t.title}</h1>
@@ -88,48 +79,39 @@ export default function AllProjectsPage() {
         })}
       </main>
 
-      <PremiumFooter />
+      <SubFooter3 />
 
       <style>{`
-.pj-root{--bg:#02090c;--muted:#8fadb5;--cyan:#2dd4bf;--line:rgba(94,209,214,.16);--card:#05141a;
- font-family:var(--pm-font-body);background:var(--bg);color:#e6f0f2;min-height:100vh;
- padding-bottom:calc(24px + env(safe-area-inset-bottom));}
+.pj-root{--bg:#0c0d14;--muted:#94a3b8;--cyan:#60a5fa;--line:rgba(255,255,255,.08);--card:#12131c;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#f1f5f9;min-height:100vh;}
 .pj-root *{box-sizing:border-box;}
 .pj-root a{text-decoration:none;color:inherit;}
-.pj-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:14px;
- padding:12px clamp(16px,4vw,36px);background:rgba(2,9,12,.8);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);}
-.pj-brand{display:flex;align-items:center;gap:11px;}
-.pj-brand-spin{display:block;width:46px;height:38px;perspective:420px;flex-shrink:0;}
-.pj-nav-right{display:flex;align-items:center;gap:16px;}
-.pj-back{font-size:13.5px;font-weight:600;color:var(--muted);transition:.2s;}
-.pj-back:hover{color:#fff;}
 .pj-head{text-align:center;padding:clamp(40px,7vw,72px) 20px 8px;}
-.pj-head h1{font-family:var(--pm-font-heading);font-weight:700;font-size:clamp(30px,5vw,52px);letter-spacing:1px;
- text-transform:uppercase;margin:0 0 10px;
- background:linear-gradient(180deg,#fff 20%,#9db3c5 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
-.pj-head p{margin:0;color:var(--muted);font-size:15px;}
-.pj-grid{max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,44px) clamp(16px,4vw,28px) 0;
+.pj-head h1{font-weight:900;font-size:clamp(30px,5vw,52px);letter-spacing:-0.02em;
+ margin:0 0 10px;color:#fff;}
+.pj-head p{margin:0;color:var(--muted);font-size:16px;}
+.pj-grid{max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,44px) clamp(16px,4vw,28px) 60px;
  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
 .pj-card{display:flex;flex-direction:column;align-items:center;gap:16px;padding:26px 16px 22px;
  background:var(--card);border:1px solid var(--line);border-radius:20px;transition:.25s;
  animation:pjIn .5s ease both;}
 @keyframes pjIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.pj-card:hover{border-color:rgba(45,212,191,.5);transform:translateY(-4px);box-shadow:0 20px 44px rgba(0,0,0,.45);}
-.pj-date{font-family:var(--pm-font-display);font-size:26px;letter-spacing:1px;line-height:1;margin:12px 0 0;
- background:linear-gradient(180deg,#7dd3fc 0%,#0ea5e9 52%,#075985 100%);
+.pj-card:hover{border-color:rgba(33,64,240,.6);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.6);}
+.pj-date{font-size:26px;font-weight:800;letter-spacing:1px;line-height:1;margin:12px 0 0;
+ background:linear-gradient(180deg,#93c5fd 0%,#3b82f6 52%,#1d4ed8 100%);
  -webkit-background-clip:text;background-clip:text;color:transparent;
- filter:drop-shadow(0 4px 12px rgba(2,60,90,.5));opacity:0.85;}
+ filter:drop-shadow(0 4px 12px rgba(29,78,216,.4));opacity:0.9;}
 .pj-info{text-align:center;}
 .pj-plat{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--cyan);
  letter-spacing:.5px;margin-bottom:8px;}
-.pj-info h3{font-family:var(--pm-font-heading);font-weight:700;font-size:17px;margin:0 0 5px;}
+.pj-info h3{font-weight:700;font-size:17px;margin:0 0 5px;color:#fff;}
 .pj-info p{margin:0;color:var(--muted);font-size:12.5px;}
 .pj-tag{display:inline-block;margin-top:10px;font-size:10.5px;font-weight:800;letter-spacing:1px;
- text-transform:uppercase;color:#03222e;background:linear-gradient(90deg,#5eead4,#22d3ee);
+ text-transform:uppercase;color:#fff;background:linear-gradient(135deg,#2547f4,#1732c5);
  padding:4px 12px;border-radius:100px;}
 
 @media(max-width:980px){.pj-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:560px){.pj-grid{grid-template-columns:1fr;}.pj-back{display:none;}}
+@media(max-width:560px){.pj-grid{grid-template-columns:1fr;}}
       `}</style>
     </div>
   );

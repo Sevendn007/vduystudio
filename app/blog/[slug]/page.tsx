@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Mark3D, Wordmark } from "@/components/premiumKit";
-import { PremiumFooter } from "@/components/PremiumFooter";
-import { useLang, LangToggle } from "@/lib/i18n";
+import SubHeader3 from "@/components/v3/ui/SubHeader3";
+import SubFooter3 from "@/components/v3/ui/SubFooter3";
+import "@/app/styles/v3-sub.css";
+import { useLang } from "@/lib/i18n";
 import { fetchBlogBySlug, DbBlog } from "@/lib/data";
 import { useContact } from "@/lib/useContact";
 
@@ -44,9 +45,9 @@ export default function BlogDetailPage() {
         <h2>{t.error}</h2>
         <Link href="/blog" className="pj-btn">{t.back}</Link>
         <style>{`
-          .blog-error{text-align:center;padding:100px 20px;min-height:100vh;background:#02090c;color:#fff;}
+          .blog-error{text-align:center;padding:100px 20px;min-height:100vh;background:#0c0d14;color:#fff;}
           .blog-error h2{margin-bottom:30px;}
-          .pj-btn{display:inline-block;background:#2dd4bf;color:#03222e;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:1px;padding:15px 44px;border-radius:100px;text-decoration:none;}
+          .pj-btn{display:inline-block;background:linear-gradient(135deg,#2547f4 0%,#1732c5 100%);color:#fff;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:1px;padding:15px 44px;border-radius:100px;text-decoration:none;box-shadow:0 4px 20px rgba(37,71,244,.4);}
         `}</style>
       </div>
     );
@@ -68,19 +69,8 @@ export default function BlogDetailPage() {
   unusedImages = unusedImages.filter(img => img !== "");
 
   return (
-    <div className="pj-root">
-      <nav className="pj-nav">
-        <Link href="/" className="pj-brand">
-          <span className="pj-brand-spin">
-            <Mark3D layers={8} className="nav" alt="VDuyStudio" />
-          </span>
-          <Wordmark className="nav" />
-        </Link>
-        <div className="pj-nav-right">
-          <Link href="/blog" className="pj-back">{t.back}</Link>
-          <LangToggle compact />
-        </div>
-      </nav>
+    <div className="v3-sub-page pj-root">
+      <SubHeader3 backHref="/blog" />
 
       <article className="blog-detail">
         <header className="blog-head">
@@ -109,33 +99,24 @@ export default function BlogDetailPage() {
         )}
       </article>
 
-      <PremiumFooter />
+      <SubFooter3 backHref="/blog" />
 
       <style>{`
-.pj-root{--bg:#02090c;--muted:#8fadb5;--cyan:#2dd4bf;--line:rgba(94,209,214,.16);--card:#05141a;
- font-family:var(--pm-font-body);background:var(--bg);color:#e6f0f2;min-height:100vh;
- padding-bottom:calc(24px + env(safe-area-inset-bottom));}
+.pj-root{--bg:#0c0d14;--muted:#94a3b8;--cyan:#60a5fa;--line:rgba(255,255,255,.08);--card:#12131c;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#f1f5f9;min-height:100vh;}
 .pj-root *{box-sizing:border-box;}
 .pj-root a{text-decoration:none;color:inherit;}
-.pj-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:14px;
- padding:12px clamp(16px,4vw,36px);background:rgba(2,9,12,.8);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);}
-.pj-brand{display:flex;align-items:center;gap:11px;}
-.pj-brand-spin{display:block;width:46px;height:38px;perspective:420px;flex-shrink:0;}
-.pj-nav-right{display:flex;align-items:center;gap:16px;}
-.pj-back{font-size:13.5px;font-weight:600;color:var(--muted);transition:.2s;}
-.pj-back:hover{color:#fff;}
 .pj-tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:1px;
- text-transform:uppercase;color:#03222e;background:linear-gradient(90deg,#5eead4,#22d3ee);
+ text-transform:uppercase;color:#fff;background:linear-gradient(135deg,#2547f4,#1732c5);
  padding:4px 12px;border-radius:100px;}
 
-
-.blog-detail{max-width:800px;margin:0 auto;padding:60px 20px 0;}
+.blog-detail{max-width:800px;margin:0 auto;padding:60px 20px 80px;}
 .blog-head{text-align:center;margin-bottom:40px;}
-.blog-head h1{font-family:var(--pm-font-heading);font-weight:700;font-size:clamp(32px,5vw,56px);margin:16px 0;line-height:1.2;color:#fff;}
+.blog-head h1{font-weight:900;font-size:clamp(30px,5vw,52px);margin:16px 0;line-height:1.2;color:#fff;letter-spacing:-0.02em;}
 .blog-head time{display:block;color:var(--muted);font-size:14px;}
-.blog-cover{width:100%;height:auto;border-radius:24px;border:1px solid var(--line);margin-bottom:50px;box-shadow:0 24px 60px rgba(0,0,0,.3);}
-.blog-content{font-size:17px;line-height:1.8;color:#c6d7e0;}
-.blog-content h2, .blog-content h3{font-family:var(--pm-font-heading);color:#fff;margin:2em 0 1em;line-height:1.3;}
+.blog-cover{width:100%;height:auto;border-radius:24px;border:1px solid var(--line);margin-bottom:50px;box-shadow:0 24px 60px rgba(0,0,0,.5);}
+.blog-content{font-size:17px;line-height:1.8;color:#cbd5e1;}
+.blog-content h2, .blog-content h3{color:#fff;margin:2em 0 1em;line-height:1.3;font-weight:800;}
 .blog-content h2{font-size:28px;}
 .blog-content p{margin-bottom:1.5em;}
 .blog-content a{color:var(--cyan);text-decoration:underline;text-underline-offset:4px;}
@@ -143,8 +124,6 @@ export default function BlogDetailPage() {
 
 .blog-gallery{margin-top:40px;display:flex;flex-direction:column;gap:20px;}
 .blog-gallery img{width:100%;border-radius:16px;border:1px solid var(--line);}
-
-@media(max-width:560px){.pj-back{display:none;}}
       `}</style>
     </div>
   );
