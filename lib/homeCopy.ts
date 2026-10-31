@@ -101,6 +101,7 @@ const vi = {
   hero: {
     chip: "✦ Xác minh & bảo vệ tài khoản mạng xã hội",
     h1a: "Uy tín số,",
+    lead: "UY TÍN SỐ",
     h1b: "bắt đầu từ",
     accent: "dấu tích xanh.",
     sub: "Tích xanh chính thống, mở khóa tài khoản & booking báo chí cho",
@@ -137,6 +138,7 @@ const en: Copy = {
   hero: {
     chip: "✦ Social verification & account protection",
     h1a: "Digital trust",
+    lead: "DIGITAL TRUST",
     h1b: "starts with a",
     accent: "blue check.",
     sub: "Official badges, account recovery & press booking for",
