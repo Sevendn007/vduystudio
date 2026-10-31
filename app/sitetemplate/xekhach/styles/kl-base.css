@@ -44,6 +44,8 @@ html.lenis body {
    nó sẽ nuốt mất nền/màu chữ của nút. Rule trong layer luôn thua rule thường. */
 @layer kl-reset {
   .kl-root {
+    /* mono dùng font hệ thống — không tải từ Google để build Vercel khỏi phụ thuộc mạng */
+    --kl-ff-mono: ui-monospace, "JetBrains Mono", "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
     font-family: var(--kl-ff-body), system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

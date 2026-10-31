@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, Be_Vietnam_Pro, Chakra_Petch, JetBrains_Mono, Oswald, Playfair_Display } from "next/font/google";
+import { Archivo, Be_Vietnam_Pro, Chakra_Petch, Oswald, Playfair_Display } from "next/font/google";
 import "./styles/kl-base.css";
 
 // Demo template cho khách — không cho index (bản thật sẽ nằm ở domain của nhà xe).
@@ -43,16 +43,10 @@ const serif = Playfair_Display({
   variable: "--kl-ff-serif",
   display: "swap",
 });
-const mono = JetBrains_Mono({
-  subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "700"],
-  variable: "--kl-ff-mono",
-  display: "swap",
-});
 
 export default function KimLyLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`kl-root ${body.variable} ${display.variable} ${brand.variable} ${serif.variable} ${tech.variable} ${mono.variable}`}>
+    <div className={`kl-root ${body.variable} ${display.variable} ${brand.variable} ${serif.variable} ${tech.variable}`}>
       {children}
     </div>
   );
