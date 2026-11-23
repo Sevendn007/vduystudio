@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import SubHeader3 from "@/components/v3/ui/SubHeader3";
 import SubFooter3 from "@/components/v3/ui/SubFooter3";
 import "@/app/styles/v3-sub.css";
 import { useLang } from "@/lib/i18n";
@@ -70,7 +69,6 @@ export default function BlogDetailPage() {
 
   return (
     <div className="v3-sub-page pj-root">
-      <SubHeader3 backHref="/blog" />
 
       <article className="blog-detail">
         <header className="blog-head">
