@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useLang, LangToggle } from "@/lib/i18n";
 import { homeCopy } from "@/lib/homeCopy";
@@ -7,16 +7,35 @@ import { useV3 } from "../V3Context";
 import { href, hash } from "@/lib/v3/routes";
 import Logo3 from "./Logo3";
 
-export default function Nav3() {
+export default function Nav3({ base, current }: { base?: string; current?: string } = {}) {
   const { lang } = useLang();
   const { contact } = useV3();
   const nav = homeCopy(lang).nav;
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState("hero");
-  const [tone, setTone] = useState<"light" | "solid">("light");
+  const [active, setActive] = useState(current ?? "hero");
+  const [tone, setTone] = useState<"light" | "solid">(base ? "solid" : "light");
+  const [hidden, setHidden] = useState(false);
+  const openRef = useRef(false);
+  openRef.current = open;
+
+  // Cuộn xuống → ẩn header, cuộn lên → hiện lại. Luôn hiện ở đầu trang, khi mở menu mobile hoặc khi đang focus trong header.
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const d = y - last;
+      if (Math.abs(d) < 6) return;
+      last = y;
+      if (y < 80 || openRef.current) { setHidden(false); return; }
+      setHidden(d > 0);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Tô sáng mục đang xem — quan sát MỌI section có trên menu (kể cả Dự án).
   useEffect(() => {
+    if (base) return; // trang con: không có các section của trang chủ
     const ids = ["hero", "process", "services", "trust", "projects", "feedback", "contact"];
     const io = new IntersectionObserver(
       (entries) => {
@@ -57,25 +76,27 @@ export default function Nav3() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
+  // Trang chủ: neo trong trang (#id). Trang con: về trang chủ rồi cuộn tới mục (/#id).
+  const anchor = (id: string) => (base ? `${base.replace(/\/$/, "")}/#${id}` : hash(id));
   const items = [
-    { k: "process", label: nav.process, href: hash("process") },
-    { k: "services", label: nav.services, href: hash("services") },
-    { k: "projects", label: nav.projects, href: hash("projects") },
-    { k: "feedback", label: nav.feedback, href: hash("feedback") },
+    { k: "process", label: nav.process, href: anchor("process") },
+    { k: "services", label: nav.services, href: anchor("services") },
+    { k: "projects", label: nav.projects, href: anchor("projects") },
+    { k: "feedback", label: nav.feedback, href: anchor("feedback") },
     { k: "blog", label: nav.blog, href: href("/blog") },
   ];
 
   const render = (it: (typeof items)[number], onClick?: () => void) =>
-    it.href.includes("#") ? (
+    it.href.includes("#") && !base ? (
       <a key={it.k} href={it.href} className={active === it.k ? "is-active" : undefined} onClick={onClick}>{it.label}</a>
     ) : (
-      <Link key={it.k} href={it.href} onClick={onClick}>{it.label}</Link>
+      <Link key={it.k} href={it.href} className={active === it.k ? "is-active" : undefined} onClick={onClick}>{it.label}</Link>
     );
 
   return (
-    <header className={`v3-nav is-${tone}`}>
+    <header className={`v3-nav is-${tone}${hidden ? " is-hidden" : ""}`} onFocus={() => setHidden(false)}>
       <div className="v3-nav-bar">
-        <a href={hash("hero")} className="v3-brand" aria-label="VDuyStudio — về đầu trang">
+        <a href={base ? "/" : hash("hero")} className="v3-brand" aria-label="VDuyStudio — về đầu trang">
           <Logo3 size={30} />
         </a>
 
