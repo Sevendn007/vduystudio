@@ -281,7 +281,7 @@ export default function ServiceDetail({ slug }: { slug: string }) {
 
       <SubFooter3 />
 
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
 .sd-root{--fg:#f8fafc;--muted:#94a3b8;--line:rgba(255,255,255,.08);--panel:rgba(255,255,255,.03);--cyan:#2140f0;--bg:#0c0d14;font-family:var(--font-inter),system-ui,sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;position:relative;overflow-x:hidden;}
 .sd-root *{box-sizing:border-box;}
 .sd-space{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
@@ -385,7 +385,7 @@ export default function ServiceDetail({ slug }: { slug: string }) {
   .sd-table td:first-child::before{display:none;}
 }
 @media(max-width:520px){.sd-steps{grid-template-columns:1fr;}.sd-nav-links a:not(.sd-nav-cta):not(.sd-lng){display:none;}}
-      `}</style>
+      ` }} />
     </div>
   );
 }

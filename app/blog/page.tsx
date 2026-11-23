@@ -76,7 +76,7 @@ function BlogListContent() {
 
       <SubFooter3 />
 
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
 .pj-root{--bg:#0c0d14;--muted:#94a3b8;--cyan:#2140f0;--line:rgba(255,255,255,.08);--card:#12131c;
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#f1f5f9;min-height:100vh;}
 .pj-root *{box-sizing:border-box;}
@@ -110,7 +110,7 @@ function BlogListContent() {
 
 @media(max-width:980px){.pj-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:560px){.pj-grid{grid-template-columns:1fr;}}
-      `}</style>
+      ` }} />
     </div>
   );
 }
