@@ -8,22 +8,35 @@ import { homeCopy, BRANDS } from "@/lib/homeCopy";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const ACCENT = /^(dấu|tích|uy|tín|số|trust|badge|badges\.?)[.,:]?$/i;
-
 // ĐỐI TÁC + TUYÊN NGÔN: hai dải chữ chạy bắt chéo (cobalt / mực) rồi một câu tuyên ngôn
 // khổng lồ "tô mực" từng chữ theo thanh cuộn.
 export default function Trust() {
   const { lang } = useLang();
   const t = homeCopy(lang);
   const root = useRef<HTMLElement>(null);
-  const words = t.manifesto.split(" ");
+  // Tách tuyên ngôn: phần dẫn (trước dấu ":") + 3 trụ cột (sau dấu ":").
+  const [lead, rest] = t.manifesto.split(/:\s*/);
+  const pillars = rest.replace(/\.$/, "").split(/,\s*/).map((x) => x.charAt(0).toUpperCase() + x.slice(1));
+  // Cụm nhấn mạnh giữ nguyên một khối, không bị ngắt dòng giữa chừng.
+  const accentRe = new RegExp(`(${t.manifestoAccent.join("|")})`, "i");
+  const chunks = lead.split(accentRe).filter(Boolean);
+  let accentIdx = 0;
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
     mm.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.fromTo(".v3-mf-w", { opacity: 0.16 }, {
-        opacity: 1, stagger: 0.1, ease: "none",
-        scrollTrigger: { trigger: ".v3-mf", start: "top 78%", end: "bottom 45%", scrub: true },
+      // Hiện theo cụm có nghĩa (không theo từng từ): mỗi cụm sáng lên lần lượt, rồi gạch/đánh dấu cụm nhấn.
+      const n = gsap.utils.toArray(".v3-mf-ph").length;
+      gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: { trigger: ".v3-mf", start: "top 80%", end: "bottom 40%", scrub: true },
+      })
+        .fromTo(".v3-mf-ph", { opacity: 0.16 }, { opacity: 1, duration: 1, stagger: 1 }, 0)
+        .fromTo(".v3-mf-ph.is-strike", { "--p": 0 }, { "--p": 1, duration: 0.8 }, 2)
+        .fromTo(".v3-mf-ph.is-mark", { "--p": 0 }, { "--p": 1, duration: 0.8 }, n);
+      gsap.fromTo(".v3-mf-pillar", { opacity: 0, y: 24 }, {
+        opacity: 1, y: 0, stagger: 0.18, ease: "power2.out",
+        scrollTrigger: { trigger: ".v3-mf-pillars", start: "top 85%", end: "bottom 60%", scrub: true },
       });
       gsap.fromTo(".v3-band-a .v3-band-track", { xPercent: 0 }, { xPercent: -18, ease: "none", scrollTrigger: { trigger: ".v3-bands", start: "top bottom", end: "bottom top", scrub: true } });
       gsap.fromTo(".v3-band-b .v3-band-track", { xPercent: -18 }, { xPercent: 0, ease: "none", scrollTrigger: { trigger: ".v3-bands", start: "top bottom", end: "bottom top", scrub: true } });
@@ -52,11 +65,27 @@ export default function Trust() {
       </div>
 
       <div className="v3-container">
-        <p className="v3-mf">
-          {words.map((w, i) => (
-            <span key={i} className={`v3-mf-w${ACCENT.test(w) ? " is-accent" : ""}`}>{w} </span>
-          ))}
-        </p>
+        <div className="v3-mf-grid">
+          <p className="v3-mf">
+            {chunks.map((c, i) => {
+              const isAccent = accentRe.test(c);
+              return (
+                <span key={i}>
+                  {/^\s/.test(c) && " "}
+                  <span className={isAccent ? `v3-mf-ph is-accent ${accentIdx++ === 0 ? "is-strike" : "is-mark"}` : "v3-mf-ph"}>
+                    {c.trim()}
+                  </span>
+                  {/\s$/.test(c) && " "}
+                </span>
+              );
+            })}
+          </p>
+          <ol className="v3-mf-pillars">
+            {pillars.map((p, i) => (
+              <li key={i} className="v3-mf-pillar"><span>0{i + 1}</span>{p}</li>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
   );

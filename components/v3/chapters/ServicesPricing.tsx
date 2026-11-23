@@ -6,15 +6,17 @@ import { homeCopy, SERVICES } from "@/lib/homeCopy";
 import { getPlatform, type PriceRow } from "@/lib/services";
 import { v3Copy } from "@/lib/v3/copy";
 import { href } from "@/lib/v3/routes";
-import { fmtNum, fmtPrice, isTermWarranty, realPrice, stripNo } from "@/lib/v3/format";
+import { fmtNum, fmtPrice, isTermWarranty, localizeVi, realPrice, stripNo } from "@/lib/v3/format";
 import { useV3 } from "../V3Context";
+import PlatformMark from "../ui/PlatformMark";
 import Icon3 from "../ui/Icon3";
 import type { DbPriceRow } from "@/lib/data";
 
 type Row = { service: string; duration: string | null; warranty: string | null; price: string | null };
 
 function rowsFor(slug: string, db: DbPriceRow[] | null, lang: "vi" | "en"): Row[] {
-  if (db && db.length) return db.map((r) => ({ service: r.service, duration: r.duration, warranty: r.warranty, price: r.price }));
+  const L = (x: string | null) => (x ? localizeVi(x, lang) : x);
+  if (db && db.length) return db.map((r) => ({ service: localizeVi(r.service, lang), duration: L(r.duration), warranty: L(r.warranty), price: r.price }));
   const fb: PriceRow[] = getPlatform(slug, lang)?.pricing ?? [];
   return fb.map((r) => ({ service: r.service, duration: r.duration, warranty: r.warranty, price: r.price }));
 }
@@ -62,7 +64,7 @@ export default function ServicesPricing() {
                   <span className="v3-index-no">0{i + 1}</span>
                   <span className="v3-index-name">
                     {svc.name}
-                    <span className="v3-index-pop" aria-hidden><Icon3 name={svc.icons[0]} size={28} /></span>
+                    <span className="v3-index-pop" aria-hidden>{svc.slug === "bao-chi" || svc.slug === "website" ? <Icon3 name={svc.icons[0]} size={28} /> : <PlatformMark platform={svc.slug} size={40} />}</span>
                   </span>
                   <span className="v3-index-info">
                     <span className="v3-index-desc">{svc.desc}</span>

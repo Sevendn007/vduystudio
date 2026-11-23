@@ -6,6 +6,7 @@ import { useLang, Lang } from "@/lib/i18n";
 import { useContact } from "@/lib/useContact";
 import type { Icon3DName } from "@/lib/homeCopy";
 import { Mark3 } from "./Logo3";
+import PlatformMark from "./PlatformMark";
 import Icon3 from "./Icon3";
 
 const SEEN_KEY = "vds_v3_welcome_seen";
@@ -172,9 +173,11 @@ export default function WelcomePopup3({ deferOpen = false }: { deferOpen?: boole
               className="v3-pop-svc-row"
               onClick={() => handleServiceClick(svc.slug)}
             >
-              <span className="v3-pop-svc-icon">
-                <Icon3 name={svc.icon} size={20} />
-              </span>
+              {svc.slug === "bao-chi" || svc.slug === "website" ? (
+                <span className="v3-pop-svc-icon is-glyph"><Icon3 name={svc.icon} size={20} /></span>
+              ) : (
+                <span className="v3-pop-svc-icon"><PlatformMark platform={svc.slug} size={34} /></span>
+              )}
               <span className="v3-pop-svc-text">
                 <span className="v3-pop-svc-name">{svc.name}</span>
                 <span className="v3-pop-svc-desc">{svc.desc}</span>
