@@ -29,17 +29,17 @@ export type Platform = {
 };
 
 const processVi: ProcessStep[] = [
-  { title: "Tư vấn & khảo sát", desc: "Đánh giá hiện trạng tài khoản, xác định phương án phù hợp và khả năng thành công." },
-  { title: "Báo giá & cam kết", desc: "Báo giá minh bạch, ký cam kết rõ ràng về thời gian và điều kiện bảo hành." },
-  { title: "Triển khai", desc: "Thực hiện theo đúng chính sách nền tảng, cập nhật tiến độ liên tục cho khách." },
-  { title: "Bàn giao & bảo hành", desc: "Bàn giao kết quả, hướng dẫn duy trì và hỗ trợ bảo hành theo cam kết." },
+  { title: "Tư vấn & khảo sát", desc: "Đánh giá hiện trạng tài khoản, xác định phương án phù hợp và khả năng thành công" },
+  { title: "Báo giá & cam kết", desc: "Báo giá minh bạch, ký cam kết rõ ràng về thời gian và điều kiện bảo hành" },
+  { title: "Triển khai", desc: "Thực hiện theo đúng chính sách nền tảng, cập nhật tiến độ liên tục cho khách" },
+  { title: "Bàn giao & bảo hành", desc: "Bàn giao kết quả, hướng dẫn duy trì và hỗ trợ bảo hành theo cam kết" },
 ];
 
 const processEn: ProcessStep[] = [
-  { title: "Consultation & audit", desc: "We assess your account's current state, define the right approach and success likelihood." },
-  { title: "Quote & commitment", desc: "Transparent pricing with a written commitment on timeline and warranty terms." },
-  { title: "Execution", desc: "Carried out strictly within platform policies, with continuous progress updates." },
-  { title: "Handover & warranty", desc: "Results delivered with maintenance guidance and warranty support as committed." },
+  { title: "Consultation & audit", desc: "We assess your account's current state, define the right approach and success likelihood" },
+  { title: "Quote & commitment", desc: "Transparent pricing with a written commitment on timeline and warranty terms" },
+  { title: "Execution", desc: "Carried out strictly within platform policies, with continuous progress updates" },
+  { title: "Handover & warranty", desc: "Results delivered with maintenance guidance and warranty support as committed" },
 ];
 
 const contactPriceVi = "Liên hệ báo giá";
@@ -50,13 +50,13 @@ const platformsVi: Platform[] = [
     slug: "tiktok",
     name: "TikTok",
     short: "TikTok",
-    tagline: "Tích xanh, mở khóa tài khoản & mở khóa tính năng bán hàng.",
+    tagline: "Tích xanh, mở khóa tài khoản & mở khóa tính năng bán hàng",
     accent: "#00f2ea",
     services: [
-      { title: "Tích xanh chính thống", desc: "Xác minh danh tính thật theo đúng chính sách TikTok, tăng độ uy tín và tiếp cận." },
-      { title: "Mở khóa tài khoản", desc: "Khôi phục tài khoản bị khóa, hạn chế hoặc vô hiệu hóa một cách an toàn." },
-      { title: "Mở khóa Livestream", desc: "Kích hoạt lại quyền livestream cho kênh bị chặn hoặc chưa đủ điều kiện." },
-      { title: "Mở khóa Giỏ hàng (TikTok Shop)", desc: "Kích hoạt tính năng giỏ hàng để bắt đầu bán hàng trực tiếp trên TikTok." },
+      { title: "Tích xanh chính thống", desc: "Xác minh danh tính thật theo đúng chính sách TikTok, tăng độ uy tín và tiếp cận" },
+      { title: "Mở khóa tài khoản", desc: "Khôi phục tài khoản bị khóa, hạn chế hoặc vô hiệu hóa một cách an toàn" },
+      { title: "Mở khóa Livestream", desc: "Kích hoạt lại quyền livestream cho kênh bị chặn hoặc chưa đủ điều kiện" },
+      { title: "Mở khóa Giỏ hàng (TikTok Shop)", desc: "Kích hoạt tính năng giỏ hàng để bắt đầu bán hàng trực tiếp trên TikTok" },
     ],
     pricing: [
       { service: "Tích xanh chính thống", duration: "7–15 ngày", warranty: "12 tháng", price: contactPriceVi },
@@ -80,12 +80,12 @@ const platformsVi: Platform[] = [
     slug: "facebook",
     name: "Facebook",
     short: "Facebook",
-    tagline: "Tích xanh & mở khóa tài khoản cá nhân / Fanpage.",
+    tagline: "Tích xanh & mở khóa tài khoản cá nhân / Fanpage",
     accent: "#1877f2",
     services: [
-      { title: "Tích xanh chính thống", desc: "Xác minh huy hiệu chính thống cho trang cá nhân hoặc Fanpage doanh nghiệp." },
-      { title: "Mở khóa tài khoản cá nhân", desc: "Khôi phục tài khoản Facebook cá nhân bị khóa, checkpoint hoặc vô hiệu hóa." },
-      { title: "Mở khóa Fanpage", desc: "Xử lý Fanpage bị hạn chế, gỡ tích hợp hoặc bị vô hiệu do vi phạm." },
+      { title: "Tích xanh chính thống", desc: "Xác minh huy hiệu chính thống cho trang cá nhân hoặc Fanpage doanh nghiệp" },
+      { title: "Mở khóa tài khoản cá nhân", desc: "Khôi phục tài khoản Facebook cá nhân bị khóa, checkpoint hoặc vô hiệu hóa" },
+      { title: "Mở khóa Fanpage", desc: "Xử lý Fanpage bị hạn chế, gỡ tích hợp hoặc bị vô hiệu do vi phạm" },
     ],
     pricing: [
       { service: "Tích xanh cá nhân/Fanpage", duration: "5–10 ngày", warranty: "12 tháng", price: contactPriceVi },
@@ -107,11 +107,11 @@ const platformsVi: Platform[] = [
     slug: "instagram-threads",
     name: "Instagram / Threads",
     short: "IG / Threads",
-    tagline: "Tích xanh chính thống & mở khóa tài khoản Instagram, Threads.",
+    tagline: "Tích xanh chính thống & mở khóa tài khoản Instagram, Threads",
     accent: "#dd2a7b",
     services: [
-      { title: "Tích xanh chính thống", desc: "Huy hiệu xác minh cho tài khoản Instagram và Threads theo đúng chính sách Meta." },
-      { title: "Mở khóa tài khoản", desc: "Khôi phục tài khoản Instagram/Threads bị khóa, tạm ngưng hoặc hạn chế." },
+      { title: "Tích xanh chính thống", desc: "Huy hiệu xác minh cho tài khoản Instagram và Threads theo đúng chính sách Meta" },
+      { title: "Mở khóa tài khoản", desc: "Khôi phục tài khoản Instagram/Threads bị khóa, tạm ngưng hoặc hạn chế" },
     ],
     pricing: [
       { service: "Tích xanh chính thống", duration: "5–10 ngày", warranty: "12 tháng", price: contactPriceVi },
@@ -131,11 +131,11 @@ const platformsVi: Platform[] = [
     slug: "bao-chi",
     name: "Báo chí",
     short: "Báo chí",
-    tagline: "Booking báo chí & viết bài PR trên các đầu báo lớn.",
+    tagline: "Booking báo chí & viết bài PR trên các đầu báo lớn",
     accent: "#f59e0b",
     services: [
-      { title: "Booking báo chí", desc: "Đăng bài trên các đầu báo uy tín theo nhu cầu thương hiệu, minh bạch bảng giá đầu báo." },
-      { title: "Viết bài PR chuẩn SEO", desc: "Đội ngũ content viết bài PR chuyên nghiệp, đúng thông điệp và tối ưu tìm kiếm." },
+      { title: "Booking báo chí", desc: "Đăng bài trên các đầu báo uy tín theo nhu cầu thương hiệu, minh bạch bảng giá đầu báo" },
+      { title: "Viết bài PR chuẩn SEO", desc: "Đội ngũ content viết bài PR chuyên nghiệp, đúng thông điệp và tối ưu tìm kiếm" },
     ],
     pricing: [
       { service: "Booking theo đầu báo", duration: "2–5 ngày", warranty: "Giữ bài theo gói", price: "Theo bảng đầu báo" },
@@ -155,12 +155,12 @@ const platformsVi: Platform[] = [
     slug: "website",
     name: "Website & Công cụ",
     short: "Website",
-    tagline: "Chuyên thiết kế landing page, portfolio, web bán hàng và công cụ phần mềm.",
+    tagline: "Chuyên thiết kế landing page, portfolio, web bán hàng và công cụ phần mềm",
     accent: "#8b5cf6",
     services: [
-      { title: "Landing Page & Portfolio", desc: "Thiết kế trang đích chuẩn SEO, giao diện đẹp mắt, tối ưu chuyển đổi và hiển thị tốt trên mọi thiết bị." },
-      { title: "Web Bán Hàng", desc: "Xây dựng hệ thống web bán hàng chuyên nghiệp, tích hợp giỏ hàng và thanh toán trực tuyến." },
-      { title: "Công cụ phần mềm", desc: "Lập trình công cụ, phần mềm quản lý theo yêu cầu cho cá nhân và doanh nghiệp vừa và nhỏ." },
+      { title: "Landing Page & Portfolio", desc: "Thiết kế trang đích chuẩn SEO, giao diện đẹp mắt, tối ưu chuyển đổi và hiển thị tốt trên mọi thiết bị" },
+      { title: "Web Bán Hàng", desc: "Xây dựng hệ thống web bán hàng chuyên nghiệp, tích hợp giỏ hàng và thanh toán trực tuyến" },
+      { title: "Công cụ phần mềm", desc: "Lập trình công cụ, phần mềm quản lý theo yêu cầu cho cá nhân và doanh nghiệp vừa và nhỏ" },
     ],
     pricing: [
       { service: "Landing Page / Portfolio", duration: "3–5 ngày", warranty: "12 tháng", price: contactPriceVi },
@@ -184,13 +184,13 @@ const platformsEn: Platform[] = [
     slug: "tiktok",
     name: "TikTok",
     short: "TikTok",
-    tagline: "Verification badge, account recovery & seller feature unlocks.",
+    tagline: "Verification badge, account recovery & seller feature unlocks",
     accent: "#00f2ea",
     services: [
-      { title: "Official verification badge", desc: "Genuine identity verification following TikTok policy — boosting credibility and reach." },
-      { title: "Account recovery", desc: "Safely restore accounts that are locked, restricted or deactivated." },
-      { title: "Livestream unlock", desc: "Reactivate livestream permission for blocked or not-yet-eligible channels." },
-      { title: "Shop cart unlock (TikTok Shop)", desc: "Activate the shopping cart feature to start selling directly on TikTok." },
+      { title: "Official verification badge", desc: "Genuine identity verification following TikTok policy — boosting credibility and reach" },
+      { title: "Account recovery", desc: "Safely restore accounts that are locked, restricted or deactivated" },
+      { title: "Livestream unlock", desc: "Reactivate livestream permission for blocked or not-yet-eligible channels" },
+      { title: "Shop cart unlock (TikTok Shop)", desc: "Activate the shopping cart feature to start selling directly on TikTok" },
     ],
     pricing: [
       { service: "Official verification badge", duration: "7–15 days", warranty: "12 months", price: contactPriceEn },
@@ -214,12 +214,12 @@ const platformsEn: Platform[] = [
     slug: "facebook",
     name: "Facebook",
     short: "Facebook",
-    tagline: "Verification badge & recovery for personal accounts / fanpages.",
+    tagline: "Verification badge & recovery for personal accounts / fanpages",
     accent: "#1877f2",
     services: [
-      { title: "Official verification badge", desc: "Official badge verification for personal profiles or business fanpages." },
-      { title: "Personal account recovery", desc: "Restore personal Facebook accounts that are locked, checkpointed or disabled." },
-      { title: "Fanpage recovery", desc: "Resolve restricted fanpages, remove integration issues or policy-violation disables." },
+      { title: "Official verification badge", desc: "Official badge verification for personal profiles or business fanpages" },
+      { title: "Personal account recovery", desc: "Restore personal Facebook accounts that are locked, checkpointed or disabled" },
+      { title: "Fanpage recovery", desc: "Resolve restricted fanpages, remove integration issues or policy-violation disables" },
     ],
     pricing: [
       { service: "Personal/Fanpage badge", duration: "5–10 days", warranty: "12 months", price: contactPriceEn },
@@ -241,11 +241,11 @@ const platformsEn: Platform[] = [
     slug: "instagram-threads",
     name: "Instagram / Threads",
     short: "IG / Threads",
-    tagline: "Official verification & account recovery for Instagram, Threads.",
+    tagline: "Official verification & account recovery for Instagram, Threads",
     accent: "#dd2a7b",
     services: [
-      { title: "Official verification badge", desc: "Verified badge for Instagram and Threads accounts per Meta policy." },
-      { title: "Account recovery", desc: "Restore Instagram/Threads accounts that are locked, suspended or restricted." },
+      { title: "Official verification badge", desc: "Verified badge for Instagram and Threads accounts per Meta policy" },
+      { title: "Account recovery", desc: "Restore Instagram/Threads accounts that are locked, suspended or restricted" },
     ],
     pricing: [
       { service: "Official verification badge", duration: "5–10 days", warranty: "12 months", price: contactPriceEn },
@@ -265,11 +265,11 @@ const platformsEn: Platform[] = [
     slug: "bao-chi",
     name: "Press & PR",
     short: "Press",
-    tagline: "Press booking & PR article writing on major news outlets.",
+    tagline: "Press booking & PR article writing on major news outlets",
     accent: "#f59e0b",
     services: [
-      { title: "Press booking", desc: "Publish on reputable news outlets to fit your brand, with transparent outlet pricing." },
-      { title: "SEO-standard PR writing", desc: "Professional content team writing PR articles on-message and search-optimized." },
+      { title: "Press booking", desc: "Publish on reputable news outlets to fit your brand, with transparent outlet pricing" },
+      { title: "SEO-standard PR writing", desc: "Professional content team writing PR articles on-message and search-optimized" },
     ],
     pricing: [
       { service: "Booking per outlet", duration: "2–5 days", warranty: "Retention per package", price: "Per outlet list" },
@@ -289,12 +289,12 @@ const platformsEn: Platform[] = [
     slug: "website",
     name: "Website & Tools",
     short: "Website",
-    tagline: "Specialized in landing pages, portfolios, e-commerce, and custom tools.",
+    tagline: "Specialized in landing pages, portfolios, e-commerce, and custom tools",
     accent: "#8b5cf6",
     services: [
-      { title: "Landing Page & Portfolio", desc: "SEO-standard landing pages with stunning, high-conversion, responsive designs." },
-      { title: "E-commerce Website", desc: "Build professional e-commerce systems with integrated shopping carts and online payments." },
-      { title: "Custom Tools & Software", desc: "Develop custom management tools and software for individuals and SMBs." },
+      { title: "Landing Page & Portfolio", desc: "SEO-standard landing pages with stunning, high-conversion, responsive designs" },
+      { title: "E-commerce Website", desc: "Build professional e-commerce systems with integrated shopping carts and online payments" },
+      { title: "Custom Tools & Software", desc: "Develop custom management tools and software for individuals and SMBs" },
     ],
     pricing: [
       { service: "Landing Page / Portfolio", duration: "3–5 days", warranty: "12 months", price: contactPriceEn },
