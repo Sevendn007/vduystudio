@@ -9,9 +9,10 @@ import { homeCopy } from "@/lib/homeCopy";
 import { getProcess } from "@/lib/services";
 import { DEFAULT_PROJECTS } from "@/components/premiumKit";
 import { BADGE_PATH, CHECK_PATH } from "@/lib/v3/badgePath";
-import { isTermWarranty, stripNo } from "@/lib/v3/format";
+import { isTermWarranty, localizeVi, stripNo } from "@/lib/v3/format";
 import { useV3 } from "../V3Context";
 import Icon3 from "../ui/Icon3";
+import PlatformMark from "../ui/PlatformMark";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -38,8 +39,8 @@ export default function Story() {
 
   const tiles = (projects && projects.length ? projects : DEFAULT_PROJECTS).slice(0, 6);
   const tick = (pricing["tiktok"] ?? []).find((r) => /t[ií]ch xanh|verif|badge/i.test(r.service));
-  const duration = tick?.duration || (en ? "7–15 days" : "7–15 ngày");
-  const warranty = tick && isTermWarranty(tick.warranty) ? tick.warranty! : en ? "12 months" : "12 tháng";
+  const duration = localizeVi(tick?.duration, lang) || (en ? "7–15 days" : "7–15 ngày");
+  const warranty = tick && isTermWarranty(tick.warranty) ? localizeVi(tick.warranty, lang) : en ? "12 months" : "12 tháng";
 
   const L = en
     ? { handle: "@your.brand", name: "Your Brand", following: "Following", followers: "Followers", likes: "Likes", follow: "Follow", msg: "Message", bio: "Official account · Booking via DM", scan: "Auditing account", checks: ["Clean content", "Valid identity", "Stable activity"], contract: "Service commitment", time: "Timeline", warr: "Warranty", sign: "Signed", run: "In progress", runSub: "Following platform policy", done: "Verified", words: ["VERI", "FIED"], live: "Live verification" }
@@ -105,8 +106,8 @@ export default function Story() {
 
       // 4 — ĐÓNG DẤU
         .fromTo(".v3-stamp", { autoAlpha: 0, scale: 3.4, rotate: -38 }, { autoAlpha: 1, scale: 1, rotate: 0, duration: 0.5, ease: "power4.in" }, 7.15)
-        .fromTo(".v3-shock", { autoAlpha: 0.9, scale: 0.3 }, { autoAlpha: 0, scale: 2.8, duration: 0.8, ease: "power2.out" }, 7.65)
-        .fromTo(".v3-shock-2", { autoAlpha: 0.6, scale: 0.3 }, { autoAlpha: 0, scale: 3.6, duration: 1.0, ease: "power2.out" }, 7.7)
+        .fromTo(".v3-shock", { autoAlpha: 0.9, scale: 0.3 }, { autoAlpha: 0, scale: 2.8, duration: 0.8, ease: "power2.out", immediateRender: false }, 7.65)
+        .fromTo(".v3-shock-2", { autoAlpha: 0.6, scale: 0.3 }, { autoAlpha: 0, scale: 3.6, duration: 1.0, ease: "power2.out", immediateRender: false }, 7.7)
         .to(".v3-phone-shake", { keyframes: { x: [0, -12, 10, -7, 4, 0], rotate: [0, -1.5, 1.2, -0.6, 0.3, 0] }, duration: 0.45 }, 7.65)
         .fromTo(".v3-confetti i",
           { x: 0, y: 0, scale: 0, rotate: 0, autoAlpha: 1 },
@@ -211,10 +212,10 @@ export default function Story() {
               </div>
               <svg className="v3-stamp" viewBox="0 0 100 100" aria-hidden><path d={BADGE_PATH} /><path d={CHECK_PATH} className="v3-ck" /></svg>
 
-              <span className="v3-sticker v3-sticker-1" aria-hidden><Icon3 name="tiktok" size={18} /> TikTok</span>
-              <span className="v3-sticker v3-sticker-2" aria-hidden><Icon3 name="facebook" size={18} /> Facebook</span>
-              <span className="v3-sticker v3-sticker-3" aria-hidden><Icon3 name="instagram" size={18} /> Instagram</span>
-              <span className="v3-sticker v3-sticker-4" aria-hidden><Icon3 name="threads" size={18} /> Threads</span>
+              <span className="v3-sticker v3-sticker-1" aria-hidden><PlatformMark platform="tiktok" size={24} /> TikTok</span>
+              <span className="v3-sticker v3-sticker-2" aria-hidden><PlatformMark platform="facebook" size={24} /> Facebook</span>
+              <span className="v3-sticker v3-sticker-3" aria-hidden><PlatformMark platform="instagram" size={24} /> Instagram</span>
+              <span className="v3-sticker v3-sticker-4" aria-hidden><PlatformMark platform="threads" size={24} /> Threads</span>
             </div>
           </div>
 

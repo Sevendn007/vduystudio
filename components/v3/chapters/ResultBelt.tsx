@@ -1,5 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
+import VerifiedTick from "@/components/v3/ui/VerifiedTick";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
@@ -7,8 +8,10 @@ import { useLang } from "@/lib/i18n";
 import { homeCopy, CLIENTS, PLATFORM_NAME } from "@/lib/homeCopy";
 import { DEFAULT_PROJECTS } from "@/components/premiumKit";
 import { href } from "@/lib/v3/routes";
-import { stripNo, tidy } from "@/lib/v3/format";
+import { localizeVi, stripNo, tidy as tidyRaw } from "@/lib/v3/format";
 import { useV3 } from "../V3Context";
+import PlatformMark from "../ui/PlatformMark";
+import { toView } from "./projects/model";
 
 // DỰ ÁN — coverflow 3D như v2 (chủ site chọn 2026-10-29), phối lại theo palette kem/mực/cobalt.
 // CSS transform (không WebGL), chạy cả desktop & mobile: vuốt/kéo, phím ←/→, tự chạy 4.5s
@@ -19,6 +22,7 @@ export default function ResultBelt() {
   const p = t.projects;
   const { projects, contact } = useV3();
   const items = projects && projects.length ? projects : DEFAULT_PROJECTS;
+  const tidy = (x?: string | null) => localizeVi(tidyRaw(x), lang);
   const n = items.length;
   const [active, setActive] = useState(0);
   const [open, setOpen] = useState<(typeof items)[number] | null>(null);
@@ -27,6 +31,9 @@ export default function ResultBelt() {
   const trackRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; dx: number; moved: boolean; id: number } | null>(null);
   const wheelLock = useRef(0);
+  const prevOff = useRef<number[]>([]);
+  const prevActive = useRef(0);
+  const [spin, setSpin] = useState(0); // vòng tròn nền quay theo hướng chuyển thẻ
 
   const go = useCallback((d: number) => setActive((a) => (a + d + n) % n), [n]);
 
@@ -96,9 +103,20 @@ export default function ResultBelt() {
     go(e.deltaX > 0 ? 1 : -1);
   };
 
-  const cur = items[active];
-  const curTitle = tidy(cur.title);
-  const curResult = tidy(cur.result);
+  // Thẻ "vòng qua" đầu bên kia (off nhảy > 2) phải dịch chuyển tức thì, nếu không sẽ thấy nó bay ngang màn hình.
+  const offs = items.map((_, i) => { let o = i - active; if (o > n / 2) o -= n; if (o < -n / 2) o += n; return o; });
+  const jumped = offs.map((o, i) => prevOff.current[i] !== undefined && Math.abs(o - prevOff.current[i]) > 2);
+  useEffect(() => { prevOff.current = offs; });
+  useEffect(() => {
+    let d = active - prevActive.current;
+    if (d > n / 2) d -= n;
+    if (d < -n / 2) d += n;
+    prevActive.current = active;
+    if (d) setSpin((v) => v + d * 60);
+  }, [active, n]);
+
+  const views = items.map((r, i) => toView(r, lang, i));
+  const cur = views[active];
 
   return (
     <section id="projects" className="v3-works v3-station">
@@ -124,12 +142,21 @@ export default function ResultBelt() {
         onPointerLeave={() => setPaused(false)}
         onWheel={onWheel}
       >
-        <div className="v3-cf-ring" aria-hidden />
         <div ref={trackRef} className="v3-cf-track" onPointerDown={onDown}>
+          {/* Quỹ đạo của các thẻ: elip dẹt rộng đúng bằng đường đi của thẻ, neo theo khung ảnh. SVG kéo dẹt + viền không co giãn. */}
+          <div className="v3-cf-orbit" aria-hidden>
+            <svg viewBox="0 0 120 120" preserveAspectRatio="none">
+              <circle className="v3-cf-orbit-line" cx="60" cy="60" r="56" vectorEffect="non-scaling-stroke" />
+              <circle className="v3-cf-orbit-dash" cx="60" cy="60" r="40" vectorEffect="non-scaling-stroke" />
+              <g className="v3-cf-orbit-spin" style={{ transform: `rotate(${spin}deg)` }}>
+                <circle className="v3-cf-orbit-halo" cx="60" cy="4" r="6" />
+                <circle className="v3-cf-orbit-dot" cx="60" cy="4" r="3" />
+              </g>
+              <circle className="v3-cf-orbit-pulse" key={active} cx="60" cy="60" r="56" vectorEffect="non-scaling-stroke" />
+            </svg>
+          </div>
           {items.map((it, i) => {
-            let off = i - active;
-            if (off > n / 2) off -= n;
-            if (off < -n / 2) off += n;
+            const off = offs[i];
             const abs = Math.abs(off);
             const title = tidy(it.title);
             return (
@@ -141,6 +168,7 @@ export default function ResultBelt() {
                   ["--abs" as string]: abs,
                   zIndex: 20 - abs,
                   opacity: abs > 2 ? 0 : 1,
+                  transition: jumped[i] ? "none" : undefined,
                   pointerEvents: abs > 2 ? "none" : undefined,
                 }}
                 aria-label={title}
@@ -176,31 +204,35 @@ export default function ResultBelt() {
 
         <div className="v3-cf-caption" aria-live="polite">
           <span className="v3-cf-count">{String(active + 1).padStart(2, "0")}<small>/{String(n).padStart(2, "0")}</small></span>
-          <h3>{curTitle}</h3>
-          {curResult && curResult !== curTitle && <p>{curResult}</p>}
-          <span className="v3-cf-chips">
-            {cur.platform && <span className="v3-chip">{PLATFORM_NAME[cur.platform] ?? cur.platform}</span>}
-            {cur.tag && <span className="v3-chip v3-chip-blue">{tidy(cur.tag)}</span>}
-          </span>
-        </div>
-        <div className="v3-cf-dots">
-          {items.map((it, i) => (
-            <button key={it.id || i} className={i === active ? "on" : ""} onClick={() => setActive(i)} aria-label={tidy(it.title)}><i /></button>
-          ))}
+          <div className="v3-bar" key={cur.id}>
+            <PlatformMark platform={cur.platform} size={40} />
+            <div className="v3-bar-main">
+              <h3>{cur.title}</h3>
+              <p>{cur.handle ? (cur.href ? <a href={cur.href} target="_blank" rel="noreferrer">{cur.handle} ↗</a> : cur.handle) : cur.note ?? cur.platformName}</p>
+            </div>
+            {cur.outcome ? (
+              <p className="v3-bar-outcome">
+                <VerifiedTick size={18} check="#fff" />
+                <span>{cur.outcome}</span>
+              </p>
+            ) : <span />}
+            {cur.days != null ? <p className="v3-bar-days"><b>{cur.days}</b><small>{lang === "en" ? "days" : "ngày"}</small></p> : <span />}
+          </div>
         </div>
       </div>
 
       <div id="clients" className="v3-container v3-clients">
         <p className="v3-eyebrow">{stripNo(t.clients.eyebrow)}</p>
         <h3 className="v3-clients-h">{t.clients.h2}</h3>
+        {/* Danh sách chỉ để ĐỌC (không bấm được): thẻ phẳng, không hover, con trỏ mặc định. */}
         <ul className="v3-stickers">
-          {CLIENTS.map((cl, i) => <li key={cl} className={`v3-stk v3-stk-${i % 4}`} style={{ ["--r" as string]: `${[-4, 3, -2, 5, -5, 2, 4, -3, 1][i % 9]}deg` }}>{cl}</li>)}
+          {CLIENTS.map((cl, i) => <li key={cl} className={`v3-stk v3-stk-${i % 4}`} style={{ ["--r" as string]: `${[-4, 3, -2, 5, -5, 2, 4, -3, 1][i % 9]}deg` }}>{localizeVi(cl, lang)}</li>)}
         </ul>
       </div>
 
       {open && createPortal(
-        <div className="v3-lightbox" role="dialog" aria-modal="true" aria-label={tidy(open.title)} onClick={() => setOpen(null)}>
-          <div className="v3-lightbox-card" onClick={(e) => e.stopPropagation()}>
+        <div className="v3-lightbox" role="dialog" aria-modal="true" aria-label={tidy(open.title)} data-lenis-prevent onClick={() => setOpen(null)}>
+          <div className="v3-lightbox-card" data-lenis-prevent onClick={(e) => e.stopPropagation()}>
             <img src={open.image_url || fallback(active)} alt={tidy(open.title)} />
             <div className="v3-lightbox-info">
               <h3>{tidy(open.title)}</h3>

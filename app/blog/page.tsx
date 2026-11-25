@@ -3,7 +3,6 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import SubHeader3 from "@/components/v3/ui/SubHeader3";
 import SubFooter3 from "@/components/v3/ui/SubFooter3";
 import "@/app/styles/v3-sub.css";
 import { useLang } from "@/lib/i18n";
@@ -41,7 +40,6 @@ function BlogListContent() {
 
   return (
     <div className="v3-sub-page pj-root">
-      <SubHeader3 />
 
       <header className="pj-head">
         <h1>{t.title}</h1>
@@ -78,7 +76,7 @@ function BlogListContent() {
 
       <SubFooter3 />
 
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
 .pj-root{--bg:#0c0d14;--muted:#94a3b8;--cyan:#2140f0;--line:rgba(255,255,255,.08);--card:#12131c;
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#f1f5f9;min-height:100vh;}
 .pj-root *{box-sizing:border-box;}
@@ -112,7 +110,7 @@ function BlogListContent() {
 
 @media(max-width:980px){.pj-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:560px){.pj-grid{grid-template-columns:1fr;}}
-      `}</style>
+      ` }} />
     </div>
   );
 }

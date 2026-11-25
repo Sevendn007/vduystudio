@@ -1,0 +1,20 @@
+/* ====================== DỰ ÁN — logo nền tảng (PlatformMark) và thanh thông tin dự án ====================== */
+.v3-pm { display: inline-flex; flex: none; border-radius: 28%; box-shadow: 0 6px 14px -8px rgba(12, 12, 16, 0.6); }
+.v3-pm svg { display: block; }
+.v3-pm-glyph { align-items: center; justify-content: center; background: var(--v3-blue-soft, rgba(33, 64, 240, 0.12)); color: var(--v3-blue-ink, #1a33c4); box-shadow: none; }
+.v3-bar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 8px 20px; max-width: 980px; min-height: 84px; margin: 4px auto 0; padding: 16px 24px; border-radius: var(--r-lg); background: var(--v3-paper); border: 1px solid var(--v3-line-2); animation: v3FadeUp 0.5s var(--ease-out) both; }
+.v3-bar-main { min-width: 0; }
+.v3-bar h3 { font-size: var(--fs-h3); font-weight: 800; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.v3-bar-main p { margin: 2px 0 0; font-size: var(--fs-meta); color: var(--v3-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.v3-bar-main a { color: var(--v3-blue-ink); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.v3-bar-outcome { display: flex; align-items: flex-start; gap: 8px; max-width: 280px; margin: 0; padding: 10px 14px; border-radius: 12px; background: var(--v3-blue-soft); color: var(--v3-blue-ink); font-size: var(--fs-meta); font-weight: 700; line-height: 1.35; }
+.v3-bar-outcome svg { flex: none; margin-top: 1px; }
+.v3-bar-outcome span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.v3-bar-days { display: flex; align-items: baseline; gap: 6px; margin: 0; min-width: 72px; justify-content: flex-end; }
+.v3-bar-days b { font-family: var(--ff-display); font-stretch: 62%; font-weight: 900; font-size: 52px; line-height: 0.9; color: var(--v3-blue); }
+.v3-bar-days small { font-family: var(--ff-mono); font-size: var(--fs-eyebrow); letter-spacing: 0.12em; text-transform: uppercase; color: var(--v3-ink-2); }
+@media (max-width: 860px) {
+  .v3-bar { grid-template-columns: auto minmax(0, 1fr); }
+  .v3-bar-outcome { grid-column: 1 / -1; max-width: none; }
+  .v3-bar-days { grid-column: 1 / -1; justify-content: flex-start; }
+}

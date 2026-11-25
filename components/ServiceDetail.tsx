@@ -5,11 +5,14 @@ import Link from "next/link";
 import { getPlatform, getPlatforms, PriceRow } from "@/lib/services";
 import { site } from "@/lib/site";
 import { IPhone, DEFAULT_PROJECTS } from "@/components/premiumKit";
-import SubHeader3 from "@/components/v3/ui/SubHeader3";
 import SubFooter3 from "@/components/v3/ui/SubFooter3";
+import PlatformMark from "@/components/v3/ui/PlatformMark";
+import VerifiedTick from "@/components/v3/ui/VerifiedTick";
+import { projectLabels, toView } from "@/components/v3/chapters/projects/model";
+import { localizeVi } from "@/lib/v3/format";
 import "@/app/styles/v3-sub.css";
 import { useLang, LangToggle } from "@/lib/i18n";
-import { fetchPricing, fetchProjects, DbProject } from "@/lib/data";
+import { fetchPricing, fetchAllProjects, DbProject } from "@/lib/data";
 import { useContact } from "@/lib/useContact";
 
 // Dự án cùng nền tảng (instagram-threads ~ instagram).
@@ -76,6 +79,18 @@ const TX = {
   },
 };
 
+// Chữ + nền cho phần đặt chữ lên màu nhấn: nền sáng (cyan, vàng) dùng chữ đen; nền tối dùng chữ trắng trên màu nhấn
+// đã tối đi 22% — đạt tương phản ≥ 4.5:1 cho mọi nền tảng.
+function onAccent(hex: string): { fg: string; bg: string } {
+  const h = hex.replace("#", "");
+  const rgb = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const lin = rgb.map((v) => v / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  const lum = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
+  if (lum > 0.35) return { fg: "#04101a", bg: hex };
+  const dark = rgb.map((v) => Math.round(v * 0.78));
+  return { fg: "#fff", bg: `rgb(${dark.join(",")})` };
+}
+
 export default function ServiceDetail({ slug }: { slug: string }) {
   const { lang } = useLang();
   const t = TX[lang];
@@ -87,11 +102,12 @@ export default function ServiceDetail({ slug }: { slug: string }) {
   const [dbProjects, setDbProjects] = useState<DbProject[] | null>(null);
   useEffect(() => {
     let mounted = true;
-    fetchProjects().then((d) => mounted && setDbProjects(d));
+    fetchAllProjects().then((d) => mounted && setDbProjects(d));
     return () => { mounted = false; };
   }, []);
   const related = (dbProjects ?? []).filter((p) => matchPlatform(p, platform.slug));
-  const projects: DbProject[] = related.length > 0 ? related.slice(0, 3) : DEFAULT_PROJECTS.slice(0, 3);
+  // Chỉ hiện dự án THỰC SỰ cùng nền tảng; chưa có thì ẩn cả mục (trước đây rơi về dự án TikTok mẫu nên trang Báo chí/Website hiện nhầm).
+  const projects: DbProject[] = related.slice(0, 3);
 
   // Bảng giá: admin nhập trong DB thì ưu tiên, chưa có thì dùng mặc định.
   const [pricing, setPricing] = useState<PriceRow[]>(platform.pricing);
@@ -103,9 +119,9 @@ export default function ServiceDetail({ slug }: { slug: string }) {
       const contactPrice = lang === "en" ? "Contact for quote" : "Liên hệ báo giá";
       setPricing(
         rows.map((r) => ({
-          service: r.service,
-          duration: r.duration || "—",
-          warranty: r.warranty || "—",
+          service: localizeVi(r.service, lang),
+          duration: localizeVi(r.duration, lang) || "—",
+          warranty: localizeVi(r.warranty, lang) || "—",
           price: r.price || contactPrice,
         }))
       );
@@ -117,17 +133,14 @@ export default function ServiceDetail({ slug }: { slug: string }) {
   }, [slug, lang]);
 
   return (
-    <div className="v3-sub-page sd-root" style={{ ["--accent" as string]: platform.accent }}>
-      <SubHeader3 />
+    <div className="v3-sub-page sd-root" style={{ ["--accent" as string]: platform.accent, ["--on-accent" as string]: onAccent(platform.accent).fg, ["--accent-solid" as string]: onAccent(platform.accent).bg }}>
 
       {/* HERO */}
       <header className="sd-hero">
         <Link href="/" className="sd-crumb">
           {t.allServices}
         </Link>
-        <div className="sd-hero-badge" style={{ background: platform.accent }}>
-          {platform.name}
-        </div>
+        <div className="sd-hero-logo"><PlatformMark platform={slug} size={64} /></div>
         <h1>{t.serviceOf(platform.name)}</h1>
         <p>{platform.tagline}</p>
         <div className="sd-hero-ctas">
@@ -202,22 +215,37 @@ export default function ServiceDetail({ slug }: { slug: string }) {
       </section>
 
       {/* PROJECTS */}
+      {projects.length > 0 && (
       <section className="sd-section">
         <div className="sd-tag">{t.projectsTag}</div>
         <h2>{t.projectsTitle}</h2>
         <div className="sd-projects">
-          {projects.map((pj, i) => (
-            <div className="sd-project" key={pj.id ?? i}>
-              <IPhone src={pj.image_url} fallback={DEFAULT_PROJECTS[i]?.image_url} alt={pj.title} size="sm" />
-              <div className="sd-project-body">
-                <h4>{pj.title}</h4>
-                {pj.result && <p>{pj.result}</p>}
-                {pj.tag && <span className="sd-project-tag">{pj.tag}</span>}
-              </div>
-            </div>
-          ))}
+          {projects.map((pj, i) => {
+            const v = toView(pj, lang, i);
+            const body = (
+              <>
+                <IPhone src={v.image} fallback={DEFAULT_PROJECTS[i]?.image_url} alt={v.title} size="sm" />
+                <div className="sd-project-body">
+                  <h4>{v.title}</h4>
+                  <span className="sd-project-handle">{v.handle ?? v.note ?? "\u00a0"}</span>
+                  {v.outcome && (
+                    <span className="sd-project-result">
+                      <VerifiedTick size={16} check="#0c0d14" />
+                      <span>{v.outcome}{v.days != null ? <em> · {projectLabels(lang).days(v.days)}</em> : null}</span>
+                    </span>
+                  )}
+                </div>
+              </>
+            );
+            return v.href ? (
+              <a className="sd-project is-link" key={v.id} href={v.href} target="_blank" rel="noreferrer">{body}</a>
+            ) : (
+              <div className="sd-project" key={v.id}>{body}</div>
+            );
+          })}
         </div>
       </section>
+      )}
 
       {/* FAQ */}
       <section className="sd-section">
@@ -253,7 +281,7 @@ export default function ServiceDetail({ slug }: { slug: string }) {
 
       <SubFooter3 />
 
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
 .sd-root{--fg:#f8fafc;--muted:#94a3b8;--line:rgba(255,255,255,.08);--panel:rgba(255,255,255,.03);--cyan:#2140f0;--bg:#0c0d14;font-family:var(--font-inter),system-ui,sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;position:relative;overflow-x:hidden;}
 .sd-root *{box-sizing:border-box;}
 .sd-space{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
@@ -272,11 +300,11 @@ export default function ServiceDetail({ slug }: { slug: string }) {
 .sd-nav{display:flex;justify-content:space-between;align-items:center;padding:12px clamp(16px,4vw,40px);position:sticky;top:0;z-index:20;background:rgba(2,9,12,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
 .sd-nav-links{display:flex;align-items:center;gap:18px;font-size:14px;font-weight:500;color:var(--muted);}
 .sd-nav-cta{border:1px solid var(--accent);color:var(--fg);background:color-mix(in srgb,var(--accent) 14%,transparent);padding:9px 18px;border-radius:100px;font-weight:600;}
-.sd-nav-cta:hover{background:var(--accent);color:#04101a;}
+.sd-nav-cta:hover{background:var(--accent-solid);color:var(--on-accent);}
 .sd-hero{max-width:900px;margin:0 auto;padding:64px clamp(16px,4vw,40px) 46px;text-align:center;}
-.sd-crumb{color:var(--muted);font-size:13px;font-weight:600;display:inline-block;margin-bottom:22px;}
+.sd-crumb{color:var(--muted);font-size:13px;font-weight:600;display:block;margin-bottom:26px;}
 .sd-crumb:hover{color:var(--fg);}
-.sd-hero-badge{display:inline-block;color:#fff;background:linear-gradient(135deg,#2547f4,#1732c5);font-weight:700;font-size:13px;padding:6px 16px;border-radius:100px;margin-bottom:18px;box-shadow:0 4px 20px rgba(37,71,244,.4);}
+.sd-hero-logo{display:flex;justify-content:center;margin-bottom:20px;}
 .sd-hero h1{font-size:clamp(32px,5vw,52px);font-weight:900;letter-spacing:-1.5px;margin:0 0 16px;color:#fff;}
 .sd-hero p{color:var(--muted);font-size:17px;max-width:560px;margin:0 auto 28px;line-height:1.6;}
 .sd-hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
@@ -288,12 +316,12 @@ export default function ServiceDetail({ slug }: { slug: string }) {
 .sd-btn.ghost-light{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);}
 
 .sd-section{max-width:1080px;margin:0 auto;padding:52px clamp(16px,4vw,40px);border-top:1px solid var(--line);}
-.sd-tag{color:var(--accent);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;}
+.sd-tag{color:color-mix(in srgb,var(--accent) 62%,#fff);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;}
 .sd-section h2{font-size:clamp(24px,3.4vw,34px);font-weight:800;letter-spacing:-1px;margin:0 0 30px;}
 
 .sd-services{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .sd-service{display:flex;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;}
-.sd-service-num{font-weight:800;color:var(--accent);font-size:15px;}
+.sd-service-num{font-weight:800;color:color-mix(in srgb,var(--accent) 62%,#fff);font-size:15px;min-width:26px;flex:none;}
 .sd-service h3{margin:0 0 6px;font-size:17px;font-weight:700;}
 .sd-service p{margin:0;color:var(--muted);font-size:14px;line-height:1.55;}
 
@@ -302,25 +330,28 @@ export default function ServiceDetail({ slug }: { slug: string }) {
 .sd-table th{text-align:left;padding:16px 20px;background:rgba(139,147,184,.08);color:var(--muted);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.5px;}
 .sd-table td{padding:16px 20px;border-top:1px solid var(--line);}
 .sd-table tbody tr:first-child td{border-top:none;}
-.sd-price{font-weight:700;color:var(--accent);}
+.sd-price{font-weight:700;color:color-mix(in srgb,var(--accent) 62%,#fff);white-space:nowrap;}
 .sd-note{color:var(--muted);font-size:13px;margin:14px 2px 0;}
 
 .sd-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
 .sd-step{background:var(--panel);border:1px solid var(--line);border-left:2px solid var(--accent);border-radius:14px;padding:22px;}
-.sd-step-num{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#04101a;display:flex;align-items:center;justify-content:center;font-weight:800;margin-bottom:14px;}
+.sd-step-num{width:34px;height:34px;border-radius:50%;background:var(--accent-solid);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-weight:800;margin-bottom:14px;}
 .sd-step h4{margin:0 0 8px;font-size:16px;font-weight:700;}
 .sd-step p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.55;}
 
 .sd-projects{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
 .sd-project{display:flex;flex-direction:column;align-items:center;gap:16px;background:var(--panel);
  border:1px solid var(--line);border-radius:20px;padding:26px 16px 22px;transition:.25s;}
-.sd-project:hover{border-color:rgba(33,64,240,.6);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.6);}
-.sd-project-body{text-align:center;padding:0;}
-.sd-project-body h4{margin:0 0 6px;font-size:16px;font-weight:700;}
-.sd-project-body p{margin:0;color:var(--muted);font-size:13.5px;}
-.sd-project-tag{display:inline-block;margin-top:10px;font-size:10.5px;font-weight:800;letter-spacing:1px;
- text-transform:uppercase;color:#fff;background:linear-gradient(135deg,#2547f4,#1732c5);
- padding:4px 12px;border-radius:100px;}
+.sd-project.is-link{cursor:pointer;}
+.sd-project.is-link:hover{border-color:rgba(33,64,240,.6);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.6);}
+.sd-project{height:100%;}
+.sd-project-body{text-align:center;padding:0;display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:auto;width:100%;}
+.sd-project-body h4{margin:0;font-size:16px;font-weight:700;line-height:1.35;min-height:2.7em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.sd-project-handle{min-height:20px;max-width:100%;font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sd-project.is-link .sd-project-handle{color:#7f9bff;font-weight:600;}
+.sd-project-result{display:flex;align-items:flex-start;justify-content:center;gap:6px;min-height:2.7em;font-size:12.5px;line-height:1.35;color:#cbd5e1;text-align:left;}
+.sd-project-result svg{color:#7f9bff;margin-top:1px;}
+.sd-project-result em{font-style:normal;color:var(--muted);}
 
 .sd-faq{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .sd-faq-item{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 24px;}
@@ -328,7 +359,7 @@ export default function ServiceDetail({ slug }: { slug: string }) {
 .sd-faq-a{color:var(--muted);font-size:14.5px;line-height:1.65;}
 @media(max-width:820px){.sd-faq{grid-template-columns:1fr;}}
 
-.sd-others{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.sd-others{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
 .sd-other{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;transition:.2s;color:var(--fg);}
 .sd-other:hover{transform:translateY(-3px);border-color:var(--accent);}
 .sd-other-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
@@ -342,8 +373,19 @@ export default function ServiceDetail({ slug }: { slug: string }) {
   .sd-services,.sd-steps,.sd-projects,.sd-others{grid-template-columns:1fr;}
   .sd-steps{grid-template-columns:1fr 1fr;}
 }
+@media(max-width:640px){
+  .sd-table-wrap{overflow:visible;border:none;background:none;}
+  .sd-table{min-width:0;display:block;}
+  .sd-table thead{display:none;}
+  .sd-table tbody,.sd-table tr,.sd-table td{display:block;width:100%;}
+  .sd-table tr{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 4px;margin-bottom:12px;}
+  .sd-table td{display:flex;justify-content:space-between;gap:16px;border:none;padding:6px 16px;text-align:right;}
+  .sd-table td::before{content:attr(data-label);color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;text-align:left;flex:none;padding-top:2px;}
+  .sd-table td:first-child{font-weight:700;text-align:left;padding-bottom:10px;}
+  .sd-table td:first-child::before{display:none;}
+}
 @media(max-width:520px){.sd-steps{grid-template-columns:1fr;}.sd-nav-links a:not(.sd-nav-cta):not(.sd-lng){display:none;}}
-      `}</style>
+      ` }} />
     </div>
   );
 }

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import SubHeader3 from "@/components/v3/ui/SubHeader3";
 import SubFooter3 from "@/components/v3/ui/SubFooter3";
 import "@/app/styles/v3-sub.css";
 import { useLang } from "@/lib/i18n";
@@ -70,7 +69,6 @@ export default function BlogDetailPage() {
 
   return (
     <div className="v3-sub-page pj-root">
-      <SubHeader3 backHref="/blog" />
 
       <article className="blog-detail">
         <header className="blog-head">
@@ -101,7 +99,7 @@ export default function BlogDetailPage() {
 
       <SubFooter3 backHref="/blog" />
 
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
 .pj-root{--bg:#0c0d14;--muted:#94a3b8;--cyan:#60a5fa;--line:rgba(255,255,255,.08);--card:#12131c;
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#f1f5f9;min-height:100vh;}
 .pj-root *{box-sizing:border-box;}
@@ -124,7 +122,7 @@ export default function BlogDetailPage() {
 
 .blog-gallery{margin-top:40px;display:flex;flex-direction:column;gap:20px;}
 .blog-gallery img{width:100%;border-radius:16px;border:1px solid var(--line);}
-      `}</style>
+      ` }} />
     </div>
   );
 }
